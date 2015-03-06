@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\xunit.runner.visualstudio.2.0.0-rc3-build1046\build\net20\xunit.runner.visualstudio.props" Condition="Exists('..\..\packages\xunit.runner.visualstudio.2.0.0-rc3-build1046\build\net20\xunit.runner.visualstudio.props')" />
+  <Import Project="..\..\packages\xunit.core.2.0.0-rc3-build2880\build\portable-net45+aspnetcore50+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props" Condition="Exists('..\..\packages\xunit.core.2.0.0-rc3-build2880\build\portable-net45+aspnetcore50+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <OutputPath>bin</OutputPath>
+    <OutputType Condition=" '$(OutputType)' == '' ">Library</OutputType>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">Any CPU</Platform>
+    <FileAlignment>512</FileAlignment>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <NoWarn>1607</NoWarn>
+    <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
+    <ProjectGuid>{F6CDD330-93C2-4243-85EE-482F3B94978A}</ProjectGuid>
+    <RootNamespace>Nine.Storage.Test</RootNamespace>
+    <AssemblyName>Nine.Storage.Test</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <NuGetPackageImportStamp>0c43f8ac</NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <BuildPackage>true</BuildPackage>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;$(DefineConstants)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <BuildPackage>true</BuildPackage>
+    <DocumentationFile>bin\Nine.Storage.Test.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;$(DefineConstants)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Nine.Formatting">
+      <HintPath>..\..\packages\Nine.Formatting.0.1.0.0\lib\portable-net45+win+wp80\Nine.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage, Version=1.0.2.0, Culture=neutral, PublicKeyToken=286fe515a2c35b64, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\PCLStorage.1.0.2\lib\net45\PCLStorage.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage.Abstractions, Version=1.0.2.0, Culture=neutral, PublicKeyToken=286fe515a2c35b64, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\PCLStorage.1.0.2\lib\net45\PCLStorage.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.XML" />
+    <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\xunit.abstractions.2.0.0-rc3-build2880\lib\net35\xunit.abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.assert, Version=2.0.0.2880, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\xunit.assert.2.0.0-rc3-build2880\lib\portable-net45+aspnetcore50+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.assert.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.core, Version=2.0.0.2880, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\xunit.extensibility.core.2.0.0-rc3-build2880\lib\portable-net45+aspnetcore50+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\Portable\Helpers\LamportTimestamp.cs">
+      <Link>LamportTimestamp.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Portable\Helpers\LazyAsync.cs">
+      <Link>LazyAsync.cs</Link>
+    </Compile>
+    <Compile Include="DataStorageTest.cs" />
+    <Compile Include="LamportTimestampTest.cs" />
+    <Compile Include="LazyAsyncTest.cs" />
+    <Compile Include="FileBlobStorageTest.cs" />
+    <Compile Include="PersistedStorageTest.cs" />
+    <Compile Include="StorageCollectionTest.cs" />
+    <Compile Include="StorageMigrationTest.cs" />
+    <Compile Include="SyncSourceTest.cs" />
+    <Compile Include="StorageSharingTest.cs" />
+    <Compile Include="CacheTest.cs" />
+    <Compile Include="StorageTest.cs" />
+    <Compile Include="StorageKeyTest.cs" />
+    <Compile Include="TestExtensionMethods.cs" />
+    <Compile Include="UISynchronizationContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Client\Nine.Storage.Client.csproj">
+      <Project>{f7626fd5-5224-4ae0-a1cf-29bd780065c5}</Project>
+      <Name>Nine.Storage.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Portable\Nine.Storage.csproj">
+      <Project>{4c65a2e5-5c95-410d-9e5f-e394cd3e2b21}</Project>
+      <Name>Nine.Storage</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Server\Nine.Storage.Server.csproj">
+      <Project>{e4a9d22d-9c83-4e9a-b742-5fe300190667}</Project>
+      <Name>Nine.Storage.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Portable\Nine.Storage.Test.csproj">
+      <Project>{179e55be-4f97-4175-9fa3-52f57231e318}</Project>
+      <Name>Nine.Storage.Test</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\xunit.core.2.0.0-rc3-build2880\build\portable-net45+aspnetcore50+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.core.2.0.0-rc3-build2880\build\portable-net45+aspnetcore50+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props'))" />
+    <Error Condition="!Exists('..\..\packages\xunit.runner.visualstudio.2.0.0-rc3-build1046\build\net20\xunit.runner.visualstudio.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.runner.visualstudio.2.0.0-rc3-build1046\build\net20\xunit.runner.visualstudio.props'))" />
+  </Target>
+</Project>
