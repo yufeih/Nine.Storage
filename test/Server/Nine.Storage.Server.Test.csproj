@@ -126,6 +126,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BlobStorageTest.cs" />
     <Compile Include="StorageTest.cs" />
   </ItemGroup>

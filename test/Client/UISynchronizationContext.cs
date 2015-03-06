@@ -4,7 +4,7 @@ namespace System.Threading
     using System.Diagnostics;
 
     [DebuggerStepThrough]
-    class UISynchronizationContext : SynchronizationContext, IDisposable
+    sealed class UISynchronizationContext : SynchronizationContext, IDisposable
     {
         struct WorkItem
         {
@@ -22,7 +22,7 @@ namespace System.Threading
 
         private bool disposed;
         private Thread uiThread;
-        private SynchronizationContext previous = SynchronizationContext.Current;
+        private SynchronizationContext previous = Current;
         private readonly BlockingCollection<WorkItem> workItems = new BlockingCollection<WorkItem>();
         
         private void EnsureUIThread()
@@ -86,7 +86,8 @@ namespace System.Threading
         public void Dispose()
         {
             disposed = true;
-            SynchronizationContext.SetSynchronizationContext(previous);
+            workItems.Dispose();
+            SetSynchronizationContext(previous);
         }
     }
 }

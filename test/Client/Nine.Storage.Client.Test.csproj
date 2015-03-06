@@ -12,7 +12,7 @@
     <NoWarn>1607</NoWarn>
     <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
     <ProjectGuid>{F6CDD330-93C2-4243-85EE-482F3B94978A}</ProjectGuid>
-    <RootNamespace>Nine.Storage.</RootNamespace>
+    <RootNamespace>Nine.Storage</RootNamespace>
     <AssemblyName>Nine.Storage.Client.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -86,6 +86,7 @@
     <Compile Include="..\..\src\Portable\Helpers\LazyAsync.cs">
       <Link>LazyAsync.cs</Link>
     </Compile>
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="DataStorageTest.cs" />
     <Compile Include="LamportTimestampTest.cs" />
     <Compile Include="LazyAsyncTest.cs" />
