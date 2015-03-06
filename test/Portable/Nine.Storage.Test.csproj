@@ -58,12 +58,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Nine.Storage.Test.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\src\Server\IOExtensions.cs">
       <Link>IOExtensions.cs</Link>
     </Compile>
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="TestDimension.cs" />
     <Compile Include="BasicTypes.cs" />
     <Compile Include="BlobStorageSpec.cs" />

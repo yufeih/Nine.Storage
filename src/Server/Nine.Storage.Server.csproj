@@ -118,12 +118,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Nine.Storage.Server.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Portable\Helpers\LazyAsync.cs">
       <Link>LazyAsync.cs</Link>
     </Compile>
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Azure\BatchedTableStorage.cs" />
     <Compile Include="Azure\BlobStorage.cs" />
     <Compile Include="Azure\KeyedTableEntity.cs" />
