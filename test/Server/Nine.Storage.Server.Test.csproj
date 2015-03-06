@@ -13,7 +13,7 @@
     <NoWarn>1607</NoWarn>
     <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
     <ProjectGuid>{C0A539A8-27B7-421A-82D1-4A674329A8FD}</ProjectGuid>
-    <RootNamespace>Nine.Storage.Server.Test</RootNamespace>
+    <RootNamespace>Nine.Storage</RootNamespace>
     <AssemblyName>Nine.Storage.Server.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <NuGetPackageImportStamp>0c43f8ac</NuGetPackageImportStamp>
