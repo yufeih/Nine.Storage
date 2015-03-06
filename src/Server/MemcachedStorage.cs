@@ -1,0 +1,171 @@
+﻿namespace Nine.Storage
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using System.Threading.Tasks;
+    using Enyim.Caching;
+    using Enyim.Caching.Configuration;
+    using Enyim.Caching.Memcached;
+    using Nine.Formatting;
+
+    public class MemcachedStorage<T> : IDisposable, IStorage<T> where T : class, IKeyed, new()
+    {
+        private static readonly IFormatter formatter = new JsonFormatter();
+        private readonly MemcachedClient cache;
+        private readonly string prefix;
+
+        public MemcachedStorage(string connection, string prefix = null)
+        {
+            var parts = connection.Split(',');
+            var servers = from x in parts where !x.Contains("=") select x;
+            var username = parts.Where(x => x.StartsWith("username=")).Select(x => x.Substring("username=".Length)).FirstOrDefault();
+            var password = parts.Where(x => x.StartsWith("password=")).Select(x => x.Substring("password=".Length)).FirstOrDefault();
+            var zone = parts.Where(x => x.StartsWith("zone=")).Select(x => x.Substring("zone=".Length)).FirstOrDefault();
+
+            var configuration = new MemcachedClientConfiguration();
+            foreach (var server in servers)
+            {
+                configuration.Servers.Add(Parse(server));
+            }
+
+            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+            {
+                configuration.Authentication.Type = typeof(PlainTextAuthenticator);
+                configuration.Authentication.Parameters.Add("zone", zone);
+                configuration.Authentication.Parameters.Add("userName", username);
+                configuration.Authentication.Parameters.Add("password", password);
+            }
+
+            this.cache = new MemcachedClient(configuration);
+            this.prefix = (prefix ?? typeof(T).ToString()) + "/";
+        }
+
+        public Task<T> Get(string key)
+        {
+            var result = cache.Get(key) as byte[];
+            if (result == null) return Task.FromResult<T>(null);
+            return Task.FromResult(formatter.FromBytes<T>(result));
+        }
+
+        public Task<IEnumerable<T>> Range(string minKey = null, string maxKey = null, int? count = null)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task<bool> Add( T value)
+        {
+            return Task.FromResult(cache.Store(StoreMode.Add, value.GetKey(), formatter.ToBytes(value)));
+        }
+
+        public Task Put(T value)
+        {
+            cache.Store(StoreMode.Set, value.GetKey(), formatter.ToBytes(value));
+            return Task.FromResult(0);
+        }
+
+        public Task<bool> Delete(string key)
+        {
+            return Task.FromResult(cache.Remove(key));
+        }
+
+        // http://stackoverflow.com/questions/2727609/best-way-to-create-ipendpoint-from-string
+        private static IPEndPoint Parse(string endpointstring)
+        {
+            return Parse(endpointstring, -1);
+        }
+
+        private static IPEndPoint Parse(string endpointstring, int defaultport)
+        {
+            if (string.IsNullOrEmpty(endpointstring) || endpointstring.Trim().Length == 0)
+            {
+                throw new ArgumentException("Endpoint descriptor may not be empty.");
+            }
+            if (defaultport != -1 && (defaultport < IPEndPoint.MinPort || defaultport > IPEndPoint.MaxPort))
+            {
+                throw new ArgumentException(string.Format("Invalid default port '{0}'", defaultport));
+            }
+
+            string[] values = endpointstring.Split(new char[] { ':' });
+            IPAddress ipaddy;
+            int port = -1;
+
+            //check if we have an IPv6 or ports
+            if (values.Length <= 2) // ipv4 or hostname
+            {
+                if (values.Length == 1)
+                    //no port is specified, default
+                    port = defaultport;
+                else
+                    port = getPort(values[1]);
+
+                //try to use the address as IPv4, otherwise get hostname
+                if (!IPAddress.TryParse(values[0], out ipaddy))
+                    ipaddy = getIPfromHost(values[0]);
+            }
+            else if (values.Length > 2) //ipv6
+            {
+                //could [a:b:c]:d
+                if (values[0].StartsWith("[") && values[values.Length - 2].EndsWith("]"))
+                {
+                    string ipaddressstring = string.Join(":", values.Take(values.Length - 1).ToArray());
+                    ipaddy = IPAddress.Parse(ipaddressstring);
+                    port = getPort(values[values.Length - 1]);
+                }
+                else //[a:b:c] or a:b:c
+                {
+                    ipaddy = IPAddress.Parse(endpointstring);
+                    port = defaultport;
+                }
+            }
+            else
+            {
+                throw new FormatException(string.Format("Invalid endpoint ipaddress '{0}'", endpointstring));
+            }
+
+            if (port == -1)
+                throw new ArgumentException(string.Format("No port specified: '{0}'", endpointstring));
+
+            return new IPEndPoint(ipaddy, port);
+        }
+
+        private static int getPort(string p)
+        {
+            int port;
+
+            if (!int.TryParse(p, out port)
+             || port < IPEndPoint.MinPort
+             || port > IPEndPoint.MaxPort)
+            {
+                throw new FormatException(string.Format("Invalid end point port '{0}'", p));
+            }
+
+            return port;
+        }
+
+        private static IPAddress getIPfromHost(string p)
+        {
+            var hosts = Dns.GetHostAddresses(p);
+
+            if (hosts == null || hosts.Length == 0)
+                throw new ArgumentException(string.Format("Host not found: {0}", p));
+
+            return hosts[0];
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (cache != null) cache.Dispose();
+            }
+        }
+    }
+}
