@@ -35,6 +35,7 @@
     <BuildPackage>true</BuildPackage>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <DocumentationFile>bin\Release\Nine.Storage.XML</DocumentationFile>
+    <NoWarn>1591,1572</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

@@ -28,6 +28,7 @@
     <WarningLevel>4</WarningLevel>
     <BuildPackage>true</BuildPackage>
     <DocumentationFile>bin\Release\Nine.Storage.Client.XML</DocumentationFile>
+    <NoWarn>1607,1591,1572</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug</OutputPath>
