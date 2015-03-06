@@ -77,6 +77,7 @@
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ISupportIncrementalLoading.cs" />
+    <Compile Include="SyncSourceExtensions.cs" />
     <Compile Include="PersistedStorage.cs" />
     <Compile Include="FileBlobStorage.cs" />
     <Compile Include="StorageCollection.cs" />
