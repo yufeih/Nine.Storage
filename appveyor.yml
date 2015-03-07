@@ -12,6 +12,8 @@ build:
   parallel: true
   publish_nuget: true
 
+test: off
+
 version: 1.0.{build}
 
 assembly_info:
