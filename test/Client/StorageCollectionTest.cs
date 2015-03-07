@@ -8,7 +8,7 @@
     using System.Threading.Tasks;
     using Xunit;
 
-    public sealed class StorageCollectionTest : IDisposable
+    sealed class StorageCollectionTest : IDisposable
     {
         private readonly UISynchronizationContext syncContext = UISynchronizationContext.BindToCurrent();
 

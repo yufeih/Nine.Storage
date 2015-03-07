@@ -10,7 +10,7 @@
     {
         class TestStorageProvider : StorageProviderBase
         {
-            public static int InitializeCount = 0;
+            public int InitializeCount = 0;
 
             protected async override Task<IStorage<T>> CreateAsync<T>()
             {
@@ -21,13 +21,14 @@
         }
 
         [Fact]
-        public static async Task storage_provider_should_only_be_initialized_once()
+        public async Task storage_provider_should_only_be_initialized_once()
         {
-            var storage = new Storage(new TestStorageProvider());
+            var provider = new TestStorageProvider();
+            var storage = new Storage(provider);
 
             await Task.WhenAll(Enumerable.Range(0, 100).AsParallel().Select(i => storage.Put(new TestStorageObject("a"))));
 
-            Assert.Equal(1, TestStorageProvider.InitializeCount);
+            Assert.Equal(1, provider.InitializeCount);
         }
 
         [Fact]

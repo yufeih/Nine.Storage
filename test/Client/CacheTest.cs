@@ -8,9 +8,9 @@
 
     public class CacheTest : CacheSpec<CacheTest>
     {
-        public override IEnumerable<Func<ICache<TestStorageObject>>> GetData()
+        public override IEnumerable<ITestFactory<ICache<TestStorageObject>>> GetData()
         {
-            yield return new Func<ICache<TestStorageObject>>(() => new MemoryStorage<TestStorageObject>());
+            yield return new TestFactory<ICache<TestStorageObject>>(nameof(MemoryStorage), () => new MemoryStorage<TestStorageObject>());
         }
 
         [Fact]

@@ -7,16 +7,16 @@
     using System.Threading.Tasks;
     using Xunit;
 
-    public abstract class BlobStorageSpec<TData> : ITestData<Func<IBlobStorage>> where TData : ITestData<Func<IBlobStorage>>, new()
+    public abstract class BlobStorageSpec<TData> : ITestFactoryData<IBlobStorage> where TData : ITestFactoryData<IBlobStorage>, new()
     {
-        public static IEnumerable<object[]> Data = new TestDimension<TData, Func<IBlobStorage>>();
+        public static IEnumerable<object[]> Data = new TestFactoryDimension<TData, IBlobStorage>();
 
-        public abstract IEnumerable<Func<IBlobStorage>> GetData();
+        public abstract IEnumerable<ITestFactory<IBlobStorage>> GetData();
 
         [Theory, MemberData("Data")]
-        public async Task store_binaries_into_blob_storage(Func<IBlobStorage> storageFactory)
+        public async Task store_binaries_into_blob_storage(ITestFactory<IBlobStorage> storageFactory)
         {
-            var storage = storageFactory();
+            var storage = storageFactory.Create();
 
             var bytes = Enumerable.Range(0, 1024).Select(x => (byte)x).ToArray();
             var stream = new MemoryStream(bytes);
@@ -34,9 +34,9 @@
         }
 
         [Theory, MemberData("Data")]
-        public async Task should_not_dispose_input_stream(Func<IBlobStorage> storageFactory)
+        public async Task should_not_dispose_input_stream(ITestFactory<IBlobStorage> storageFactory)
         {
-            var storage = storageFactory();
+            var storage = storageFactory.Create();
             var random = new Random();
 
             var bytes = Enumerable.Range(0, 11).Select(x => (byte)random.Next(255)).ToArray();

@@ -2,17 +2,18 @@
 {
     using System;
     using System.Collections.Generic;
+    using Xunit;
 
     class AzureStorageTest : StorageSpec<AzureStorageTest>
     {
         private const string AzureStorageConnection = "";
 
-        public override IEnumerable<Func<IStorage<TestStorageObject>>> GetData()
+        public override IEnumerable<ITestFactory<IStorage<TestStorageObject>>> GetData()
         {
             return new[]
             {
-                new Func<IStorage<TestStorageObject>>(() => new BatchedTableStorage<TestStorageObject>(AzureStorageConnection, "BatchedTableStorage" + Environment.TickCount.ToString())),
-                new Func<IStorage<TestStorageObject>>(() => new TableStorage<TestStorageObject>(AzureStorageConnection, "TableStorage" + Environment.TickCount.ToString()))
+                new TestFactory<IStorage<TestStorageObject>>(typeof(BatchedTableStorage<>), () => new BatchedTableStorage<TestStorageObject>(AzureStorageConnection, "BatchedTableStorage" + Environment.TickCount.ToString())),
+                new TestFactory<IStorage<TestStorageObject>>(typeof(TableStorage<>), () => new TableStorage<TestStorageObject>(AzureStorageConnection, "TableStorage" + Environment.TickCount.ToString()))
             };
         }
     }
@@ -24,14 +25,14 @@
         private const string MemcacheEndpoint = "";
         private const string RedisEndpoint = "";
 
-        public override IEnumerable<Func<IStorage<TestStorageObject>>> GetData()
+        public override IEnumerable<ITestFactory<IStorage<TestStorageObject>>> GetData()
         {
             return new[]
             {
-                new Func<IStorage<TestStorageObject>>(() => new ElasticSearchStorage<TestStorageObject>(ElasticSearchEndpoint, "ElasticSearchTest-" + Environment.TickCount.ToString())),
-                new Func<IStorage<TestStorageObject>>(() => new MongoStorage<TestStorageObject>(MongoDbEndpoint, Environment.TickCount.ToString())),
-                new Func<IStorage<TestStorageObject>>(() => new MemcachedStorage<TestStorageObject>(MemcacheEndpoint, Environment.TickCount.ToString())),
-                new Func<IStorage<TestStorageObject>>(() => new RedisStorage<TestStorageObject>(RedisEndpoint,  Environment.TickCount.ToString())),
+                new TestFactory<IStorage<TestStorageObject>>(typeof(ElasticSearchStorage<>), () => new ElasticSearchStorage<TestStorageObject>(ElasticSearchEndpoint, "ElasticSearchTest-" + Environment.TickCount.ToString())),
+                new TestFactory<IStorage<TestStorageObject>>(typeof(MongoStorage<>), () => new MongoStorage<TestStorageObject>(MongoDbEndpoint, Environment.TickCount.ToString())),
+                new TestFactory<IStorage<TestStorageObject>>(typeof(MemcachedStorage<>), () => new MemcachedStorage<TestStorageObject>(MemcacheEndpoint, Environment.TickCount.ToString())),
+                new TestFactory<IStorage<TestStorageObject>>(typeof(RedisStorage<>), () => new RedisStorage<TestStorageObject>(RedisEndpoint,  Environment.TickCount.ToString())),
             };
         }
     }

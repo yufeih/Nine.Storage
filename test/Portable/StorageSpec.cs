@@ -8,24 +8,24 @@
     using Newtonsoft.Json;
     using Xunit;
 
-    public abstract class StorageSpec<TData> : ITestData<Func<IStorage<TestStorageObject>>> where TData : ITestData<Func<IStorage<TestStorageObject>>>, new()
+    public abstract class StorageSpec<TData> : ITestFactoryData<IStorage<TestStorageObject>> where TData : ITestFactoryData<IStorage<TestStorageObject>>, new()
     {
-        public static IEnumerable<object[]> Data = new TestDimension<TData, Func<IStorage<TestStorageObject>>>();
+        public static IEnumerable<object[]> Data = new TestFactoryDimension<TData, IStorage<TestStorageObject>>();
 
-        public abstract IEnumerable<Func<IStorage<TestStorageObject>>> GetData();
+        public abstract IEnumerable<ITestFactory<IStorage<TestStorageObject>>> GetData();
 
         [Theory, MemberData("Data")]
-        public async Task get_an_not_existing_entity_should_return_null(Func<IStorage<TestStorageObject>> storageFactory)
+        public async Task get_an_not_existing_entity_should_return_null(ITestFactory<IStorage<TestStorageObject>> storageFactory)
         {
-            var storage = storageFactory();
+            var storage = storageFactory.Create();
             var id = Guid.NewGuid().ToString("N");
             Assert.Null(await storage.Get("asdf").ConfigureAwait(false));
         }
 
         [Theory, MemberData("Data")]
-        public async Task basic_types_should_be_identical_after_saved_to_storage(Func<IStorage<TestStorageObject>> storageFactory)
+        public async Task basic_types_should_be_identical_after_saved_to_storage(ITestFactory<IStorage<TestStorageObject>> storageFactory)
         {
-            var storage = storageFactory();
+            var storage = storageFactory.Create();
             var expected = new TestStorageObject
             {
                 ApplicationName = "Test",
@@ -47,9 +47,9 @@
         }
 
         [Theory, MemberData("Data")]
-        public async Task add_get_and_remove_an_object_from_storage(Func<IStorage<TestStorageObject>> storageFactory)
+        public async Task add_get_and_remove_an_object_from_storage(ITestFactory<IStorage<TestStorageObject>> storageFactory)
         {
-            var storage = storageFactory();
+            var storage = storageFactory.Create();
             var id = Guid.NewGuid().ToString("N");
             await storage.Put(new TestStorageObject { Id = id, Name = "my" }).ConfigureAwait(false);
 
@@ -64,9 +64,9 @@
         }
 
         [Theory, MemberData("Data")]
-        public async Task it_should_not_treat_datetime_like_string_as_datetime(Func<IStorage<TestStorageObject>> storageFactory)
+        public async Task it_should_not_treat_datetime_like_string_as_datetime(ITestFactory<IStorage<TestStorageObject>> storageFactory)
         {
-            var storage = storageFactory();
+            var storage = storageFactory.Create();
             for (var i = 0; i < 1; i++)
             {
                 await storage.Put(new TestStorageObject { Id = Guid.NewGuid().ToString("N"), ApplicationName = JsonConvert.ToString(DateTime.UtcNow) });
@@ -76,9 +76,9 @@
         }
 
         [Theory, MemberData("Data")]
-        public async Task remove_object_from_storage(Func<IStorage<TestStorageObject>> storageFactory)
+        public async Task remove_object_from_storage(ITestFactory<IStorage<TestStorageObject>> storageFactory)
         {
-            var storage = storageFactory();
+            var storage = storageFactory.Create();
 
             await storage.Put(new TestStorageObject { Id = "1111", Name = "my1" });
             await storage.Put(new TestStorageObject { Id = "2222", Name = "my2" });
@@ -94,7 +94,7 @@
             await storage.Put(new TestStorageObject { Id = "1111", Name = "my3" }).ConfigureAwait(false);
             Assert.Equal("my3", (await storage.Get("1111").ConfigureAwait(false)).Name);
 
-            storage = storageFactory();
+            storage = storageFactory.Create();
 
             await Task.WhenAll(Enumerable.Range(0, 10).Select(i => storage.Put(new TestStorageObject { Id = i.ToString(), Name = i.ToString() })));
             Assert.True((await Task.WhenAll(Enumerable.Range(2, 6).Select(i => storage.Delete(i.ToString())))).Distinct().Single());
@@ -111,11 +111,11 @@
         }
 
         [Theory, MemberData("Data")]
-        public async Task try_add_using_the_same_key_should_fail(Func<IStorage<TestStorageObject>> storageFactory)
+        public async Task try_add_using_the_same_key_should_fail(ITestFactory<IStorage<TestStorageObject>> storageFactory)
         {
             try
             {
-                var storage = storageFactory();
+                var storage = storageFactory.Create();
 
                 Assert.True(await storage.Add(new TestStorageObject { Id = "tryadd", Name = "1" }).ConfigureAwait(false));
                 Assert.False(await storage.Add(new TestStorageObject { Id = "tryadd", Name = "2" }).ConfigureAwait(false));
@@ -130,9 +130,9 @@
         }
 
         [Theory, MemberData("Data")]
-        public async Task put_using_the_same_key_should_override(Func<IStorage<TestStorageObject>> storageFactory)
+        public async Task put_using_the_same_key_should_override(ITestFactory<IStorage<TestStorageObject>> storageFactory)
         {
-            var storage = storageFactory();
+            var storage = storageFactory.Create();
 
             await storage.Put(new TestStorageObject { Id = "put", Name = "1" }).ConfigureAwait(false);
             await storage.Put(new TestStorageObject { Id = "put", Name = "2" }).ConfigureAwait(false);
@@ -143,9 +143,9 @@
         }
 
         [Theory, MemberData("Data")]
-        public async Task get_many_should_repect_range(Func<IStorage<TestStorageObject>> storageFactory)
+        public async Task get_many_should_repect_range(ITestFactory<IStorage<TestStorageObject>> storageFactory)
         {
-            var storage = storageFactory();
+            var storage = storageFactory.Create();
             var users = Enumerable.Range(100, 4).Select(i => new TestStorageObject { Id = i.ToString(), Name = "user" + i }).ToArray();
 
             await Task.WhenAll(from user in users select storage.Put(user)).ConfigureAwait(false);
@@ -208,12 +208,12 @@
         }
 
         [Theory, MemberData("Data")]
-        public async Task paged_query_with_get_many_async(Func<IStorage<TestStorageObject>> storageFactory)
+        public async Task paged_query_with_get_many_async(ITestFactory<IStorage<TestStorageObject>> storageFactory)
         {
             try
             {
                 var records = 0;
-                var storage = storageFactory();
+                var storage = storageFactory.Create();
                 var users = Enumerable.Range(100, 4).Select(i => new TestStorageObject { Id = i.ToString(), Name = "user" + i }).ToArray();
 
                 await Task.WhenAll(from user in users select storage.Put(user)).ConfigureAwait(false);
@@ -242,9 +242,9 @@
         }
 
         [Theory, MemberData("Data")]
-        public async Task stress_add_get_and_remove_many_objects_from_table_storage_in_parallel(Func<IStorage<TestStorageObject>> storageFactory)
+        public async Task stress_add_get_and_remove_many_objects_from_table_storage_in_parallel(ITestFactory<IStorage<TestStorageObject>> storageFactory)
         {
-            var storage = storageFactory();
+            var storage = storageFactory.Create();
 
             var count = 10;
             var stopwatch = new Stopwatch();

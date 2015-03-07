@@ -3,16 +3,16 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Xunit;
 
     public class PersistedStorageTest : StorageSpec<PersistedStorageTest>
     {
-        public override IEnumerable<Func<IStorage<TestStorageObject>>> GetData()
+        public override IEnumerable<ITestFactory<IStorage<TestStorageObject>>> GetData()
         {
             return new[]
             {
-                new Func<IStorage<TestStorageObject>>(() => PersistedStorage<TestStorageObject>.GetOrCreateAsync(Guid.NewGuid().ToString()).Result),
-                new Func<IStorage<TestStorageObject>>(() => new PersistedStorageForTest<TestStorageObject>(Guid.NewGuid().ToString())),
-                new Func<IStorage<TestStorageObject>>(() => new PersistedStorageForTest2<TestStorageObject>(Guid.NewGuid().ToString())),
+                new TestFactory<IStorage<TestStorageObject>>(typeof(PersistedStorageForTest<>), () => new PersistedStorageForTest<TestStorageObject>(Guid.NewGuid().ToString())),
+                new TestFactory<IStorage<TestStorageObject>>(typeof(PersistedStorageForTest2<>), () => new PersistedStorageForTest2<TestStorageObject>(Guid.NewGuid().ToString())),
             };
         }
     }
