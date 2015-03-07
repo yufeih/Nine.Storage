@@ -77,6 +77,9 @@
     <Compile Include="..\Portable\Helpers\LazyAsync.cs">
       <Link>LazyAsync.cs</Link>
     </Compile>
+    <Compile Include="..\Portable\Helpers\Sha1.cs">
+      <Link>Sha1.cs</Link>
+    </Compile>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ISupportIncrementalLoading.cs" />
