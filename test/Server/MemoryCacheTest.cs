@@ -5,7 +5,7 @@
     using System.Threading.Tasks;
     using Xunit;
 
-    class MemoryCacheStorageTest : StorageSpec<MemoryCacheStorageTest>
+    public class MemoryCacheStorageTest : StorageSpec<MemoryCacheStorageTest>
     {
         public override IEnumerable<ITestFactory<IStorage<TestStorageObject>>> GetData()
         {
