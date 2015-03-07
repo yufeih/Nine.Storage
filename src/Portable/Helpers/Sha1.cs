@@ -323,7 +323,7 @@ namespace System.Security.Cryptography
         }
     }
 
-    public class Sha1
+    class Sha1
     {
         public static byte[] ComputeHash(byte[] bytes)
         {
