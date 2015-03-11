@@ -11,6 +11,7 @@ before_build:
 build:
   parallel: true
   publish_nuget: true
+  include_nuget_references: true
 
 test: off
 
