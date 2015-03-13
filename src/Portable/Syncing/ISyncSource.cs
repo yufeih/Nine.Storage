@@ -55,6 +55,8 @@
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class SyncSourceExtensions
     {
+        class Defaults<T> where T : class, new() { public static readonly T Value = new T(); }
+
         public static IDisposable On<T>(this ISyncSource source, string minKey, string maxKey, Action<Delta<T>> action) where T : class, IKeyed, new()
         {
             return source.On<T>(change => HandleDelta(change, minKey, maxKey, action));
@@ -62,25 +64,25 @@
         
         public static IDisposable On<T>(this ISyncSource source, string key, Action<T> action) where T : class, IKeyed, new()
         {
-            return source.On<T>(key, change => action(change.Value ?? Synced<T>.Default));
+            return source.On<T>(key, change => action(change.Value ?? Defaults<T>.Value));
         }
 
         public static IDisposable Sync<T>(this ISyncSource source, string key, Action<T> action) where T : class, IKeyed, new()
         {
-            var result = source.On<T>(key, change => action(change.Value ?? Synced<T>.Default));
-            action(Synced<T>.Default);
+            var result = source.On<T>(key, change => action(change.Value ?? Defaults<T>.Value));
+            action(Defaults<T>.Value);
             return result;
         }
 
         public static IDisposable On<T>(this ISyncSource source, Action<T> action) where T : class, IKeyed, new()
         {
-            return source.On<T>(change => action(change.Value ?? Synced<T>.Default));
+            return source.On<T>(change => action(change.Value ?? Defaults<T>.Value));
         }
 
         public static IDisposable Sync<T>(this ISyncSource source, Action<T> action) where T : class, IKeyed, new()
         {
-            var result = source.On<T>(change => action(change.Value ?? Synced<T>.Default));
-            action(Synced<T>.Default);
+            var result = source.On<T>(change => action(change.Value ?? Defaults<T>.Value));
+            action(Defaults<T>.Value);
             return result;
         }
 
@@ -89,7 +91,7 @@
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
             
-            source.On<T>(x => action(x ?? Synced<T>.Default));
+            source.On<T>(x => action(x ?? Defaults<T>.Value));
         }
 
         public static void Sync<T>(this IStorage storage, Action<T> action) where T : class, IKeyed, new()
@@ -97,8 +99,8 @@
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
 
-            source.On<T>(x => action(x ?? Synced<T>.Default));
-            action(Synced<T>.Default);
+            source.On<T>(x => action(x ?? Defaults<T>.Value));
+            action(Defaults<T>.Value);
         }
 
         public static void On<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
@@ -106,7 +108,7 @@
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
 
-            source.On<T>(key, x => action(x ?? Synced<T>.Default));
+            source.On<T>(key, x => action(x ?? Defaults<T>.Value));
         }
 
         public static async void Sync<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
@@ -114,7 +116,7 @@
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
 
-            source.On<T>(key, x => action(x ?? Synced<T>.Default));
+            source.On<T>(key, x => action(x ?? Defaults<T>.Value));
 
             // Populate the initial value
             var value = await storage.Get<T>(key).ConfigureAwait(false);
