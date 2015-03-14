@@ -71,6 +71,10 @@
             {
                 Assert.True(StorageKey.IsIncrement(key, StorageKey.Increment(key)));
             }
+
+            Assert.False(StorageKey.IsIncrement("aa", ""));
+            Assert.False(StorageKey.IsIncrement("a", "a"));
+            Assert.False(StorageKey.IsIncrement("a", null));
         }
     }
 }

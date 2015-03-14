@@ -266,6 +266,7 @@
         {
             if (string.IsNullOrEmpty(key) && string.IsNullOrEmpty(incrementedKey)) return true;
             if (key == null || incrementedKey == null) return false;
+            if (key.Length != incrementedKey.Length) return false;
 
             checked
             {
