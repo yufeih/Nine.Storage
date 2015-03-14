@@ -1,24 +1,10 @@
 ﻿namespace Nine.Storage
 {
     using System;
-
-    /// <summary>
-    /// Marks an object as formattable to be used as a polymophic type with IFormatter.
-    /// </summary>
-    public class FormattableAttribute : Attribute
-    {
-        public uint TypeId { get; private set; }
-
-        public FormattableAttribute(uint typeId = 0)
-        {
-            this.TypeId = TypeId;
-        }
-    }
-
+    
     /// <summary>
     /// Represents a storage object that can be saved
     /// </summary>
-    [Formattable]
     public interface IKeyed
     {
         /// <summary>
