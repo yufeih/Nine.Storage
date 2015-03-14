@@ -2,8 +2,10 @@
 {
     using System;
     using System.Collections.Concurrent;
+    using System.ComponentModel;
     using System.Threading.Tasks;
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public abstract class StorageProviderBase : IStorageProvider
     {
         private readonly ConcurrentDictionary<Type, LazyAsync<object>> values = new ConcurrentDictionary<Type, LazyAsync<object>>();
