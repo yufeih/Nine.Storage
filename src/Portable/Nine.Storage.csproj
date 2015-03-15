@@ -64,7 +64,6 @@
     <Compile Include="Storage\StorageProviderBase.cs" />
     <Compile Include="Storage\MemoryBlobStorage.cs" />
     <Compile Include="Syncing\ISyncSource.cs" />
-    <Compile Include="Syncing\SyncThrottler.cs" />
     <Compile Include="Syncing\SyncSource.cs" />
     <Compile Include="Storage\ObservableStorage.cs" />
     <Compile Include="IBlobStorage.cs" />

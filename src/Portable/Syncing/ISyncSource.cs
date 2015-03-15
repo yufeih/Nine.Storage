@@ -122,12 +122,7 @@
             var value = await storage.Get<T>(key).ConfigureAwait(false);
             if (value != null) action(value);
         }
-
-        public static ISyncSource Throttle(this ISyncSource source, int millisecondsInterval = 0)
-        {
-            return new SyncThrottler(source, millisecondsInterval);
-        }
-
+        
         private static void HandleDelta<T>(Delta<T> change, string minKey, string maxKey, Action<Delta<T>> action)
         {
             if ((minKey != null && string.CompareOrdinal(change.Key, minKey) < 0) ||
