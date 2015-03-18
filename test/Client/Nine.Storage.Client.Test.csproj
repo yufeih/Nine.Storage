@@ -99,7 +99,6 @@
     <Compile Include="StorageCollectionTest.cs" />
     <Compile Include="StorageKeyTest.cs" />
     <Compile Include="StorageMigrationTest.cs" />
-    <Compile Include="StorageSharingTest.cs" />
     <Compile Include="StorageTest.cs" />
     <Compile Include="SyncSourceTest.cs" />
     <Compile Include="TestExtensionMethods.cs" />

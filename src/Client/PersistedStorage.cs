@@ -7,12 +7,51 @@
     using System.IO;
     using System.Linq;
     using System.Text;
-    using System.Threading;
     using System.Threading.Tasks;
     using Nine.Formatting;
     using PCLStorage;
 
     public class PersistedStorage<T> : IStorage<T> where T : class, IKeyed, new()
+    {
+        private readonly LazyAsync<PersistedStorageCore<T>> coreFactory;
+
+        public PersistedStorage(string baseDirectory = "Objects", IFormatter formatter = null)
+        {
+            coreFactory = new LazyAsync<PersistedStorageCore<T>>(() => PersistedStorageCore<T>.GetOrCreateAsync(baseDirectory, formatter));
+        }
+
+        public async Task<bool> Add(T value)
+        {
+            var core = await coreFactory.GetValueAsync().ConfigureAwait(false);
+            return await core.Add(value).ConfigureAwait(false);
+        }
+
+        public async Task<bool> Delete(string key)
+        {
+            var core = await coreFactory.GetValueAsync().ConfigureAwait(false);
+            return await core.Delete(key).ConfigureAwait(false);
+        }
+
+        public async Task<T> Get(string key)
+        {
+            var core = await coreFactory.GetValueAsync().ConfigureAwait(false);
+            return await core.Get(key).ConfigureAwait(false);
+        }
+
+        public async Task Put(T value)
+        {
+            var core = await coreFactory.GetValueAsync().ConfigureAwait(false);
+            await core.Put(value).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<T>> Range(string minKey, string maxKey, int? count = default(int?))
+        {
+            var core = await coreFactory.GetValueAsync().ConfigureAwait(false);
+            return await core.Range(minKey, maxKey, count).ConfigureAwait(false);
+        }
+    }
+
+    class PersistedStorageCore<T> : IStorage<T> where T : class, IKeyed, new()
     {
         struct Node
         {
@@ -55,27 +94,25 @@
 
         public event Action<Exception> Error;
 
-        private static ConcurrentDictionary<string, LazyAsync<PersistedStorage<T>>> instances = new ConcurrentDictionary<string, LazyAsync<PersistedStorage<T>>>();
+        private static ConcurrentDictionary<string, LazyAsync<PersistedStorageCore<T>>> instances = new ConcurrentDictionary<string, LazyAsync<PersistedStorageCore<T>>>();
 
-        private PersistedStorage(string name, string baseDirectory, IFormatter formatter = null)
+        private PersistedStorageCore(string baseDirectory, IFormatter formatter = null)
         {
             if (baseDirectory != null && Path.IsPathRooted(baseDirectory)) throw new NotSupportedException();
 
             this.formatter = formatter ?? new JsonFormatter();
-            this.baseDirectory = PortablePath.Combine(baseDirectory, name);
+            this.baseDirectory = PortablePath.Combine(baseDirectory, typeof(T).Name);
         }
 
-        public static Task<PersistedStorage<T>> GetOrCreateAsync(string name = null, string baseDirectory = "Objects", IFormatter formatter = null)
+        public static Task<PersistedStorageCore<T>> GetOrCreateAsync(string baseDirectory, IFormatter formatter)
         {
-            name = string.IsNullOrEmpty(name) ? typeof(T).Name : name;
-
-            var instance = instances.GetOrAdd(name, k => new LazyAsync<PersistedStorage<T>>(() => CreateAsync(name, baseDirectory, formatter)));
+            var instance = instances.GetOrAdd(baseDirectory, k => new LazyAsync<PersistedStorageCore<T>>(() => CreateAsync(baseDirectory, formatter)));
             return instance.GetValueAsync();
         }
 
-        private static async Task<PersistedStorage<T>> CreateAsync(string name = null, string baseDirectory = "Objects", IFormatter formatter = null)
+        private static async Task<PersistedStorageCore<T>> CreateAsync(string baseDirectory, IFormatter formatter)
         {
-            var result = new PersistedStorage<T>(name, baseDirectory, formatter);
+            var result = new PersistedStorageCore<T>(baseDirectory, formatter);
             try
             {
                 await result.InitializeAsync().ConfigureAwait(false);
