@@ -43,8 +43,7 @@
       <HintPath>..\..\packages\Elasticsearch.Net.1.4.2\lib\net45\Elasticsearch.Net.dll</HintPath>
     </Reference>
     <Reference Include="Enyim.Caching">
-      <HintPath>..\..\packages\EnyimMemcached.2.12\lib\net35\Enyim.Caching.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\packages\EnyimMemcached.2.13\lib\net35\Enyim.Caching.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Data.Edm, Version=5.6.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -121,7 +120,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Nine.Storage.Server.nuspec" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Portable\Helpers\LazyAsync.cs">
