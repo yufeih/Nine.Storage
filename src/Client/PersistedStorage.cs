@@ -91,9 +91,7 @@
         private readonly Encoding encoding = new UTF8Encoding(false, false);
         private readonly List<Bucket> buckets = new List<Bucket>();
         private readonly Dictionary<byte[], Node> items = new Dictionary<byte[], Node>(new KeyComparer());
-
-        public event Action<Exception> Error;
-
+        
         private static ConcurrentDictionary<string, LazyAsync<PersistedStorageCore<T>>> instances = new ConcurrentDictionary<string, LazyAsync<PersistedStorageCore<T>>>();
 
         private PersistedStorageCore(string baseDirectory, IFormatter formatter = null)
@@ -306,14 +304,6 @@
                 }
                 return null;
             }
-        }
-
-        private void RaiseError(Exception e)
-        {
-            Debug.WriteLine(e.ToString());
-
-            var error = Error;
-            if (error != null) error(e);
         }
 
         private async Task<Bucket> GetBucketAsync(int length)
