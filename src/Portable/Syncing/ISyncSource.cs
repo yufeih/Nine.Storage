@@ -32,6 +32,8 @@
             Value = delta.Value;
             return true;
         }
+
+        public override string ToString() => $"{ Action } { typeof(T).Name } { Key }";
     }
 
     /// <summary>
