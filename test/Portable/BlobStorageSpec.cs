@@ -14,6 +14,16 @@
         public abstract IEnumerable<ITestFactory<IBlobStorage>> GetData();
 
         [Theory, MemberData("Data")]
+        public async Task get_null_sha_returns_null(ITestFactory<IBlobStorage> storageFactory)
+        {
+            var storage = storageFactory.Create();
+            Assert.Null(await storage.GetUri(null));
+            Assert.Null(await storage.GetUri(""));
+            Assert.Null(await storage.Get(null));
+            Assert.Null(await storage.Get(""));
+        }
+
+        [Theory, MemberData("Data")]
         public async Task store_binaries_into_blob_storage(ITestFactory<IBlobStorage> storageFactory)
         {
             var storage = storageFactory.Create();

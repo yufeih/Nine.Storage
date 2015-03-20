@@ -13,6 +13,7 @@
 
         public Task<bool> Exists(string sha)
         {
+            if (string.IsNullOrEmpty(sha)) return Task.FromResult(false);
             return Task.FromResult(store.ContainsKey(sha));
         }
 
@@ -24,6 +25,7 @@
         public Task<Stream> Get(string sha, int index, int count, IProgress<ProgressInBytes> progress = null, CancellationToken cancellation = default(CancellationToken))
         {
             byte[] bytes;
+            if (string.IsNullOrEmpty(sha)) return Task.FromResult<Stream>(null);
             return Task.FromResult<Stream>(store.TryGetValue(sha, out bytes) ? new MemoryStream(bytes) : null);
         }
 

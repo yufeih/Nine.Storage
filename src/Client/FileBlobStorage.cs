@@ -26,17 +26,20 @@
 
         public async Task<bool> Exists(string sha)
         {
+            if (string.IsNullOrEmpty(sha)) return false;
             return await GetFileAsync(sha).ConfigureAwait(false) != null;
         }
 
         public async Task<string> GetUri(string sha)
         {
+            if (string.IsNullOrEmpty(sha)) return null;
             var file = await GetFileAsync(sha).ConfigureAwait(false);
             return file != null ? file.Path : null;
         }
 
         public async Task<Stream> Get(string sha, int index, int count, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (string.IsNullOrEmpty(sha)) return null;
             var file = await GetFileAsync(sha, cancellationToken).ConfigureAwait(false);
             return file != null ? await file.OpenAsync(FileAccess.Read, cancellationToken).ConfigureAwait(false) : null;
         }
