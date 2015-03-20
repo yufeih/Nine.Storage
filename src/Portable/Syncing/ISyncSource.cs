@@ -69,23 +69,9 @@
             return source.On<T>(key, change => action(change.Value ?? Defaults<T>.Value));
         }
 
-        public static IDisposable Sync<T>(this ISyncSource source, string key, Action<T> action) where T : class, IKeyed, new()
-        {
-            var result = source.On<T>(key, change => action(change.Value ?? Defaults<T>.Value));
-            action(Defaults<T>.Value);
-            return result;
-        }
-
         public static IDisposable On<T>(this ISyncSource source, Action<T> action) where T : class, IKeyed, new()
         {
             return source.On<T>(change => action(change.Value ?? Defaults<T>.Value));
-        }
-
-        public static IDisposable Sync<T>(this ISyncSource source, Action<T> action) where T : class, IKeyed, new()
-        {
-            var result = source.On<T>(change => action(change.Value ?? Defaults<T>.Value));
-            action(Defaults<T>.Value);
-            return result;
         }
 
         public static void On<T>(this IStorage storage, Action<T> action) where T : class, IKeyed, new()
@@ -96,33 +82,12 @@
             source.On<T>(x => action(x ?? Defaults<T>.Value));
         }
 
-        public static void Sync<T>(this IStorage storage, Action<T> action) where T : class, IKeyed, new()
-        {
-            var source = storage as ISyncSource;
-            if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
-
-            source.On<T>(x => action(x ?? Defaults<T>.Value));
-            action(Defaults<T>.Value);
-        }
-
         public static void On<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
         {
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
 
             source.On<T>(key, x => action(x ?? Defaults<T>.Value));
-        }
-
-        public static async void Sync<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
-        {
-            var source = storage as ISyncSource;
-            if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
-
-            source.On<T>(key, x => action(x ?? Defaults<T>.Value));
-
-            // Populate the initial value
-            var value = await storage.Get<T>(key).ConfigureAwait(false);
-            if (value != null) action(value);
         }
         
         private static void HandleDelta<T>(Delta<T> change, string minKey, string maxKey, Action<Delta<T>> action)
