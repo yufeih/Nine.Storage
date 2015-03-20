@@ -56,13 +56,13 @@
             return blob.Put(stream, sha, 0, -1, progress, cancellationToken);
         }
 
-        public static async Task<string> Download(this IBlobStorage storage, string sha, CancellationToken cancellationToken = default(CancellationToken))
+        public static async Task<string> Download(this IBlobStorage blob, string sha, CancellationToken cancellationToken = default(CancellationToken))
         {
-            await storage.Get(sha, null, cancellationToken).ConfigureAwait(false);
-            return await storage.GetUri(sha).ConfigureAwait(false);
+            await blob.Get(sha, null, cancellationToken).ConfigureAwait(false);
+            return await blob.GetUri(sha).ConfigureAwait(false);
         }
 
-        public static async Task Download(this IBlobStorage storage, string sha, Action<BlobProgress> progress, CancellationToken cancellationToken = default(CancellationToken))
+        public static async Task Download(this IBlobStorage blob, string sha, Action<BlobProgress> progress, CancellationToken cancellationToken = default(CancellationToken))
         {
             var info = new BlobProgress { State = BlobProgressState.Running };
             progress(info);
@@ -77,8 +77,8 @@
             try
             {
                 var progressInBytes = new Progress<ProgressInBytes>(p => { info.Progress = p; progress(info); });
-                await storage.Get(sha, progressInBytes, cancellationToken).ConfigureAwait(false);
-                info.Uri = await storage.GetUri(sha).ConfigureAwait(false);
+                await blob.Get(sha, progressInBytes, cancellationToken).ConfigureAwait(false);
+                info.Uri = await blob.GetUri(sha).ConfigureAwait(false);
                 info.State = BlobProgressState.Succeeded;
                 progress(info);
             }
