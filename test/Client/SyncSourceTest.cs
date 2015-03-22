@@ -75,5 +75,27 @@
 
             Assert.Equal(1, changes.Count);
         }
+
+        [Fact]
+        public async Task sync_to_storage_change()
+        {
+            var changeCount = 0;
+            StringComparison? change = null;
+            var storage = new Storage(MakeObservableStorage);
+            storage.Sync<TestStorageObject>("a", x => x.Enum, x => { change = x.Enum; changeCount++; });
+
+            await Task.Delay(10);
+            Assert.Equal((StringComparison)0, change);
+            Assert.Equal(1, changeCount);
+
+            for (int i = 0; i < 10; i++)
+            {
+                await storage.Put(new TestStorageObject("a") { Enum = StringComparison.InvariantCulture });
+            }
+
+            await Task.Delay(10);
+            Assert.Equal(StringComparison.InvariantCulture, change);
+            Assert.Equal(2, changeCount);
+        }
     }
 }

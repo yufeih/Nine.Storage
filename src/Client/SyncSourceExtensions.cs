@@ -82,7 +82,7 @@
             source.On<T>(key, x =>
             {
                 var copy = formatter.Copy(x);
-                if (watch != null && watch(x ?? Defaults<T>.Value) != watch(oldValue ?? Defaults<T>.Value))
+                if (watch != null && !Equals(watch(x ?? Defaults<T>.Value), watch(oldValue ?? Defaults<T>.Value)))
                 {
                     action(x ?? Defaults<T>.Value);
                 }
