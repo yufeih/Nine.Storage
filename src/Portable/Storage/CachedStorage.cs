@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using ProtoBuf;
@@ -51,10 +52,16 @@
 
         public event Action<string> Missed;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether put should modify an existing instance.
+        /// This ensures that objects with the same key always shares the same object reference.
+        /// </summary>
+        public bool ReuseExistingInstance { get; set; }
+
         public CachedStorage(IStorage<T> persistedStorage, ICache<T> cache, ICache<CachedStorageItems<T>> rangeCache = null)
         {
-            if (persistedStorage == null) throw new ArgumentNullException("persistedStorage");
-            if (cache == null) throw new ArgumentNullException("cache");
+            if (persistedStorage == null) throw new ArgumentNullException(nameof(persistedStorage));
+            if (cache == null) throw new ArgumentNullException(nameof(cache));
 
             this.persistStorage = persistedStorage;
             this.cache = cache;
@@ -144,9 +151,20 @@
         /// </summary>
         public async Task Put(T value)
         {
+            var key = value.GetKey();
+
+            if (ReuseExistingInstance && value != null)
+            {
+                var target = await Get(value.GetKey());
+                if (target != null)
+                {
+                    Merge(target, value);
+                    value = target;
+                }
+            }
+
             await persistStorage.Put(value).ConfigureAwait(false);
 
-            var key = value.GetKey();
             cache.Put(key, value);
             if (rangeCache != null) InvalidateRange(key);
         }
@@ -170,5 +188,29 @@
                 rangeCache.Delete(key.Substring(0, i));
             }
         }
+
+        private static void Merge(T target, T change)
+        {
+            lock (target)
+            {
+                foreach (var pi in mergeProperties)
+                {
+                    pi.SetMethod.Invoke(target, new[] { pi.GetMethod.Invoke(change, null) });
+                }
+
+                foreach (var pi in mergeFields)
+                {
+                    pi.SetValue(target, pi.GetValue(change));
+                }
+            }
+        }
+
+        private static readonly PropertyInfo[] mergeProperties = (
+            from pi in typeof(T).GetTypeInfo().DeclaredProperties
+            where pi.GetMethod != null && pi.GetMethod.IsPublic && pi.SetMethod != null && pi.SetMethod.IsPublic
+            select pi).ToArray();
+
+        private static readonly FieldInfo[] mergeFields = (
+            from fi in typeof(T).GetTypeInfo().DeclaredFields where fi.IsPublic select fi).ToArray();
     }
 }
