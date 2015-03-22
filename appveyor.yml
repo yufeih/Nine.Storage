@@ -13,8 +13,6 @@ build:
   publish_nuget: true
   include_nuget_references: true
 
-test: off
-
 version: 1.1.{build}
 
 assembly_info:
