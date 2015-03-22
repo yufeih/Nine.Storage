@@ -91,7 +91,7 @@
         private readonly Encoding encoding = new UTF8Encoding(false, false);
         private readonly List<Bucket> buckets = new List<Bucket>();
         private readonly Dictionary<byte[], Node> items = new Dictionary<byte[], Node>(new KeyComparer());
-        
+
         private static ConcurrentDictionary<string, LazyAsync<PersistedStorageCore<T>>> instances = new ConcurrentDictionary<string, LazyAsync<PersistedStorageCore<T>>>();
 
         private PersistedStorageCore(string baseDirectory, IFormatter formatter = null)
@@ -211,11 +211,14 @@
 
         public Task Put(T value)
         {
-            Delete(value.GetKey());
-            return Add(value);
+            lock (sync)
+            {
+                Delete(value.GetKey());
+                return Add(value);
+            }
         }
 
-        public async Task<bool> Add(T value)
+        public Task<bool> Add(T value)
         {
             var compactKey = CompressString(value.GetKey());
 
@@ -227,11 +230,11 @@
             }
 
             var head = BitConverter.GetBytes((ushort)count);
-            var bucket = await GetBucketAsync(count + HeaderSize).ConfigureAwait(false);
+            var bucket = GetBucket(count + HeaderSize);
 
             lock (sync)
             {
-                if (items.ContainsKey(compactKey)) return false;
+                if (items.ContainsKey(compactKey)) return Task.FromResult(false);
 
                 Node node = new Node { Bucket = bucket, Index = bucket.Count };
                 bucket.Count++;
@@ -246,7 +249,7 @@
                 items.Add(compactKey, node);
             }
 
-            return true;
+            return Task.FromResult(true);
         }
 
         public Task<bool> Delete(string key)
@@ -306,10 +309,9 @@
             }
         }
 
-        private async Task<Bucket> GetBucketAsync(int length)
+        private Bucket GetBucket(int length)
         {
             length = UpperPowerOfTwo(length);
-            var stream = await OpenStreamForWriteAsync(length).ConfigureAwait(false);
 
             lock (sync)
             {
@@ -318,7 +320,7 @@
                     if (buckets[i].Size == length) return buckets[i];
                 }
 
-                var bucket = new Bucket { Size = length, Buffer = new byte[length], Stream = stream };
+                var bucket = new Bucket { Size = length, Buffer = new byte[length], Stream = OpenStreamForWriteAsync(length).Result };
                 buckets.Add(bucket);
                 return bucket;
             }
