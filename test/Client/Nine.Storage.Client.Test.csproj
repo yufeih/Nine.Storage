@@ -96,6 +96,7 @@
     <Compile Include="LamportTimestampTest.cs" />
     <Compile Include="LazyAsyncTest.cs" />
     <Compile Include="PersistedStorageTest.cs" />
+    <Compile Include="ObservableStorageTest.cs" />
     <Compile Include="StorageCollectionTest.cs" />
     <Compile Include="StorageKeyTest.cs" />
     <Compile Include="StorageMigrationTest.cs" />
