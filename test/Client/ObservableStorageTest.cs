@@ -17,9 +17,30 @@
         }
 
         [Fact]
-        public async Task it_should_reused_existing_instance()
+        public async Task it_should_reused_existing_instance_for_get()
         {
-            var storage = new ObservableStorage<TestStorageObject>(new PersistedStorage<TestStorageObject>(), true);
+            var persisted = new PersistedStorage<TestStorageObject>(Guid.NewGuid().ToString());
+            var storage = new ObservableStorage<TestStorageObject>(persisted, true);
+
+            await persisted.Put(new TestStorageObject("1"));
+            Assert.True(ReferenceEquals(
+                await storage.Get<TestStorageObject>("1"),
+                await storage.Get<TestStorageObject>("1")));
+
+            await persisted.Put(new TestStorageObject("2"));
+            await persisted.Put(new TestStorageObject("3"));
+
+            var r1 = await storage.Range(null, null);
+            var r2 = await storage.Range(null, null);
+
+            Assert.Equal(r1, r2);
+        }
+
+        [Fact]
+        public async Task it_should_reused_existing_instance_for_put()
+        {
+            var persisted = new PersistedStorage<TestStorageObject>(Guid.NewGuid().ToString());
+            var storage = new ObservableStorage<TestStorageObject>(persisted, true);
 
             await storage.Put(new TestStorageObject("id") { Name = "1" });
             var instance = await storage.Get("id");
