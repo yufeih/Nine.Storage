@@ -26,40 +26,66 @@
             this.storage = storage;
         }
 
-        public Task<T> Get(string key)
+        public async Task<T> Get(string key)
         {
             T target;
             WeakReference<T> wr;
             if (instances != null && instances.TryGetValue(key, out wr) && wr.TryGetTarget(out target))
             {
-                return Task.FromResult(target);
+                return target;
             }
-            return storage.Get(key);
+
+            var result = await storage.Get(key).ConfigureAwait(false);
+            if (instances == null) return result;
+
+            if (!instances.TryGetValue(key, out wr) || !wr.TryGetTarget(out target))
+            {
+                wr = new WeakReference<T>(result);
+                instances.AddOrUpdate(key, wr, (k, v) => wr).TryGetTarget(out target);
+            }
+            return target;
         }
 
         public async Task<IEnumerable<T>> Range(string minKey, string maxKey, int? count = null)
         {
-            var result = await storage.Range(minKey, maxKey, count).ConfigureAwait(false);
-            if (instances == null) return result;
+            var results = await storage.Range(minKey, maxKey, count).ConfigureAwait(false);
+            if (instances == null) return results;
 
             T target;
             WeakReference<T> wr;
-            IList<T> list = (result as IList<T>) ?? result.ToArray();
+            IList<T> list = (results as IList<T>) ?? results.ToArray();
             for (var i = 0; i < list.Count; i++)
             {
                 var item = list[i];
-                if (item != null && instances.TryGetValue(item.GetKey(), out wr) && wr.TryGetTarget(out target))
+                if (item == null) continue;
+
+                var key = item.GetKey();
+                if (!instances.TryGetValue(key, out wr) || !wr.TryGetTarget(out target))
                 {
-                    list[i] = Merge(target, item);
+                    wr = new WeakReference<T>(item);
+                    instances.AddOrUpdate(key, wr, (k, v) => wr).TryGetTarget(out target);
                 }
+                list[i] = target;
             }
             return list;
         }
 
         public async Task<bool> Add(T value)
         {
+            var key = value.GetKey();
             if (!await storage.Add(value).ConfigureAwait(false)) return false;
-            Notify(new Delta<T>(DeltaAction.Add, value.GetKey(), value));
+
+            if (instances != null)
+            {
+                T target;
+                var wr = instances.GetOrAdd(key, _ => new WeakReference<T>(value));
+                if (wr.TryGetTarget(out target))
+                {
+                    value = Merge(target, value);
+                }
+            }
+
+            Notify(new Delta<T>(DeltaAction.Add, key, value));
             return true;
         }
 
@@ -84,8 +110,8 @@
         public async Task<bool> Delete(string key)
         {
             WeakReference<T> wr;
-            if (instances != null) instances.TryRemove(key, out wr);
             if (!await storage.Delete(key).ConfigureAwait(false)) return false;
+            if (instances != null) instances.TryRemove(key, out wr);
             Notify(new Delta<T>(DeltaAction.Remove, key));
             return true;
         }
