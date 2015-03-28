@@ -133,6 +133,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BlobStorageTest.cs" />
     <Compile Include="MemoryCacheTest.cs" />
+    <Compile Include="AzureStoragePartitionKeyTest.cs" />
     <Compile Include="StorageTest.cs" />
   </ItemGroup>
   <ItemGroup>

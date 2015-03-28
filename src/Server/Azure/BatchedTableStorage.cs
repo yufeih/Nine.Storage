@@ -94,7 +94,12 @@
         /// <summary>
         /// Calculates the partition key for a given key.
         /// </summary>
-        private int GetPartitionKey(string key)
+        public int GetPartitionKey(string key) => GetPartitionKey(key, partitionCount, partitionKeyLength);
+
+        /// <summary>
+        /// Calculates the partition key for a given key.
+        /// </summary>
+        public static int GetPartitionKey(string key, int partitionCount, int partitionKeyLength)
         {
             if (string.IsNullOrEmpty(key)) throw new NotSupportedException("key is empty");
 
