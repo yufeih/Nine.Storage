@@ -9,6 +9,8 @@
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class StorageExtensions
     {
+        class Defaults<T> where T : class, new() { public static readonly T Value = new T(); }
+
         public static Task<T> Get<T>(this IStorage<T> storage, params object[] keyComponents) where T : class, IKeyed, new()
         {
             return storage.Get(StorageKey.Get(keyComponents));
@@ -57,7 +59,7 @@
             if (result == null)
             {
                 // TODO: Locking ???
-                result = factory != null ? factory() : new T();
+                result = factory != null ? factory() : Defaults<T>.Value;
                 if (result != null) await storage.Put<T>(result);
             }
             return result;
@@ -97,9 +99,21 @@
 
         public static async Task<bool> Put<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
         {
-            var existing = await storage.Get<T>(key).ConfigureAwait(false) ?? new T();
+            var existing = await storage.Get<T>(key).ConfigureAwait(false) ?? Defaults<T>.Value;
             action(existing);
             await storage.Put(existing).ConfigureAwait(false);
+            return true;
+        }
+
+        public static async Task<bool> Put<T>(this IStorage storage, string key, Func<T, bool> predicate, Action<T> action) where T : class, IKeyed, new()
+        {
+            var existing = await storage.Get<T>(key).ConfigureAwait(false) ?? Defaults<T>.Value;
+            if (predicate(existing))
+            {
+                action(existing);
+                await storage.Put(existing).ConfigureAwait(false);
+                return false;
+            }
             return true;
         }
 
