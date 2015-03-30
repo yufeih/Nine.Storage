@@ -59,8 +59,8 @@
             if (result == null)
             {
                 // TODO: Locking ???
-                result = factory != null ? factory() : Defaults<T>.Value;
-                if (result != null) await storage.Put<T>(result);
+                result = factory != null ? factory() : new T();
+                if (result != null) await storage.Put(result);
             }
             return result;
         }
