@@ -99,7 +99,7 @@
 
             await Task.WhenAll(Enumerable.Range(0, count).AsParallel().Select(i => storage.Put(new TestStorageObject(i))));
 
-            var collection = new StorageCollection<TestStorageObject>(storage, null, null) { AutoLoad = true };
+            var collection = new StorageCollection<TestStorageObject>(storage, null, null).WithAllItems();
 
             await Task.WhenAll(Enumerable.Range(count, count).AsParallel().Select(i => storage.Put(new TestStorageObject(i))));
             await collection.ChangedTo(m => m.Select(x => x.Id).Distinct().Count() == count * 2);
@@ -139,7 +139,7 @@
         {
             var changes = new List<NotifyCollectionChangedEventArgs>();
             var storage = new Storage(x => new ObservableStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>()));
-            var collection = new StorageCollection<TestStorageObject>(storage, "0", "6") { AutoLoad = true };
+            var collection = new StorageCollection<TestStorageObject>(storage, "0", "6").WithAllItems();
             var handler = new NotifyCollectionChangedEventHandler((sender, e) => { changes.Add(e); });
 
             collection.CollectionChanged += handler;

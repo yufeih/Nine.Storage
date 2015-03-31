@@ -35,7 +35,6 @@
         private bool subscribed;
         private IDisposable subscription;
 
-        private bool autoLoad;
         private string cursor;
 
         public int Count { get { return collection.Count; } }
@@ -47,12 +46,6 @@
 
         public bool IsLoading { get; private set; }
         public bool HasMoreItems { get; private set; }
-
-        public bool AutoLoad
-        {
-            get { return autoLoad; }
-            set { if (autoLoad != value) { autoLoad = value; LoadAll(); } }
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -77,12 +70,19 @@
             this.observableStorage = storage as ISyncSource;
         }
 
-        private async void LoadAll()
+#pragma warning disable CS4014
+        public StorageCollection<T, TViewModel> WithAllItems(int batchSize = 100)
         {
-            if (!autoLoad || IsLoading || !HasMoreItems) return;
-
-            await LoadAllAsync();
+            LoadAllAsync(batchSize);
+            return this;
         }
+
+        public StorageCollection<T, TViewModel> WithItems(int count)
+        {
+            LoadMoreItemsAsync(count);
+            return this;
+        }
+#pragma warning restore CS4014
 
         public async Task LoadAllAsync(int batchSize = 100)
         {
