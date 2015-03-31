@@ -95,22 +95,22 @@
             return storage.Delete<T>(value.GetKey());
         }
 
-        public static async Task<bool> Put<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
+        public static async Task<bool> Put<T>(this IStorage storage, string key, Action<T> action, Func<T> factory = null) where T : class, IKeyed, new()
         {
-            var existing = await storage.Get<T>(key).ConfigureAwait(false) ?? new T();
+            var existing = await storage.Get<T>(key).ConfigureAwait(false) ?? (factory != null ? factory() :  new T());
             action(existing);
-            if (key != existing.GetKey()) throw new InvalidOperationException("Put with an invalid key");
+            if (key != null && existing.GetKey() == null) throw new InvalidOperationException("Put with an invalid key");
             await storage.Put(existing).ConfigureAwait(false);
             return true;
         }
 
-        public static async Task<bool> Put<T>(this IStorage storage, string key, Func<T, bool> predicate, Action<T> action) where T : class, IKeyed, new()
+        public static async Task<bool> Put<T>(this IStorage storage, string key, Func<T, bool> predicate, Action<T> action, Func<T> factory = null) where T : class, IKeyed, new()
         {
-            var existing = await storage.Get<T>(key).ConfigureAwait(false) ?? new T();
+            var existing = await storage.Get<T>(key).ConfigureAwait(false) ?? (factory != null ? factory() : new T());
             if (predicate(existing))
             {
                 action(existing);
-                if (key != existing.GetKey()) throw new InvalidOperationException("Put with an invalid key");
+                if (key != null && existing.GetKey() == null) throw new InvalidOperationException("Put with an invalid key");
                 await storage.Put(existing).ConfigureAwait(false);
                 return true;
             }
