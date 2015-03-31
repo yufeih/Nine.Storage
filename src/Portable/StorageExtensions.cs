@@ -56,7 +56,6 @@
             var result = await storage.Get<T>(StorageKey.Get(keyComponents)).ConfigureAwait(false);
             if (result == null)
             {
-                // TODO: Locking ???
                 result = factory != null ? factory() : new T();
                 if (result != null) await storage.Put(result);
             }
