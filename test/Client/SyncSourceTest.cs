@@ -76,16 +76,25 @@
             Assert.Equal(1, changes.Count);
         }
 
-        [Fact]
-        public async Task sync_to_storage_change()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task sync_to_storage_change(bool initToDefault)
         {
             var changeCount = 0;
             StringComparison? change = null;
+
             var storage = new Storage(MakeObservableStorage);
+            var initial = initToDefault ? 0 : StringComparison.InvariantCultureIgnoreCase;
+            if (!initToDefault) await storage.Put(new TestStorageObject("a") { Enum = initial });
             storage.Sync<TestStorageObject>("a", x => x.Enum, x => { change = x.Enum; changeCount++; });
 
             await Task.Delay(10);
-            Assert.Equal((StringComparison)0, change);
+            Assert.Equal(initial, change);
+            Assert.Equal(1, changeCount);
+
+            await storage.Put(new TestStorageObject("a") { Enum = initial });
+            await Task.Delay(10);
             Assert.Equal(1, changeCount);
 
             for (int i = 0; i < 10; i++)

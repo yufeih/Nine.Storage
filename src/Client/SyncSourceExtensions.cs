@@ -66,9 +66,9 @@
                 oldValue = copy;
             });
 
-            // TODO: Add test case
-            var value = await storage.Get<T>(key).ConfigureAwait(false);
-            action(value ?? Defaults<T>.Value, Defaults<T>.Value);
+            var value = await storage.Get<T>(key).ConfigureAwait(false) ?? Defaults<T>.Value;
+            oldValue = formatter.Copy(value);
+            action(value, Defaults<T>.Value);
         }
 
         public static async void Sync<T>(this IStorage storage, string key, Func<T, object> watch, Action<T> action) where T : class, IKeyed, new()
@@ -89,9 +89,9 @@
                 oldValue = copy;
             });
 
-            // TODO: Add test case
-            var value = await storage.Get<T>(key).ConfigureAwait(false);
-            action(value ?? Defaults<T>.Value);
+            var value = await storage.Get<T>(key).ConfigureAwait(false) ?? Defaults<T>.Value;
+            oldValue = formatter.Copy(value);
+            action(value);
         }
 
         private static Action<T> PostToSynchronizationContext<T>(Action<T> action) where T : class, IKeyed, new()
