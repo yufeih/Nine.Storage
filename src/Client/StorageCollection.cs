@@ -77,7 +77,7 @@
             return this;
         }
 
-        public StorageCollection<T, TViewModel> WithItems(int count)
+        public StorageCollection<T, TViewModel> WithItems(int count, int batchSize = 100)
         {
             LoadMoreItemsAsync(count);
             return this;
@@ -88,11 +88,28 @@
         {
             while (HasMoreItems)
             {
-                await LoadMoreItemsAsync(batchSize);
+                await LoadMoreItemsCoreAsync(batchSize);
             }
         }
 
-        public async Task<int> LoadMoreItemsAsync(int count)
+        public Task<int> LoadMoreItemsAsync(int count)
+        {
+            return LoadMoreItemsAsync(count, 100);
+        }
+
+        public async Task<int> LoadMoreItemsAsync(int count, int batchSize)
+        {
+            var total = 0;
+            while (total < count)
+            {
+                var current = await LoadMoreItemsCoreAsync(Math.Min(batchSize, count - total));
+                if (current <= 0) return total;
+                total += current;
+            }
+            return total;
+        }
+
+        private async Task<int> LoadMoreItemsCoreAsync(int count)
         {
             if (!subscribed)
             {
