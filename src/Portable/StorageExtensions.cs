@@ -9,8 +9,6 @@
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class StorageExtensions
     {
-        class Defaults<T> where T : class, new() { public static readonly T Value = new T(); }
-
         public static Task<T> Get<T>(this IStorage<T> storage, params object[] keyComponents) where T : class, IKeyed, new()
         {
             return storage.Get(StorageKey.Get(keyComponents));
@@ -99,22 +97,24 @@
 
         public static async Task<bool> Put<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
         {
-            var existing = await storage.Get<T>(key).ConfigureAwait(false) ?? Defaults<T>.Value;
+            var existing = await storage.Get<T>(key).ConfigureAwait(false) ?? new T();
             action(existing);
+            if (key != existing.GetKey()) throw new InvalidOperationException("Put with an invalid key");
             await storage.Put(existing).ConfigureAwait(false);
             return true;
         }
 
         public static async Task<bool> Put<T>(this IStorage storage, string key, Func<T, bool> predicate, Action<T> action) where T : class, IKeyed, new()
         {
-            var existing = await storage.Get<T>(key).ConfigureAwait(false) ?? Defaults<T>.Value;
+            var existing = await storage.Get<T>(key).ConfigureAwait(false) ?? new T();
             if (predicate(existing))
             {
                 action(existing);
+                if (key != existing.GetKey()) throw new InvalidOperationException("Put with an invalid key");
                 await storage.Put(existing).ConfigureAwait(false);
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
 
         public static Task<bool> Patch<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
