@@ -11,8 +11,18 @@
         public string Memcached;
         public string Redis;
 
-        public static Connection Current = 
-            new JsonFormatter().FromText<Connection>(
-                File.ReadAllText("connection.json"));
+        public static Connection Current;
+
+        static Connection()
+        {
+            try
+            {
+                Current = new JsonFormatter().FromText<Connection>(File.ReadAllText("connection.json"));
+            }
+            catch
+            {
+                Current = new Connection();
+            }
+        }
     }
 }

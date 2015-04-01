@@ -35,6 +35,8 @@
                     () => new RedisStorage<TestStorageObject>(
                         Connection.Current.Redis,
                         Environment.TickCount.ToString()));
+
+            yield return new TestFactory<IStorage<TestStorageObject>>("dummy", () => new MemoryStorage<TestStorageObject>());
         }
     }
 }

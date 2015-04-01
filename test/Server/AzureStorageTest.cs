@@ -9,19 +9,22 @@
     {
         public override IEnumerable<ITestFactory<IStorage<TestStorageObject>>> GetData()
         {
-            if (string.IsNullOrEmpty(Connection.Current.AzureStorage)) yield break;
+            if (!string.IsNullOrEmpty(Connection.Current.AzureStorage))
+            {
+                yield return new TestFactory<IStorage<TestStorageObject>>(
+                    typeof(BatchedTableStorage<>),
+                    () => new BatchedTableStorage<TestStorageObject>(
+                        Connection.Current.AzureStorage,
+                        "BatchedTableStorage" + Environment.TickCount.ToString()));
 
-            yield return new TestFactory<IStorage<TestStorageObject>>(
-                typeof(BatchedTableStorage<>),
-                () => new BatchedTableStorage<TestStorageObject>(
-                    Connection.Current.AzureStorage,
-                    "BatchedTableStorage" + Environment.TickCount.ToString()));
+                yield return new TestFactory<IStorage<TestStorageObject>>(
+                    typeof(TableStorage<>),
+                    () => new TableStorage<TestStorageObject>(
+                        Connection.Current.AzureStorage,
+                        "TableStorage" + Environment.TickCount.ToString()));
+            }
 
-            yield return new TestFactory<IStorage<TestStorageObject>>(
-                typeof(TableStorage<>),
-                () => new TableStorage<TestStorageObject>(
-                    Connection.Current.AzureStorage, 
-                    "TableStorage" + Environment.TickCount.ToString()));
+            yield return new TestFactory<IStorage<TestStorageObject>>("dummy", () => new MemoryStorage<TestStorageObject>());
         }
     }
 
