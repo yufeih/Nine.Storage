@@ -54,20 +54,19 @@
         /// <summary>
         /// Initializes a new instance of BatchedTableStorage.
         /// </summary>
-        public BatchedTableStorage(string connectionString, string tableName, int partitionCount = 0, int partitionKeyLength = 0)
+        public BatchedTableStorage(string connectionString, string tableName = null, int partitionCount = 0, int partitionKeyLength = 0)
             : this(CloudStorageAccount.Parse(connectionString), tableName, partitionCount, partitionKeyLength)
         { }
 
         /// <summary>
         /// Initializes a new instance of BatchedTableStorage.
         /// </summary>
-        public BatchedTableStorage(CloudStorageAccount storageAccount, string tableName, int partitionCount = 0, int partitionKeyLength = 0)
+        public BatchedTableStorage(CloudStorageAccount storageAccount, string tableName = null, int partitionCount = 0, int partitionKeyLength = 0)
         {
             // Default to 1 partition
             if (partitionCount <= 0) partitionCount = 1;
             if (partitionCount < 1 || partitionCount > 1024) throw new ArgumentOutOfRangeException("partitionCount");
             if (storageAccount == null) throw new ArgumentNullException("storageAccount");
-            if (tableName == null) throw new ArgumentNullException("tableName");
 
             this.partitionCount = partitionCount;
             this.partitionKeyLength = partitionKeyLength;
@@ -85,7 +84,7 @@
 
             this.table = new LazyAsync<CloudTable>(async () =>
             {
-                var table = storageAccount.CreateCloudTableClient().GetTableReference(tableName);
+                var table = storageAccount.CreateCloudTableClient().GetTableReference(tableName ?? typeof(T).Name);
                 await table.CreateIfNotExistsAsync().ConfigureAwait(false);
                 return table;
             });
