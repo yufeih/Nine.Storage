@@ -5,6 +5,8 @@
 *.ide
 *.exe
 
+/test/Server/connection.json
+
 /**/bin
 /**/obj
 /packages
