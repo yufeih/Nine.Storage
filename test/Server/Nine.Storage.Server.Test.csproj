@@ -124,6 +124,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="connection.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
@@ -131,10 +134,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Connection.cs" />
     <Compile Include="BlobStorageTest.cs" />
     <Compile Include="MemoryCacheTest.cs" />
-    <Compile Include="AzureStoragePartitionKeyTest.cs" />
+    <Compile Include="AzureStorageTest.cs" />
     <Compile Include="StorageTest.cs" />
+    <Compile Include="TextConverterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Client\Nine.Storage.Client.csproj">

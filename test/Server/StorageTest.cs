@@ -4,36 +4,39 @@
     using System.Collections.Generic;
     using Xunit;
 
-    class AzureStorageTest : StorageSpec<AzureStorageTest>
+    public class ServerStorageTest : StorageSpec<ServerStorageTest>
     {
-        private const string AzureStorageConnection = "";
-
         public override IEnumerable<ITestFactory<IStorage<TestStorageObject>>> GetData()
         {
-            return new[]
-            {
-                new TestFactory<IStorage<TestStorageObject>>(typeof(BatchedTableStorage<>), () => new BatchedTableStorage<TestStorageObject>(AzureStorageConnection, "BatchedTableStorage" + Environment.TickCount.ToString())),
-                new TestFactory<IStorage<TestStorageObject>>(typeof(TableStorage<>), () => new TableStorage<TestStorageObject>(AzureStorageConnection, "TableStorage" + Environment.TickCount.ToString()))
-            };
-        }
-    }
+            if (!string.IsNullOrEmpty(Connection.Current.ElasticSearch))
+                yield return new TestFactory<IStorage<TestStorageObject>>(
+                    typeof(ElasticSearchStorage<>),
+                    () => new ElasticSearchStorage<TestStorageObject>(
+                        Connection.Current.ElasticSearch,
+                        "ElasticSearchTest-" + Environment.TickCount.ToString()));
 
-    class ServerStorageTest : StorageSpec<ServerStorageTest>
-    {
-        private const string ElasticSearchEndpoint = "";
-        private const string MongoDbEndpoint = "";
-        private const string MemcacheEndpoint = "";
-        private const string RedisEndpoint = "";
+            if (!string.IsNullOrEmpty(Connection.Current.Mongo))
+                yield return new TestFactory<IStorage<TestStorageObject>>(
+                    typeof(MongoStorage<>),
+                    () => new MongoStorage<TestStorageObject>(
+                        Connection.Current.Mongo,
+                        Environment.TickCount.ToString()));
 
-        public override IEnumerable<ITestFactory<IStorage<TestStorageObject>>> GetData()
-        {
-            return new[]
-            {
-                new TestFactory<IStorage<TestStorageObject>>(typeof(ElasticSearchStorage<>), () => new ElasticSearchStorage<TestStorageObject>(ElasticSearchEndpoint, "ElasticSearchTest-" + Environment.TickCount.ToString())),
-                new TestFactory<IStorage<TestStorageObject>>(typeof(MongoStorage<>), () => new MongoStorage<TestStorageObject>(MongoDbEndpoint, Environment.TickCount.ToString())),
-                new TestFactory<IStorage<TestStorageObject>>(typeof(MemcachedStorage<>), () => new MemcachedStorage<TestStorageObject>(MemcacheEndpoint, Environment.TickCount.ToString())),
-                new TestFactory<IStorage<TestStorageObject>>(typeof(RedisStorage<>), () => new RedisStorage<TestStorageObject>(RedisEndpoint,  Environment.TickCount.ToString())),
-            };
+            if (!string.IsNullOrEmpty(Connection.Current.Memcached))
+                yield return new TestFactory<IStorage<TestStorageObject>>(
+                    typeof(MemcachedStorage<>),
+                    () => new MemcachedStorage<TestStorageObject>(
+                        Connection.Current.Memcached,
+                        Environment.TickCount.ToString()));
+
+            if (!string.IsNullOrEmpty(Connection.Current.Redis))
+                yield return new TestFactory<IStorage<TestStorageObject>>(
+                    typeof(RedisStorage<>),
+                    () => new RedisStorage<TestStorageObject>(
+                        Connection.Current.Redis,
+                        Environment.TickCount.ToString()));
+
+            yield return new TestFactory<IStorage<TestStorageObject>>("dummy", () => new MemoryStorage<TestStorageObject>());
         }
     }
 }

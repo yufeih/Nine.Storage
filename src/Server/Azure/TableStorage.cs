@@ -7,6 +7,7 @@
 
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Table;
+    using Nine.Formatting;
 
     /// <summary>
     /// Represents a straightforward keyed storage system for windows azure. 
@@ -26,22 +27,24 @@
         /// <summary>
         /// Resolves an entity into a KeyedTableEntity.
         /// </summary>
-        private readonly EntityResolver<KeyedTableEntity> entityResolver;
+        private readonly EntityResolver<KeyedTableEntity<T>> entityResolver;
+        private readonly KeyedTableEntityFormatter<T> formatter;
 
         /// <summary>
         /// Initializes a new instance of TableStorage.
         /// </summary>
-        public TableStorage(string connectionString, string tableName = null)
-            : this(CloudStorageAccount.Parse(connectionString), tableName)
+        public TableStorage(string connectionString, string tableName = null, bool treatKeyAsPartitionKey = false, TextConverter textConverter = null)
+            : this(CloudStorageAccount.Parse(connectionString), tableName, treatKeyAsPartitionKey, textConverter)
         { }
 
         /// <summary>
         /// Initializes a new instance of TableStorage.
         /// </summary>
-        public TableStorage(CloudStorageAccount storageAccount, string tableName = null, bool treatKeyAsPartitionKey = false)
+        public TableStorage(CloudStorageAccount storageAccount, string tableName = null, bool treatKeyAsPartitionKey = false, TextConverter textConverter = null)
         {
             if (storageAccount == null) throw new ArgumentNullException("storageAccount");
 
+            this.formatter = new KeyedTableEntityFormatter<T>(textConverter);
             this.entityResolver = ResolveEntity;
             this.treatKeyAsPartitionKey = treatKeyAsPartitionKey;
             this.table = new LazyAsync<CloudTable>(async () =>
@@ -64,7 +67,7 @@
             var operation = treatKeyAsPartitionKey ? TableOperation.Retrieve(key, "", entityResolver) : TableOperation.Retrieve("", key, entityResolver);
             var result = await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(operation).ConfigureAwait(false);
             if (result == null || result.Result == null) return null;
-            return (T)(((KeyedTableEntity)result.Result).Data);
+            return (((KeyedTableEntity<T>)result.Result).Data);
         }
 
         /// <summary>
@@ -125,8 +128,8 @@
             {
                 var key = value.GetKey();
                 var entity = treatKeyAsPartitionKey ?
-                    new KeyedTableEntity { Data = value, PartitionKey = key, RowKey = "" } :
-                    new KeyedTableEntity { Data = value, PartitionKey = "", RowKey = key };
+                    new KeyedTableEntity<T>(formatter) { Data = value, PartitionKey = key, RowKey = "" } :
+                    new KeyedTableEntity<T>(formatter) { Data = value, PartitionKey = "", RowKey = key };
 
                 await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Insert(entity)).ConfigureAwait(false);
                 return true;
@@ -147,8 +150,8 @@
         {
             var key = value.GetKey();
             var entity = treatKeyAsPartitionKey ?
-                new KeyedTableEntity { Data = value, PartitionKey = key, RowKey = "" } :
-                new KeyedTableEntity { Data = value, PartitionKey = "", RowKey = key };
+                new KeyedTableEntity<T>(formatter) { Data = value, PartitionKey = key, RowKey = "" } :
+                new KeyedTableEntity<T>(formatter) { Data = value, PartitionKey = "", RowKey = key };
 
             await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.InsertOrReplace(entity)).ConfigureAwait(false);
         }
@@ -177,9 +180,9 @@
             }
         }
 
-        private KeyedTableEntity ResolveEntity(string partitionKey, string rowKey, DateTimeOffset timestamp, IDictionary<string, EntityProperty> properties, string etag)
+        private KeyedTableEntity<T> ResolveEntity(string partitionKey, string rowKey, DateTimeOffset timestamp, IDictionary<string, EntityProperty> properties, string etag)
         {
-            var entity = new KeyedTableEntity();
+            var entity = new KeyedTableEntity<T>(formatter);
             entity.Data = new T();
             entity.ETag = etag;
             entity.Timestamp = timestamp;

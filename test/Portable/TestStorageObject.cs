@@ -13,7 +13,7 @@
         [ProtoMember(3)]
         public string ApplicationName { get; set; }
         [ProtoMember(4)]
-        public DateTime Time { get; set; }
+        public DateTime Time { get; set; } = DateTime.UtcNow;
         [ProtoMember(5)]
         public DateTime? NullableTime { get; set; }
         [ProtoMember(6)]
