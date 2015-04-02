@@ -17,7 +17,13 @@
 
         public string ToText(Vector2 value)
         {
-            return $"{ value.X },{ value.Y }";
+            // In some cases, Double values formatted with the "R" standard numeric format string
+            // do not successfully round-trip if compiled using the /platform:x64 or
+            // /platform:anycpu switches and run on 64-bit systems.
+            // To work around this problem, you can format Double values by using the 
+            // "G17" standard numeric format string
+            // https://msdn.microsoft.com/en-us/library/kfsatb94(v=vs.110).aspx
+            return $"{ value.X.ToString("G17") },{ value.Y.ToString("G17") }";
         }
     }
 
@@ -38,8 +44,8 @@
 
         static TextConverterTest()
         {
-            Storage.Add(() => new TableStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage));
-            Storage.Add(() => new BatchedTableStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage));
+            Storage.Add(() => new TableStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage, null, false, converter));
+            Storage.Add(() => new BatchedTableStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage, null, 2, 1, converter));
         }
 
         [Theory, MemberData("Storage")]

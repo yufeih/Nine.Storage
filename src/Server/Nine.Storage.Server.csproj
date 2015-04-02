@@ -134,6 +134,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Azure\BatchedTableStorage.cs" />
     <Compile Include="Azure\BlobStorage.cs" />
+    <Compile Include="Azure\KeyedTableEntityFormatter.cs" />
     <Compile Include="Azure\KeyedTableEntity.cs" />
     <Compile Include="Azure\TableStorage.cs" />
     <Compile Include="GlobalSuppressions.cs" />

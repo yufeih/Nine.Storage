@@ -12,7 +12,6 @@
     using Microsoft.WindowsAzure.Storage.Table;
     using Nine.Formatting;
 
-
     /// <summary>
     /// Represents a deferred storage where write operations are buffered and inserted into azure table in batches.
     /// Write operations are flushed every minute or when the 100 batch limit is reach for that partition.
@@ -51,8 +50,8 @@
         /// <summary>
         /// Resolves an entity into a KeyedTableEntity.
         /// </summary>
-        private readonly EntityResolver<KeyedTableEntity> entityResolver;
-        private readonly TextConverter textConverter;
+        private readonly EntityResolver<KeyedTableEntity<T>> entityResolver;
+        private readonly KeyedTableEntityFormatter<T> formatter;
 
         /// <summary>
         /// Initializes a new instance of BatchedTableStorage.
@@ -74,11 +73,11 @@
             this.partitionCount = partitionCount;
             this.partitionKeyLength = partitionKeyLength;
             this.batches = Enumerable.Range(0, partitionCount).Select(i => new Batch { PartitionKey = i.ToString(), Owner = this }).ToArray();
-            this.textConverter = textConverter;
+            this.formatter = new KeyedTableEntityFormatter<T>(textConverter);
 
             this.entityResolver = (string partitionKey, string rowKey, DateTimeOffset timestamp, IDictionary<string, EntityProperty> properties, string etag) =>
             {
-                var entity = new KeyedTableEntity(textConverter);
+                var entity = new KeyedTableEntity<T>(formatter);
                 entity.Data = new T();
                 entity.ETag = etag;
                 entity.Timestamp = timestamp;
@@ -152,7 +151,7 @@
             // Lookup the storage for persisted records.
             var result = await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Retrieve(partitionKey.ToString(), key, entityResolver)).ConfigureAwait(false);
             if (result == null || result.Result == null) return null;
-            return (T)(((KeyedTableEntity)result.Result).Data);
+            return (((KeyedTableEntity<T>)result.Result).Data);
         }
 
         /// <summary>
@@ -361,7 +360,7 @@
                 var batch = new TableBatchOperation();
                 foreach (var item in items)
                 {
-                    var entity = new KeyedTableEntity(Owner.textConverter) { Data = item.Value, PartitionKey = PartitionKey, RowKey = item.Key };
+                    var entity = new KeyedTableEntity<T>(Owner.formatter) { Data = item.Value, PartitionKey = PartitionKey, RowKey = item.Key };
                     batch.Add(TableOperation.InsertOrReplace(entity));
                     if (++count >= maxRecords)
                     {

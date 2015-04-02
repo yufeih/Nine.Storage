@@ -11,6 +11,7 @@
         {
             if (!string.IsNullOrEmpty(Connection.Current.AzureStorage))
             {
+                // TODO: BatchedTableStorage is not flushed during the test.
                 yield return new TestFactory<IStorage<TestStorageObject>>(
                     typeof(BatchedTableStorage<>),
                     () => new BatchedTableStorage<TestStorageObject>(
