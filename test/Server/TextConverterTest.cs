@@ -44,8 +44,12 @@
 
         static TextConverterTest()
         {
-            Storage.Add(() => new TableStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage, null, false, converter));
-            Storage.Add(() => new BatchedTableStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage, null, 2, 1, converter));
+            if (!string.IsNullOrEmpty(Connection.Current.AzureStorage))
+            {
+                Storage.Add(() => new TableStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage, null, false, converter));
+                Storage.Add(() => new BatchedTableStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage, null, 2, 1, converter));
+            }
+            Storage.Add(() => new MemoryStorage<ClassWithCustomMembers>());
         }
 
         [Theory, MemberData("Storage")]
