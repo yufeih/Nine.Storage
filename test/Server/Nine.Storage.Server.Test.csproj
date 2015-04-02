@@ -139,6 +139,7 @@
     <Compile Include="MemoryCacheTest.cs" />
     <Compile Include="AzureStorageTest.cs" />
     <Compile Include="StorageTest.cs" />
+    <Compile Include="TextConverterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Client\Nine.Storage.Client.csproj">

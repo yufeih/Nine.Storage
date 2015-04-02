@@ -10,6 +10,8 @@
     using System.Threading.Tasks;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Table;
+    using Nine.Formatting;
+
 
     /// <summary>
     /// Represents a deferred storage where write operations are buffered and inserted into azure table in batches.
@@ -50,18 +52,19 @@
         /// Resolves an entity into a KeyedTableEntity.
         /// </summary>
         private readonly EntityResolver<KeyedTableEntity> entityResolver;
+        private readonly TextConverter textConverter;
 
         /// <summary>
         /// Initializes a new instance of BatchedTableStorage.
         /// </summary>
-        public BatchedTableStorage(string connectionString, string tableName = null, int partitionCount = 0, int partitionKeyLength = 0)
-            : this(CloudStorageAccount.Parse(connectionString), tableName, partitionCount, partitionKeyLength)
+        public BatchedTableStorage(string connectionString, string tableName = null, int partitionCount = 0, int partitionKeyLength = 0, TextConverter textConverter = null)
+            : this(CloudStorageAccount.Parse(connectionString), tableName, partitionCount, partitionKeyLength, textConverter)
         { }
 
         /// <summary>
         /// Initializes a new instance of BatchedTableStorage.
         /// </summary>
-        public BatchedTableStorage(CloudStorageAccount storageAccount, string tableName = null, int partitionCount = 0, int partitionKeyLength = 0)
+        public BatchedTableStorage(CloudStorageAccount storageAccount, string tableName = null, int partitionCount = 0, int partitionKeyLength = 0, TextConverter textConverter = null)
         {
             // Default to 1 partition
             if (partitionCount <= 0) partitionCount = 1;
@@ -70,11 +73,12 @@
 
             this.partitionCount = partitionCount;
             this.partitionKeyLength = partitionKeyLength;
-            this.batches = Enumerable.Range(0, partitionCount).Select(i => new Batch { PartitionKey = i.ToString() }).ToArray();
+            this.batches = Enumerable.Range(0, partitionCount).Select(i => new Batch { PartitionKey = i.ToString(), Owner = this }).ToArray();
+            this.textConverter = textConverter;
 
             this.entityResolver = (string partitionKey, string rowKey, DateTimeOffset timestamp, IDictionary<string, EntityProperty> properties, string etag) =>
             {
-                var entity = new KeyedTableEntity();
+                var entity = new KeyedTableEntity(textConverter);
                 entity.Data = new T();
                 entity.ETag = etag;
                 entity.Timestamp = timestamp;
@@ -317,6 +321,7 @@
         {
             private int HasValue;
             public string PartitionKey;
+            public BatchedTableStorage<T> Owner;
             public ConcurrentDictionary<string, T> Items = new ConcurrentDictionary<string, T>();
 
             /// <summary>
@@ -356,7 +361,7 @@
                 var batch = new TableBatchOperation();
                 foreach (var item in items)
                 {
-                    var entity = new KeyedTableEntity { Data = item.Value, PartitionKey = PartitionKey, RowKey = item.Key };
+                    var entity = new KeyedTableEntity(Owner.textConverter) { Data = item.Value, PartitionKey = PartitionKey, RowKey = item.Key };
                     batch.Add(TableOperation.InsertOrReplace(entity));
                     if (++count >= maxRecords)
                     {

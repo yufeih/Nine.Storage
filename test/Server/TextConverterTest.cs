@@ -31,7 +31,9 @@
 
     public class TextConverterTest
     {
+        private static readonly TextConverter converter = new TextConverter(new Vector2Converter());
         private static Random random = new Random();
+
         public static TheoryData<Func<IStorage<ClassWithCustomMembers>>> Storage = new TheoryData<Func<IStorage<ClassWithCustomMembers>>>();
 
         static TextConverterTest()
@@ -40,7 +42,7 @@
             Storage.Add(() => new BatchedTableStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage));
         }
 
-        [Theory, MemberData("")]
+        [Theory, MemberData("Storage")]
         public async Task it_should_respect_text_converter(Func<IStorage<ClassWithCustomMembers>> factory)
         {
             var store = factory();
