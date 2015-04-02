@@ -110,9 +110,11 @@
         public async Task<bool> Delete(string key)
         {
             WeakReference<T> wr;
+            var existing = await Get(key).ConfigureAwait(false);
+            if (existing == null) return false;
             if (!await storage.Delete(key).ConfigureAwait(false)) return false;
             if (instances != null) instances.TryRemove(key, out wr);
-            Notify(new Delta<T>(DeltaAction.Remove, key));
+            Notify(new Delta<T>(DeltaAction.Remove, key, existing));
             return true;
         }
 
