@@ -23,7 +23,7 @@
 
         private readonly SynchronizationContext syncContext = SynchronizationContext.Current;
         private readonly List<Entry> collection = new List<Entry>();
-        private readonly Func<T, TViewModel> convert;
+        private readonly Func<T, TViewModel, TViewModel> convert;
 
         private IStorage storage;
         private readonly ISyncSource observableStorage;
@@ -50,11 +50,11 @@
         public event PropertyChangedEventHandler PropertyChanged;
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        public StorageCollection(IStorage storage, string prefix, Func<T, TViewModel> convert)
+        public StorageCollection(IStorage storage, string prefix, Func<T, TViewModel, TViewModel> convert)
             : this(storage, prefix, StorageKey.Increment(prefix), convert)
         { }
 
-        public StorageCollection(IStorage storage, string minKey, string maxKey, Func<T, TViewModel> convert)
+        public StorageCollection(IStorage storage, string minKey, string maxKey, Func<T, TViewModel, TViewModel> convert)
         {
             if (storage == null) throw new ArgumentException("storage");
             if (convert == null) throw new ArgumentException("convert");
@@ -154,7 +154,7 @@
                     var key = item.GetKey();
                     if (string.CompareOrdinal(key, cursor) > 0) cursor = key;
                     if (TryFindIndex(key, out index)) continue;
-                    var value = convert(item);
+                    var value = convert(item, default(TViewModel));
 
                     collection.Insert(index, new Entry { Key = key, Data = item, Value = value });
                     addedItems.Add(value);
@@ -215,7 +215,7 @@
             {
                 if (!TryFindIndex(key, out index))
                 {
-                    var value = convert(change.Value);
+                    var value = convert(change.Value, default(TViewModel));
                     collection.Insert(index, new Entry { Key = key, Data = change.Value, Value = value });
 
                     OnPropertyChanged("Count");
@@ -238,14 +238,13 @@
                 if (TryFindIndex(key, out index))
                 {
                     var entry = collection[index];
-                    var value = convert(change.Value);
+                    var value = convert(change.Value, entry.Value);
                     collection[index] = new Entry { Key = key, Data = change.Value, Value = value };
-
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, entry.Value, index));
                 }
                 else
                 {
-                    var value = convert(change.Value);
+                    var value = convert(change.Value, default(TViewModel));
                     collection.Insert(index, new Entry { Key = key, Data = change.Value, Value = value });
 
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index));
@@ -317,11 +316,11 @@
     public class StorageCollection<T> : StorageCollection<T, T> where T : class, IKeyed, new()
     {
         public StorageCollection(IStorage storage, string prefix)
-            : base(storage, prefix, x => x)
+            : base(storage, prefix, (x, e) => x)
         { }
 
         public StorageCollection(IStorage storage, string minKey, string maxKey)
-            : base(storage, minKey, maxKey, x => x)
+            : base(storage, minKey, maxKey, (x, e) => x)
         { }
     }
 }
