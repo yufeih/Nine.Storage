@@ -50,8 +50,16 @@
         public event PropertyChangedEventHandler PropertyChanged;
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
+        public StorageCollection(IStorage storage, string prefix, Func<T, TViewModel> convert)
+            : this(storage, prefix, (x, e) => convert(x))
+        { }
+
         public StorageCollection(IStorage storage, string prefix, Func<T, TViewModel, TViewModel> convert)
             : this(storage, prefix, StorageKey.Increment(prefix), convert)
+        { }
+
+        public StorageCollection(IStorage storage, string minKey, string maxKey, Func<T, TViewModel> convert)
+            : this(storage, minKey, maxKey, (x, e) => convert(x))
         { }
 
         public StorageCollection(IStorage storage, string minKey, string maxKey, Func<T, TViewModel, TViewModel> convert)
@@ -240,7 +248,11 @@
                     var entry = collection[index];
                     var value = convert(change.Value, entry.Value);
                     collection[index] = new Entry { Key = key, Data = change.Value, Value = value };
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, entry.Value, index));
+
+                    if (!Equals(value, entry.Value))
+                    {
+                        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, entry.Value, index));
+                    }
                 }
                 else
                 {
