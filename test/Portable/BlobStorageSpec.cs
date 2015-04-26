@@ -34,9 +34,10 @@
             var stream = new MemoryStream(bytes);
 
             stream.Seek(0, SeekOrigin.Begin);
-            var key = await storage.Put("key", stream).ConfigureAwait(false);
+            var name = Guid.NewGuid().ToString();
+            var key = await storage.Put(name, stream).ConfigureAwait(false);
 
-            Assert.Equal("key", key);
+            Assert.Equal(name, key);
             Assert.True(await storage.Exists(key));
 
             var read = await storage.Get(key).ConfigureAwait(false);
@@ -57,11 +58,11 @@
             for (int i = 0; i < 2; i++)
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                var key = await storage.Put("randomkey", stream).ConfigureAwait(false);
+                var key = await storage.Put(Guid.NewGuid().ToString(), stream).ConfigureAwait(false);
                 var read = await storage.Get(key).ConfigureAwait(false);
                 var stored = await read.ReadBytesAsync();
 
-                Assert.True(bytes.SequenceEqual(stored));
+                Assert.Equal(bytes, stored);
             }
         }
 
