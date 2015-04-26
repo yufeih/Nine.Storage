@@ -3,7 +3,6 @@
     using System;
     using System.IO;
     using System.Runtime.Caching;
-    using System.Security.Cryptography;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.WindowsAzure.Storage;
@@ -50,81 +49,60 @@
             return container;
         }
 
-        public Task<string> GetUri(string sha1)
+        public Task<string> GetUri(string key)
         {
-            if (string.IsNullOrEmpty(sha1)) return Task.FromResult<string>(null);
-            return Task.FromResult(BaseUri + sha1);
+            if (string.IsNullOrEmpty(key)) return Task.FromResult<string>(null);
+            return Task.FromResult(BaseUri + key);
         }
 
-        public async Task<bool> Exists(string sha1)
+        public async Task<bool> Exists(string key)
         {
-            VerifySha1(sha1);
+            if (contentCache.Contains(key)) return true;
 
-            if (contentCache.Contains(sha1)) return true;
-
-            return await Container.GetBlockBlobReference(sha1).ExistsAsync().ConfigureAwait(false);
+            return await Container.GetBlockBlobReference(key).ExistsAsync().ConfigureAwait(false);
         }
 
-        public async Task<Stream> Get(string sha1, int index, int count, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            VerifySha1(sha1);
-
-            var cached = contentCache.Get(sha1) as byte[];
+            var cached = contentCache.Get(key) as byte[];
             if (cached != null) return new MemoryStream(cached);
             
-            using (var stream = await Container.GetBlockBlobReference(sha1).OpenReadAsync(cancellationToken).ConfigureAwait(false))
+            using (var stream = await Container.GetBlockBlobReference(key).OpenReadAsync(cancellationToken).ConfigureAwait(false))
             {
                 var bytes = await stream.ReadBytesAsync(8 * 1024, cancellationToken).ConfigureAwait(false);
-                contentCache.Add(sha1, bytes, new DateTimeOffset(DateTime.UtcNow.AddMinutes(10)));
+                contentCache.Add(key, bytes, new DateTimeOffset(DateTime.UtcNow.AddMinutes(10)));
                 return new MemoryStream(bytes);
             }
         }
 
-        public Task<string> Put(Stream stream, string sha1, int index, int count, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return Put(stream, sha1, true, int.MaxValue, null, cancellationToken);
+            return Put(key, stream, true, int.MaxValue, null, cancellationToken);
         }
 
-        public async Task<string> Put(Stream stream, string sha1, bool cache, int maxSizeInBytes, Action onExceededMaxSize = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<string> Put(string key, Stream stream, bool cache, int maxSizeInBytes, Action onExceededMaxSize = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             CloudBlockBlob blob;
 
-            if (!string.IsNullOrEmpty(sha1))
+            if (!string.IsNullOrEmpty(key))
             {
-                blob = Container.GetBlockBlobReference(sha1);
-                if (await blob.ExistsAsync(cancellationToken)) return sha1;
+                blob = Container.GetBlockBlobReference(key);
+                if (await blob.ExistsAsync(cancellationToken)) return key;
             }
 
             var buffer = new MemoryStream(8192);
             await stream.CopyToAsync(buffer, 8192, maxSizeInBytes, null, cancellationToken);
-
-            if (string.IsNullOrEmpty(sha1))
-            {
-                buffer.Seek(0, SeekOrigin.Begin);
-                sha1 = Sha1.ComputeHashString(buffer);
-            }
-
+            
             if (cache)
             {
-                contentCache.Add(sha1, buffer.ToArray(), new DateTimeOffset(DateTime.UtcNow.AddMinutes(10)));
+                contentCache.Add(key, buffer.ToArray(), new DateTimeOffset(DateTime.UtcNow.AddMinutes(10)));
             }
 
             buffer.Seek(0, SeekOrigin.Begin);
-            blob = Container.GetBlockBlobReference(sha1);
+            blob = Container.GetBlockBlobReference(key);
             await blob.UploadFromStreamAsync(buffer, cancellationToken).ConfigureAwait(false);
 
-            return sha1;
-        }
-
-        private void VerifySha1(string sha1)
-        {
-            if (sha1 == null) throw new ArgumentNullException("sha1");
-            if (sha1.Length != 40) throw new ArgumentException("sha1");
-
-            foreach (var c in sha1)
-            {
-                if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z'))) throw new ArgumentException("sha1");
-            }
+            return key;
         }
     }
 }

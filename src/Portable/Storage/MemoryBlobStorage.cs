@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Concurrent;
     using System.IO;
-    using System.Security.Cryptography;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -11,31 +10,30 @@
     {
         private readonly ConcurrentDictionary<string, byte[]> store = new ConcurrentDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 
-        public Task<bool> Exists(string sha)
+        public virtual Task<bool> Exists(string key)
         {
-            if (string.IsNullOrEmpty(sha)) return Task.FromResult(false);
-            return Task.FromResult(store.ContainsKey(sha));
+            if (string.IsNullOrEmpty(key)) return Task.FromResult(false);
+            return Task.FromResult(store.ContainsKey(key));
         }
 
-        public Task<string> GetUri(string sha)
+        public virtual Task<string> GetUri(string key)
         {
             return Task.FromResult<string>(null);
         }
 
-        public Task<Stream> Get(string sha, int index, int count, IProgress<ProgressInBytes> progress = null, CancellationToken cancellation = default(CancellationToken))
+        public virtual Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellation = default(CancellationToken))
         {
             byte[] bytes;
-            if (string.IsNullOrEmpty(sha)) return Task.FromResult<Stream>(null);
-            return Task.FromResult<Stream>(store.TryGetValue(sha, out bytes) ? new MemoryStream(bytes) : null);
+            if (string.IsNullOrEmpty(key)) return Task.FromResult<Stream>(null);
+            return Task.FromResult<Stream>(store.TryGetValue(key, out bytes) ? new MemoryStream(bytes) : null);
         }
 
-        public Task<string> Put(Stream stream, string sha, int index, int count, IProgress<ProgressInBytes> progress = null, CancellationToken cancellation = default(CancellationToken))
+        public virtual Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellation = default(CancellationToken))
         {
             var bytes = new byte[stream.Length];
             stream.Read(bytes, 0, (int)stream.Length);
-            sha = Sha1.ComputeHashString(bytes);
-            store.GetOrAdd(sha, bytes);
-            return Task.FromResult(sha);
+            store.GetOrAdd(key, bytes);
+            return Task.FromResult(key);
         }
     }
 }

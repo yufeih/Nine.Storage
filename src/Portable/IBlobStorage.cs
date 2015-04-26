@@ -34,28 +34,26 @@
 
     public interface IBlobStorage
     {
-        Task<bool> Exists(string sha);
+        Task<bool> Exists(string key);
 
-        Task<string> GetUri(string sha);
+        Task<string> GetUri(string key);
 
-        Task<Stream> Get(string sha, int index, int count, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken));
 
-        Task<string> Put(Stream stream, string sha, int index, int totalLength, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken));
+    }
+
+    /// <summary>
+    /// Represents a basic content addressable storage.
+    /// </summary>
+    public interface IContentAddressableStorage : IBlobStorage
+    {
+        Task<string> Put(Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken));
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class BlobStorageExtensions
     {
-        public static Task<Stream> Get(this IBlobStorage blob, string sha, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return blob.Get(sha, 0, -1, progress, cancellationToken);
-        }
-
-        public static Task<string> Put(this IBlobStorage blob, Stream stream, string sha = null, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return blob.Put(stream, sha, 0, -1, progress, cancellationToken);
-        }
-
         public static async Task<string> Download(this IBlobStorage blob, string sha, CancellationToken cancellationToken = default(CancellationToken))
         {
             await blob.Get(sha, null, cancellationToken).ConfigureAwait(false);
