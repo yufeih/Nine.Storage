@@ -57,6 +57,7 @@
     <Compile Include="ICache.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Storage\ContentAddressableStorage.cs" />
+    <Compile Include="Storage\RecycledStorage.cs" />
     <Compile Include="Storage\Storage.cs" />
     <Compile Include="Storage\CachedStorage.cs" />
     <Compile Include="IBulkStorage.cs" />
