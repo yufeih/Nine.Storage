@@ -10,6 +10,8 @@
     {
         private readonly IBlobStorage blob;
 
+        public IBlobStorage Blob => blob;
+
         public ContentAddressableStorage(IBlobStorage blob)
         {
             if ((this.blob = blob) == null) throw new ArgumentNullException(nameof(blob));
