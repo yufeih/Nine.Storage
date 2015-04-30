@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Threading;
 
     public enum DeltaAction
     {
@@ -73,16 +74,77 @@
         {
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
-            
+
+            action = PostToSynchronizationContext(action);
             source.On<T>(x => action(x ?? Defaults<T>.Value));
         }
 
-        public static void On<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
+        public static async void On<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
         {
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
 
+            action = PostToSynchronizationContext(action);
             source.On<T>(key, x => action(x ?? Defaults<T>.Value));
+            
+            action(await storage.Get<T>(key).ConfigureAwait(false) ?? Defaults<T>.Value);
+        }
+
+        public static async void On<T>(this IStorage storage, string key, Action<T, T> action) where T : class, IKeyed, new()
+        {
+            var source = storage as ISyncSource;
+            if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
+
+            T oldValue = Defaults<T>.Value;
+
+            action = PostToSynchronizationContext(action);
+            source.On<T>(key, x =>
+            {
+                var copy = ObjectHelper<T>.Clone(x);
+                action(x ?? Defaults<T>.Value, oldValue);
+                oldValue = copy;
+            });
+
+            var value = await storage.Get<T>(key).ConfigureAwait(false) ?? Defaults<T>.Value;
+            oldValue = ObjectHelper<T>.Clone(value);
+            action(value ?? Defaults<T>.Value, Defaults<T>.Value);
+        }
+
+        public static async void On<T>(this IStorage storage, string key, Func<T, object> watch, Action<T> action) where T : class, IKeyed, new()
+        {
+            var source = storage as ISyncSource;
+            if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
+
+            T oldValue = Defaults<T>.Value;
+
+            action = PostToSynchronizationContext(action);
+            source.On<T>(key, x =>
+            {
+                var copy = ObjectHelper<T>.Clone(x);
+                if (watch != null && !Equals(watch(x ?? Defaults<T>.Value), watch(oldValue ?? Defaults<T>.Value)))
+                {
+                    action(x ?? Defaults<T>.Value);
+                }
+                oldValue = copy;
+            });
+
+            var value = await storage.Get<T>(key).ConfigureAwait(false) ?? Defaults<T>.Value;
+            oldValue = ObjectHelper<T>.Clone(value);
+            action(value ?? Defaults<T>.Value);
+        }
+
+        private static Action<T> PostToSynchronizationContext<T>(Action<T> action) where T : class, IKeyed, new()
+        {
+            var syncContext = SynchronizationContext.Current;
+            if (syncContext == null) return action;
+            return new Action<T>(target => syncContext.Post(x => action(target), null));
+        }
+
+        private static Action<T, T> PostToSynchronizationContext<T>(Action<T, T> action) where T : class, IKeyed, new()
+        {
+            var syncContext = SynchronizationContext.Current;
+            if (syncContext == null) return action;
+            return new Action<T, T>((a, b) => syncContext.Post(x => action(a, b), null));
         }
     }
 }

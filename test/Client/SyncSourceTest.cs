@@ -72,7 +72,7 @@
             var storage = new Storage(MakeObservableStorage);
             var initial = initToDefault ? 0 : StringComparison.InvariantCultureIgnoreCase;
             if (!initToDefault) await storage.Put(new TestStorageObject("a") { Enum = initial });
-            storage.Sync<TestStorageObject>("a", x => x.Enum, x => { change = x.Enum; changeCount++; });
+            storage.On<TestStorageObject>("a", x => x.Enum, x => { change = x.Enum; changeCount++; });
 
             await Task.Delay(10);
             Assert.Equal(initial, change);

@@ -47,6 +47,7 @@
     <Compile Include="Helpers\StringBuilderCache.cs" />
     <Compile Include="ICache.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="ObjectHelper.cs" />
     <Compile Include="Storage\ContentAddressableStorage.cs" />
     <Compile Include="Storage\RecycledStorage.cs" />
     <Compile Include="Storage\Storage.cs" />
