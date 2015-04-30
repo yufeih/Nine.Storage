@@ -58,11 +58,6 @@
     public static class SyncSourceExtensions
     {
         class Defaults<T> where T : class, new() { public static readonly T Value = new T(); }
-
-        public static IDisposable On<T>(this ISyncSource source, string minKey, string maxKey, Action<Delta<T>> action) where T : class, IKeyed, new()
-        {
-            return source.On<T>(change => HandleDelta(change, minKey, maxKey, action));
-        }
         
         public static IDisposable On<T>(this ISyncSource source, string key, Action<T> action) where T : class, IKeyed, new()
         {
@@ -88,17 +83,6 @@
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
 
             source.On<T>(key, x => action(x ?? Defaults<T>.Value));
-        }
-        
-        private static void HandleDelta<T>(Delta<T> change, string minKey, string maxKey, Action<Delta<T>> action)
-        {
-            if ((minKey != null && string.CompareOrdinal(change.Key, minKey) < 0) ||
-                (maxKey != null && string.CompareOrdinal(change.Key, maxKey) >= 0))
-            {
-                return;
-            }
-
-            action(change);
         }
     }
 }
