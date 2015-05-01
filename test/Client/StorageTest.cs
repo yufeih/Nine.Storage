@@ -11,6 +11,7 @@
             return new[]
             {
                 new TestFactory<IStorage<TestStorageObject>>(nameof(MemoryStorage), () => new MemoryStorage<TestStorageObject>()),
+                new TestFactory<IStorage<TestStorageObject>>(nameof(MemoryStorage), () => new MemoryStorage<TestStorageObject>(true)),
                 new TestFactory<IStorage<TestStorageObject>>(typeof(RecycledStorage<>), () => new RecycledStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>(), new MemoryStorage<TestStorageObject>())),
                 new TestFactory<IStorage<TestStorageObject>>(typeof(CachedStorage<>), () => new CachedStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>(), new MemoryStorage<TestStorageObject>())),
                 new TestFactory<IStorage<TestStorageObject>>(typeof(CachedStorage<>), () => new CachedStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>(), new MemoryStorage<TestStorageObject>(), new MemoryStorage<CachedStorageItems<TestStorageObject>>())),
