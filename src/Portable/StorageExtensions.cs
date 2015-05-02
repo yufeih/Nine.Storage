@@ -28,10 +28,16 @@
 
         public static IAsyncEnumerator<T> All<T>(this IStorage<T> storage, int? batchSize = 1000) where T : class, IKeyed, new()
         {
-            var continuation = (string)null;
+            return All(storage, null, batchSize);
+        }
+
+        public static IAsyncEnumerator<T> All<T>(this IStorage<T> storage, string prefix, int? batchSize = 1000) where T : class, IKeyed, new()
+        {
+            var continuation = prefix;
+            var end = StorageKey.Increment(continuation);
             return AsyncEnumerator.Create(new Func<Task<AsyncEnumerationResult<T>>>(async () =>
             {
-                var batch = await storage.Range(continuation, null, batchSize);
+                var batch = await storage.Range(continuation, end, batchSize);
                 var hasMore = batchSize != null && batch.Any();
                 if (hasMore)
                 {
@@ -65,10 +71,16 @@
 
         public static IAsyncEnumerator<T> All<T>(this IStorage storage, int? batchSize = 1000) where T : class, IKeyed, new()
         {
-            var continuation = (string)null;
+            return All<T>(storage, null, batchSize);
+        }
+
+        public static IAsyncEnumerator<T> All<T>(this IStorage storage, string prefix, int? batchSize = 1000) where T : class, IKeyed, new()
+        {
+            var continuation = prefix;
+            var end = StorageKey.Increment(continuation);
             return AsyncEnumerator.Create(new Func<Task<AsyncEnumerationResult<T>>>(async () =>
             {
-                var batch = await storage.Range<T>(continuation, null, batchSize);
+                var batch = await storage.Range<T>(continuation, end, batchSize);
                 var hasMore = batchSize != null && batch.Any();
                 if (hasMore)
                 {
