@@ -18,21 +18,6 @@
         }
 
         [Fact]
-        public async Task subscribe_to_a_range_of_items()
-        {
-            var changes = new List<Delta<TestStorageObject>>();
-            var storage = new Storage(MakeObservableStorage);
-
-            storage.On<TestStorageObject>("a", "b", x => changes.Add(x));
-            await storage.Put(new TestStorageObject { Id = "b" });
-            Assert.Equal(0, changes.Count);
-
-            storage.On<TestStorageObject>("b", "c", x => changes.Add(x));
-            await storage.Put(new TestStorageObject { Id = "b" });
-            Assert.Equal(1, changes.Count);
-        }
-
-        [Fact]
         public async Task subscribe_to_all_changes()
         {
             var changes = new List<Delta<TestStorageObject>>();
@@ -67,7 +52,7 @@
         {
             var changes = new List<Delta<TestStorageObject>>();
             var storage = new Storage(MakeObservableStorage);
-            var subscription = storage.On<TestStorageObject>("a", "z", x => changes.Add(x));
+            var subscription = storage.On<TestStorageObject>(x => changes.Add(x));
 
             await storage.Put(new TestStorageObject { Id = "a" });
             subscription.Dispose();
@@ -87,7 +72,7 @@
             var storage = new Storage(MakeObservableStorage);
             var initial = initToDefault ? 0 : StringComparison.InvariantCultureIgnoreCase;
             if (!initToDefault) await storage.Put(new TestStorageObject("a") { Enum = initial });
-            storage.Sync<TestStorageObject>("a", x => x.Enum, x => { change = x.Enum; changeCount++; });
+            storage.On<TestStorageObject>("a", x => x.Enum, x => { change = x.Enum; changeCount++; });
 
             await Task.Delay(10);
             Assert.Equal(initial, change);

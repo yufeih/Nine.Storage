@@ -126,7 +126,7 @@
                 if (observableStorage != null)
                 {
                     // If there are any actions happened before the subscription is set, thoses changes will be lost
-                    subscription = observableStorage.On<T>(minKey, maxKey, OnStorageChanged);
+                    subscription = observableStorage.On<T>(OnStorageChanged);
                 }
             }
 
@@ -198,6 +198,12 @@
 
         private void OnStorageChanged(Delta<T> change)
         {
+            if ((minKey != null && string.CompareOrdinal(change.Key, minKey) < 0) ||
+                (maxKey != null && string.CompareOrdinal(change.Key, maxKey) >= 0))
+            {
+                return;
+            }
+
             if (syncContext != null)
             {
                 syncContext.Post(c => OnStorageChangedCore((Delta<T>)c), change);

@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using ProtoBuf;
 
     /// <summary>
     /// Contains status about memory cached storage.
@@ -20,15 +19,11 @@
             get { return totalCount > 0 ? 1.0 * (totalCount - missedCount) / totalCount : 0.0; }
         }
     }
-
-    [ProtoContract]
+    
     public class CachedStorageItems<T> : IKeyed
     {
-        [ProtoMember(1)]
         public T[] Items { get; set; }
-        [ProtoMember(2)]
         public string Key { get; set; }
-        [ProtoMember(3)]
         public DateTime Time { get; set; }
 
         public string GetKey() { return Key; }

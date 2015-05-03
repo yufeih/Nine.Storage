@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Threading;
 
     public enum DeltaAction
     {
@@ -58,11 +59,6 @@
     public static class SyncSourceExtensions
     {
         class Defaults<T> where T : class, new() { public static readonly T Value = new T(); }
-
-        public static IDisposable On<T>(this ISyncSource source, string minKey, string maxKey, Action<Delta<T>> action) where T : class, IKeyed, new()
-        {
-            return source.On<T>(change => HandleDelta(change, minKey, maxKey, action));
-        }
         
         public static IDisposable On<T>(this ISyncSource source, string key, Action<T> action) where T : class, IKeyed, new()
         {
@@ -74,31 +70,88 @@
             return source.On<T>(change => action(change.Value ?? Defaults<T>.Value));
         }
 
-        public static void On<T>(this IStorage storage, Action<T> action) where T : class, IKeyed, new()
-        {
-            var source = storage as ISyncSource;
-            if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
-            
-            source.On<T>(x => action(x ?? Defaults<T>.Value));
-        }
-
-        public static void On<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
+        public static IDisposable On<T>(this IStorage storage, Action<T> action) where T : class, IKeyed, new()
         {
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
 
-            source.On<T>(key, x => action(x ?? Defaults<T>.Value));
+            action = PostToSynchronizationContext(action);
+            return source.On<T>(x => action(x ?? Defaults<T>.Value));
         }
-        
-        private static void HandleDelta<T>(Delta<T> change, string minKey, string maxKey, Action<Delta<T>> action)
+
+        public static IDisposable On<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
         {
-            if ((minKey != null && string.CompareOrdinal(change.Key, minKey) < 0) ||
-                (maxKey != null && string.CompareOrdinal(change.Key, maxKey) >= 0))
+            var source = storage as ISyncSource;
+            if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
+
+            action = PostToSynchronizationContext(action);
+            storage.Get<T>(key).ContinueWith(task => action(task.Result ?? Defaults<T>.Value));
+            return source.On<T>(key, x => action(x ?? Defaults<T>.Value));
+        }
+
+        public static IDisposable On<T>(this IStorage storage, string key, Action<T, T> action) where T : class, IKeyed, new()
+        {
+            var source = storage as ISyncSource;
+            if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
+
+            T oldValue = Defaults<T>.Value;
+
+            action = PostToSynchronizationContext(action);
+
+            storage.Get<T>(key).ContinueWith(task =>
             {
-                return;
-            }
+                var value = task.Result ?? Defaults<T>.Value;
+                oldValue = ObjectHelper<T>.Clone(value);
+                action(value, Defaults<T>.Value);
+            });
 
-            action(change);
+            return source.On<T>(key, x =>
+            {
+                var copy = ObjectHelper<T>.Clone(x);
+                action(x ?? Defaults<T>.Value, oldValue);
+                oldValue = copy;
+            });
+        }
+
+        public static IDisposable On<T>(this IStorage storage, string key, Func<T, object> watch, Action<T> action) where T : class, IKeyed, new()
+        {
+            var source = storage as ISyncSource;
+            if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
+
+            T oldValue = Defaults<T>.Value;
+
+            action = PostToSynchronizationContext(action);
+
+            storage.Get<T>(key).ContinueWith(task =>
+            {
+                var value = task.Result ?? Defaults<T>.Value;
+                oldValue = ObjectHelper<T>.Clone(value);
+                action(value);
+            });
+
+            return source.On<T>(key, x =>
+            {
+                var copy = ObjectHelper<T>.Clone(x);
+                if (watch != null && !Equals(watch(x ?? Defaults<T>.Value), watch(oldValue ?? Defaults<T>.Value)))
+                {
+                    action(x ?? Defaults<T>.Value);
+                }
+                oldValue = copy;
+            });
+        }
+
+        private static Action<T> PostToSynchronizationContext<T>(Action<T> action) where T : class, IKeyed, new()
+        {
+            var syncContext = SynchronizationContext.Current;
+            if (syncContext == null) return action;
+            return new Action<T>(target => syncContext.Post(x => action(target), null));
+        }
+
+        private static Action<T, T> PostToSynchronizationContext<T>(Action<T, T> action) where T : class, IKeyed, new()
+        {
+            var syncContext = SynchronizationContext.Current;
+            if (syncContext == null) return action;
+            return new Action<T, T>((a, b) => syncContext.Post(x => action(a, b), null));
         }
     }
 }

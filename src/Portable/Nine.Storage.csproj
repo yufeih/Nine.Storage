@@ -38,15 +38,6 @@
     <NoWarn>1591,1572</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\portable-net45+wp80+win8+wpa81+aspnetcore50\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="protobuf-net">
-      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\portable-sl4+net40+wp7+windows8\protobuf-net.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Helpers\ConcurrentDictionary.cs" />
     <Compile Include="Helpers\ConcurrentQueue.cs" />
@@ -56,6 +47,7 @@
     <Compile Include="Helpers\StringBuilderCache.cs" />
     <Compile Include="ICache.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="ObjectHelper.cs" />
     <Compile Include="Storage\ContentAddressableStorage.cs" />
     <Compile Include="Storage\RecycledStorage.cs" />
     <Compile Include="Storage\Storage.cs" />
@@ -78,7 +70,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Nine.Storage.nuspec" />
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SolutionDir)\NuGet.targets" Condition="Exists('$(SolutionDir)\NuGet.targets')" />
