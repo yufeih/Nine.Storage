@@ -1,7 +1,9 @@
 ﻿namespace Nine.Storage
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using SQLite.Net.Platform.Win32;
     using Xunit;
 
     public class StorageTest : StorageSpec<StorageTest>
@@ -10,8 +12,9 @@
         {
             return new[]
             {
-                new TestFactory<IStorage<TestStorageObject>>(nameof(MemoryStorage), () => new MemoryStorage<TestStorageObject>()),
-                new TestFactory<IStorage<TestStorageObject>>(nameof(MemoryStorage), () => new MemoryStorage<TestStorageObject>(true)),
+                new TestFactory<IStorage<TestStorageObject>>(typeof(SqliteStorage<>), () => new SqliteStorage<TestStorageObject>($"sqlite-{ Environment.TickCount }.db", new SQLitePlatformWin32())),
+                new TestFactory<IStorage<TestStorageObject>>(typeof(MemoryStorage<>), () => new MemoryStorage<TestStorageObject>()),
+                new TestFactory<IStorage<TestStorageObject>>(typeof(MemoryStorage<>), () => new MemoryStorage<TestStorageObject>(true)),
                 new TestFactory<IStorage<TestStorageObject>>(typeof(RecycledStorage<>), () => new RecycledStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>(), new MemoryStorage<TestStorageObject>())),
                 new TestFactory<IStorage<TestStorageObject>>(typeof(CachedStorage<>), () => new CachedStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>(), new MemoryStorage<TestStorageObject>())),
                 new TestFactory<IStorage<TestStorageObject>>(typeof(CachedStorage<>), () => new CachedStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>(), new MemoryStorage<TestStorageObject>(), new MemoryStorage<CachedStorageItems<TestStorageObject>>())),
