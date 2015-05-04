@@ -26,6 +26,14 @@
         {
             if (string.IsNullOrEmpty(key))
             {
+                if (!stream.CanSeek)
+                {
+                    var ms = new MemoryStream();
+                    stream.CopyTo(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    stream = ms;
+                }
+
                 key = Sha1.ComputeHashString(stream);
                 stream.Seek(0, SeekOrigin.Begin);
             }
