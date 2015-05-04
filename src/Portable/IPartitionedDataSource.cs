@@ -7,8 +7,9 @@
 
     public interface IPartitionedDataSource<T>
     {
-        Task<IEnumerable<string>> GetPartitionsAsync();
-        IAsyncEnumerator<T> GetValuesAsync(string partition);
+        Task<IEnumerable<string>> GetPartitions();
+
+        IAsyncEnumerator<T> GetValues(string partition);
     }
 
     public class StorageDataSource<T> : IPartitionedDataSource<T> where T : class, IKeyed, new()
@@ -41,13 +42,13 @@
             return new StorageDataSource<T>(storage, validIdChars, batchSize);
         }
 
-        public Task<IEnumerable<string>> GetPartitionsAsync()
+        public Task<IEnumerable<string>> GetPartitions()
         {
             return Task.FromResult<IEnumerable<string>>(
                 validKeyCharactors != null ? validKeyCharactors : new[] { "" });
         }
 
-        public IAsyncEnumerator<T> GetValuesAsync(string partition)
+        public IAsyncEnumerator<T> GetValues(string partition)
         {
             if (partition == "") return storage.All<T>(batchSize);
 

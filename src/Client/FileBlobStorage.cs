@@ -17,7 +17,7 @@
         {
             if (baseDirectory != null && Path.IsPathRooted(baseDirectory))
             {
-                throw new NotSupportedException();
+                throw new NotSupportedException("baseDirectory cannot be rooted.");
             }
 
             this.baseDirectory = baseDirectory;
