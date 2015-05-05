@@ -137,9 +137,9 @@
     <Compile Include="Azure\KeyedTableEntityFormatter.cs" />
     <Compile Include="Azure\KeyedTableEntity.cs" />
     <Compile Include="Azure\TableStorage.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ElasticSearchStorage.cs" />
     <Compile Include="IOExtensions.cs" />
+    <Compile Include="SqlStorage.cs" />
     <Compile Include="MemoryCacheStorage.cs" />
     <Compile Include="MemcachedStorage.cs" />
     <Compile Include="MongoStorage.cs" />

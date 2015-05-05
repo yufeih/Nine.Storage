@@ -10,6 +10,7 @@
         public string Mongo;
         public string Memcached;
         public string Redis;
+        public string Sql;
 
         public static Connection Current;
 
