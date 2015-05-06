@@ -106,8 +106,9 @@
             if (existing == null) return false;
             if (predicate != null && !predicate(existing)) return false;
 
-            action(existing);
-            await storage.Put(existing).ConfigureAwait(false);
+            var cloned = ObjectHelper<T>.Clone(existing);
+            action(cloned);
+            await storage.Put(cloned).ConfigureAwait(false);
             return true;
         }
     }
