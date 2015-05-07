@@ -68,33 +68,30 @@
             return source.On<T>(change => action(change.Value));
         }
 
-        public static IDisposable On<T>(this IStorage storage, Action<T> action) where T : class, IKeyed, new()
+        public static IDisposable On<T>(this IStorage storage, Action<T> action, bool captureSyncContext = true) where T : class, IKeyed, new()
         {
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
-
-            action = PostToSynchronizationContext(action);
+            if (captureSyncContext) action = PostToSynchronizationContext(action);
             return source.On<T>(action);
         }
 
-        public static IDisposable On<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
+        public static IDisposable On<T>(this IStorage storage, string key, Action<T> action, bool captureSyncContext = true) where T : class, IKeyed, new()
         {
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
-
-            action = PostToSynchronizationContext(action);
+            if (captureSyncContext) action = PostToSynchronizationContext(action);
             storage.Get<T>(key).ContinueWith(task => { action(task.Result); });
             return source.On<T>(key, action);
         }
 
-        public static IDisposable On<T>(this IStorage storage, string key, Action<T, T> action) where T : class, IKeyed, new()
+        public static IDisposable On<T>(this IStorage storage, string key, Action<T, T> action, bool captureSyncContext = true) where T : class, IKeyed, new()
         {
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
+            if (captureSyncContext) action = PostToSynchronizationContext(action);
 
             T oldValue = null;
-
-            action = PostToSynchronizationContext(action);
 
             storage.Get<T>(key).ContinueWith(task =>
             {
@@ -111,14 +108,13 @@
             });
         }
 
-        public static IDisposable On<T>(this IStorage storage, string key, Func<T, object> watch, Action<T> action) where T : class, IKeyed, new()
+        public static IDisposable On<T>(this IStorage storage, string key, Func<T, object> watch, Action<T> action, bool captureSyncContext = true) where T : class, IKeyed, new()
         {
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
+            if (captureSyncContext) action = PostToSynchronizationContext(action);
 
             T oldValue = null;
-
-            action = PostToSynchronizationContext(action);
 
             storage.Get<T>(key).ContinueWith(task =>
             {
