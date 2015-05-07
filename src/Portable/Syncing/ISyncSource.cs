@@ -58,16 +58,14 @@
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class SyncSourceExtensions
     {
-        class Defaults<T> where T : class, new() { public static readonly T Value = new T(); }
-        
         public static IDisposable On<T>(this ISyncSource source, string key, Action<T> action) where T : class, IKeyed, new()
         {
-            return source.On<T>(key, change => action(change.Value ?? Defaults<T>.Value));
+            return source.On<T>(key, change => action(change.Value));
         }
 
         public static IDisposable On<T>(this ISyncSource source, Action<T> action) where T : class, IKeyed, new()
         {
-            return source.On<T>(change => action(change.Value ?? Defaults<T>.Value));
+            return source.On<T>(change => action(change.Value));
         }
 
         public static IDisposable On<T>(this IStorage storage, Action<T> action) where T : class, IKeyed, new()
@@ -76,7 +74,7 @@
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
 
             action = PostToSynchronizationContext(action);
-            return source.On<T>(x => action(x ?? Defaults<T>.Value));
+            return source.On<T>(action);
         }
 
         public static IDisposable On<T>(this IStorage storage, string key, Action<T> action) where T : class, IKeyed, new()
@@ -85,8 +83,14 @@
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
 
             action = PostToSynchronizationContext(action);
-            storage.Get<T>(key).ContinueWith(task => action(task.Result ?? Defaults<T>.Value));
-            return source.On<T>(key, x => action(x ?? Defaults<T>.Value));
+            storage.Get<T>(key).ContinueWith(task => 
+            {
+                if (task.Result != null)
+                {
+                    action(task.Result);
+                }
+            });
+            return source.On<T>(key, action);
         }
 
         public static IDisposable On<T>(this IStorage storage, string key, Action<T, T> action) where T : class, IKeyed, new()
@@ -94,21 +98,24 @@
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
 
-            T oldValue = Defaults<T>.Value;
+            T oldValue = null;
 
             action = PostToSynchronizationContext(action);
 
             storage.Get<T>(key).ContinueWith(task =>
             {
-                var value = task.Result ?? Defaults<T>.Value;
-                oldValue = ObjectHelper<T>.Clone(value);
-                action(value, Defaults<T>.Value);
+                var value = task.Result;
+                if (value != null)
+                {
+                    oldValue = ObjectHelper<T>.Clone(value);
+                    action(value, null);
+                }
             });
 
             return source.On<T>(key, x =>
             {
                 var copy = ObjectHelper<T>.Clone(x);
-                action(x ?? Defaults<T>.Value, oldValue);
+                action(x, oldValue);
                 oldValue = copy;
             });
         }
@@ -118,24 +125,26 @@
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
 
-            T oldValue = Defaults<T>.Value;
+            T oldValue = null;
 
             action = PostToSynchronizationContext(action);
 
             storage.Get<T>(key).ContinueWith(task =>
             {
-                var value = task.Result ?? Defaults<T>.Value;
-                oldValue = ObjectHelper<T>.Clone(value);
-                action(value);
+                var value = task.Result;
+                if (value != null)
+                {
+                    oldValue = ObjectHelper<T>.Clone(value);
+                    action(value);
+                }
             });
 
             return source.On<T>(key, x =>
             {
                 var copy = ObjectHelper<T>.Clone(x);
-                if (watch != null && !Equals(watch(x ?? Defaults<T>.Value), watch(oldValue ?? Defaults<T>.Value)))
-                {
-                    action(x ?? Defaults<T>.Value);
-                }
+                if (watch == null) return;
+                if (x != null && oldValue != null && Equals(watch(x), watch(oldValue))) return;
+                action(x);
                 oldValue = copy;
             });
         }
