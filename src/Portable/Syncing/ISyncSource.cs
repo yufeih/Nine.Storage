@@ -83,13 +83,7 @@
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
 
             action = PostToSynchronizationContext(action);
-            storage.Get<T>(key).ContinueWith(task => 
-            {
-                if (task.Result != null)
-                {
-                    action(task.Result);
-                }
-            });
+            storage.Get<T>(key).ContinueWith(task => { action(task.Result); });
             return source.On<T>(key, action);
         }
 
@@ -105,11 +99,8 @@
             storage.Get<T>(key).ContinueWith(task =>
             {
                 var value = task.Result;
-                if (value != null)
-                {
-                    oldValue = ObjectHelper<T>.Clone(value);
-                    action(value, null);
-                }
+                oldValue = ObjectHelper<T>.Clone(value);
+                action(value, null);
             });
 
             return source.On<T>(key, x =>
@@ -132,11 +123,8 @@
             storage.Get<T>(key).ContinueWith(task =>
             {
                 var value = task.Result;
-                if (value != null)
-                {
-                    oldValue = ObjectHelper<T>.Clone(value);
-                    action(value);
-                }
+                oldValue = ObjectHelper<T>.Clone(value);
+                action(value);
             });
 
             return source.On<T>(key, x =>

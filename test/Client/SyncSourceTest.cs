@@ -72,17 +72,18 @@
             storage.On<TestStorageObject>("a", x => x.Enum, x => { change = x.Enum; changeCount++; });
 
             await Task.Delay(10);
-            Assert.Equal(0, changeCount);
+            Assert.Equal(0, (int)change);
+            Assert.Equal(1, changeCount);
 
             await storage.Put(new TestStorageObject("a") { Enum = initial });
 
             await Task.Delay(10);
             Assert.Equal(initial, change);
-            Assert.Equal(1, changeCount);
+            Assert.Equal(2, changeCount);
 
             await storage.Put(new TestStorageObject("a") { Enum = initial });
             await Task.Delay(10);
-            Assert.Equal(1, changeCount);
+            Assert.Equal(2, changeCount);
 
             for (int i = 0; i < 10; i++)
             {
@@ -91,7 +92,7 @@
 
             await Task.Delay(10);
             Assert.Equal(StringComparison.InvariantCulture, change);
-            Assert.Equal(2, changeCount);
+            Assert.Equal(3, changeCount);
         }
     }
 }
