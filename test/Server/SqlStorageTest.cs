@@ -14,7 +14,7 @@
                     typeof(SqlStorage<>),
                     () => new SqlStorage<TestStorageObject>(
                         Connection.Current.Sql,
-                        "TestStorageObject" + Environment.TickCount.ToString()));
+                        "TestStorageObject" + (int.MaxValue - Environment.TickCount).ToString()));
             }
             else
             {

@@ -4,52 +4,14 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
+    using System.IO;
     using System.Linq;
-    using System.Reflection;
     using System.Threading.Tasks;
     using Nine.Formatting;
 
     public class SqlStorage<T> : IDisposable, IStorage<T> where T : class, IKeyed, new()
     {
-        private static readonly Dictionary<string, SqlDbType> columns;
-
-        static SqlStorage()
-        {
-            var properties =
-                from p in typeof(T).GetTypeInfo().DeclaredProperties
-                where p.GetMethod != null && p.GetMethod.IsPublic &&
-                      p.SetMethod != null && p.SetMethod.IsPublic &&
-                      p.GetIndexParameters().Length <= 0
-                select new { Name = p.Name, Type = p.PropertyType };
-
-            var fields = 
-                from f in typeof(T).GetTypeInfo().DeclaredFields
-                where f.IsPublic
-                select new { Name = f.Name, Type = f.FieldType };
-
-            columns = properties.Concat(fields).ToDictionary(m => m.Name, m => GetDbType(m.Type), StringComparer.OrdinalIgnoreCase);
-        }
-
-        private static SqlDbType GetDbType(Type type)
-        {
-            if (type == typeof(string)) return SqlDbType.NVarChar;
-            if (type == typeof(bool)) return SqlDbType.Bit;
-            if (type == typeof(int)) return SqlDbType.Int;
-            if (type == typeof(uint)) return SqlDbType.Int;
-            if (type == typeof(short)) return SqlDbType.SmallInt;
-            if (type == typeof(ushort)) return SqlDbType.SmallInt;
-            if (type == typeof(long)) return SqlDbType.BigInt;
-            if (type == typeof(ulong)) return SqlDbType.BigInt;
-            if (type.IsEnum) return SqlDbType.Int;
-
-            return SqlDbType.NVarChar;
-        }
-        
-        private static string ToText(SqlDbType type)
-        {
-            if (type == SqlDbType.NVarChar) return "nvarchar(max)";
-            return type.ToString().ToLowerInvariant();
-        }
+        private static readonly List<SqlColumn> columns = SqlColumn.FromType(typeof(T)).ToList();
 
         private readonly TextConverter converter;
         private readonly SqlConnection connection;
@@ -58,7 +20,7 @@
         public SqlStorage(string connectionString, string tableName = null, bool autoSchema = false, TextConverter converter = null)
         {
             if (string.IsNullOrEmpty(connectionString)) throw new ArgumentNullException(nameof(connectionString));
-            
+
             this.connection = new SqlConnection(connectionString);
             this.connection.Open();
             this.tableName = tableName ?? typeof(T).Name;
@@ -68,7 +30,7 @@
             {
                 if (autoSchema)
                 {
-                    UpgradeSchema(reader);
+                    UpgradeSchema(reader.GetSchemaTable());
                 }
             }
         }
@@ -83,33 +45,71 @@
                 {
                     return command.ExecuteReader();
                 }
-                catch (SqlException) { }
+                catch (SqlException e) when (e.ErrorCode == -2146232060) { } // 0x80131904
             }
 
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = $"create table { tableName } ({ string.Join(", ", columns.Select(c => $"{ c.Key } { ToText(c.Value) }")) })";
+                var columnText = $"{ string.Concat(columns.Select(c => $"{ c.Name } { c.ToDbTypeText() }, ")) }";
+                var constraint = $"constraint [PK_{ tableName }] primary key ({ SqlColumn.KeyColumnName })";
+                command.CommandText = $"create table { tableName } ({ columnText } { constraint })";
                 return command.ExecuteReader();
             }
         }
 
-        private void UpgradeSchema(SqlDataReader reader)
+        private void UpgradeSchema(DataTable schema)
         {
-            for (var i = 0; i < reader.FieldCount; i++)
-            {
-                var name = reader.GetName(i);
-                var type = reader.GetFieldType(i);
+            var columnsToAdd = columns.ToList();
+            var schemaColumnNames = schema.Columns.OfType<DataColumn>().Select(c => c.ColumnName).ToList();
 
+            columnsToAdd.RemoveAll(c => schemaColumnNames.Contains(c.Name));
+
+            if (columnsToAdd.Count > 0)
+            {
                 throw new NotImplementedException();
             }
         }
 
-        public Task<bool> Add(T value)
+        public async Task<bool> Add(T value)
         {
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "insert into values";
-                return Task.FromResult(command.ExecuteNonQuery() == 1);
+                var sb = StringBuilderCache.Acquire(260);
+                sb.Append("insert into ");
+                sb.Append(tableName);
+                sb.Append(" (");
+
+                for (var i = 0; i < columns.Count; i++)
+                {
+                    sb.Append(columns[i].Name);
+                    if (i != columns.Count - 1) sb.Append(',');
+                }
+                sb.Append(") values(");
+
+                for (var i = 0; i < columns.Count; i++)
+                {
+                    sb.Append("@");
+                    sb.Append(i);
+                    if (i != columns.Count - 1) sb.Append(',');
+                }
+                sb.Append(")");
+
+                command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
+
+                for (int i = 0; i < columns.Count; i++)
+                {
+                    var columnValue = columns[i].ToSqlValue(value, converter);
+                    command.Parameters.AddWithValue("@" + i, columnValue);
+                }
+
+                try
+                {
+                    return await command.ExecuteNonQueryAsync().ConfigureAwait(false) == 1;
+                }
+                catch (SqlException e) when (e.ErrorCode == -2146232060) // 0x80131904
+                {
+                    return false;
+                }
             }
         }
 
@@ -118,14 +118,39 @@
             throw new NotImplementedException();
         }
 
-        public Task<T> Get(string key)
+        public async Task<T> Get(string key)
         {
-            throw new NotImplementedException();
+            using (var command = connection.CreateCommand())
+            {
+                var sb = StringBuilderCache.Acquire(260);
+                sb.Append("select * from ");
+                sb.Append(tableName);
+                sb.Append(" where ");
+                sb.Append(SqlColumn.KeyColumnName);
+                sb.Append(" = @key");
+
+                command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
+                command.Parameters.AddWithValue("@key", key);
+
+                try
+                {
+                    await command.ExecuteReaderAsync().ConfigureAwait(false);
+                    return null;
+                }
+                catch (SqlException e) when (e.ErrorCode == -2146232060) // 0x80131904
+                {
+                    return null;
+                }
+            }
         }
 
         public Task Put(T value)
         {
-            throw new NotImplementedException();
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "insert into values";
+                return Task.FromResult(command.ExecuteNonQuery() == 1);
+            }
         }
 
         public Task<IEnumerable<T>> Range(string minKey, string maxKey, int? count = default(int?))
