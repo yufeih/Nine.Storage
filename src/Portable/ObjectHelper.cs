@@ -2,9 +2,8 @@
 {
     using System.Reflection;
     using System.Linq;
-    using System.Collections.Generic;
 
-    static class ObjectHelper<T> where T : new()
+    static class ObjectHelper<T> where T : class, new()
     {
         private static readonly PropertyInfo[] mergeProperties = (
             from pi in typeof(T).GetTypeInfo().DeclaredProperties
@@ -33,6 +32,7 @@
 
         public static T Clone(T target)
         {
+            if (target == null) return null;
             return Merge(new T(), target);
         }
     }
