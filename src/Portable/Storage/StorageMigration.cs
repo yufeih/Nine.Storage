@@ -47,8 +47,8 @@
             }
             else
             {
-                var partitions = await previousSource.GetPartitionsAsync().ConfigureAwait(false);
-                var tasks = partitions.Select(p => MigrateAsync(previousSource.GetValuesAsync(p), reporter));
+                var partitions = await previousSource.GetPartitions().ConfigureAwait(false);
+                var tasks = partitions.Select(p => MigrateAsync(previousSource.GetValues(p), reporter));
                 await Task.WhenAll(tasks);
             }
         }

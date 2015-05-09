@@ -75,12 +75,7 @@
             }
         }
 
-        public Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return Put(key, stream, true, int.MaxValue, null, cancellationToken);
-        }
-
-        public async Task<string> Put(string key, Stream stream, bool cache, int maxSizeInBytes, Action onExceededMaxSize = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             CloudBlockBlob blob;
 
@@ -90,17 +85,8 @@
                 if (await blob.ExistsAsync(cancellationToken)) return key;
             }
 
-            var buffer = new MemoryStream(8192);
-            await stream.CopyToAsync(buffer, 8192, maxSizeInBytes, null, cancellationToken);
-            
-            if (cache)
-            {
-                contentCache.Add(key, buffer.ToArray(), new DateTimeOffset(DateTime.UtcNow.AddMinutes(10)));
-            }
-
-            buffer.Seek(0, SeekOrigin.Begin);
             blob = Container.GetBlockBlobReference(key);
-            await blob.UploadFromStreamAsync(buffer, cancellationToken).ConfigureAwait(false);
+            await blob.UploadFromStreamAsync(stream, cancellationToken).ConfigureAwait(false);
 
             return key;
         }

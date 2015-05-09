@@ -218,7 +218,7 @@
             // This can be implemented by adding a new batches array if needed in the future.
             //
             // See http://msdn.microsoft.com/en-us/library/windowsazure/dd894038.aspx
-            throw new NotSupportedException();
+            throw new NotSupportedException("BatchedTableStorage does not support Add");
         }
 
         /// <summary>
@@ -267,12 +267,12 @@
             await Task.WhenAll(from x in batches select x.FlushAsync(tableValue)).ConfigureAwait(false);
         }
 
-        public Task<IEnumerable<string>> GetPartitionsAsync()
+        public Task<IEnumerable<string>> GetPartitions()
         {
             return Task.FromResult(Enumerable.Range(0, partitionCount).Select(i => i.ToString()));
         }
 
-        public IAsyncEnumerator<T> GetValuesAsync(string partition)
+        public IAsyncEnumerator<T> GetValues(string partition)
         {
             var continuation = (TableContinuationToken)null;
             var query = new TableQuery { FilterString = TableQuery.GenerateFilterCondition("PartitionKey", "eq", partition) };
