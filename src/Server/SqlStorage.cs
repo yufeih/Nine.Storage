@@ -96,7 +96,7 @@
                     if (!reader.Read()) return null;
 
                     var result = new T();
-                    for (int i = 0; i < columns.Count; i++)
+                    for (int i = 1; i < columns.Count; i++) // Skip the first '_Key' column
                     {
                         columns[i].FromSqlValue(result, reader, converter);
                     }
@@ -148,12 +148,69 @@
             }
         }
 
-        public Task Put(T value)
+        public async Task Put(T value)
         {
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "insert into values";
-                return Task.FromResult(command.ExecuteNonQuery() == 1);
+                var sb = StringBuilderCache.Acquire(260);
+                sb.Append("merge ");
+                sb.Append(tableName);
+                sb.Append(" as target using (values (");
+
+                for (var i = 0; i < columns.Count; i++)
+                {
+                    sb.Append("@");
+                    sb.Append(i);
+                    if (i != columns.Count - 1) sb.Append(',');
+                }
+
+                sb.Append(")) as source (");
+
+                for (var i = 0; i < columns.Count; i++)
+                {
+                    sb.Append(columns[i].Name);
+                    if (i != columns.Count - 1) sb.Append(',');
+                }
+                sb.Append(") on target.");
+                sb.Append(SqlColumn.KeyColumnName);
+                sb.Append(" = source.");
+                sb.Append(SqlColumn.KeyColumnName);
+
+                sb.Append(" when matched then update set ");
+
+                for (var i = 0; i < columns.Count; i++)
+                {
+                    sb.Append(columns[i].Name);
+                    sb.Append(" = source.");
+                    sb.Append(columns[i].Name);
+                    if (i != columns.Count - 1) sb.Append(',');
+                }
+
+                sb.Append(" when not matched then insert (");
+                for (var i = 0; i < columns.Count; i++)
+                {
+                    sb.Append(columns[i].Name);
+                    if (i != columns.Count - 1) sb.Append(',');
+                }
+
+                sb.Append(") values (");
+                for (var i = 0; i < columns.Count; i++)
+                {
+                    sb.Append(columns[i].Name);
+                    if (i != columns.Count - 1) sb.Append(',');
+                }
+
+                sb.Append(");");
+
+                command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
+
+                for (int i = 0; i < columns.Count; i++)
+                {
+                    var columnValue = columns[i].ToSqlValue(value, converter);
+                    command.Parameters.AddWithValue("@" + i, columnValue);
+                }
+
+                await command.ExecuteNonQueryAsync().ConfigureAwait(false);
             }
         }
 
