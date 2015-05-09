@@ -77,6 +77,34 @@
             }
         }
 
+        public async Task<T> Get(string key)
+        {
+            using (var command = connection.CreateCommand())
+            {
+                var sb = StringBuilderCache.Acquire(260);
+                sb.Append("select * from ");
+                sb.Append(tableName);
+                sb.Append(" where ");
+                sb.Append(SqlColumn.KeyColumnName);
+                sb.Append(" = @key");
+
+                command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
+                command.Parameters.AddWithValue("@key", key);
+
+                using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
+                {
+                    if (!reader.Read()) return null;
+
+                    var result = new T();
+                    for (int i = 0; i < columns.Count; i++)
+                    {
+                        columns[i].FromSqlValue(result, reader, converter);
+                    }
+                    return result;
+                }
+            }
+        }
+
         public async Task<bool> Add(T value)
         {
             using (var command = connection.CreateCommand())
@@ -120,17 +148,21 @@
             }
         }
 
-        public Task<bool> Delete(string key)
+        public Task Put(T value)
         {
-            throw new NotImplementedException();
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "insert into values";
+                return Task.FromResult(command.ExecuteNonQuery() == 1);
+            }
         }
 
-        public async Task<T> Get(string key)
+        public async Task<bool> Delete(string key)
         {
             using (var command = connection.CreateCommand())
             {
                 var sb = StringBuilderCache.Acquire(260);
-                sb.Append("select * from ");
+                sb.Append("delete from ");
                 sb.Append(tableName);
                 sb.Append(" where ");
                 sb.Append(SqlColumn.KeyColumnName);
@@ -139,26 +171,7 @@
                 command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
                 command.Parameters.AddWithValue("@key", key);
 
-                using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
-                {
-                    if (!reader.Read()) return null;
-
-                    var result = new T();
-                    for (int i = 0; i < columns.Count; i++)
-                    {
-                        columns[i].FromSqlValue(result, reader, converter);
-                    }
-                    return result;
-                }
-            }
-        }
-
-        public Task Put(T value)
-        {
-            using (var command = connection.CreateCommand())
-            {
-                command.CommandText = "insert into values";
-                return Task.FromResult(command.ExecuteNonQuery() == 1);
+                return await command.ExecuteNonQueryAsync().ConfigureAwait(false) == 1;
             }
         }
 
