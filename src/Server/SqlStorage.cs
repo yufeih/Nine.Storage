@@ -99,7 +99,7 @@
                     sb.Append(" = @key");
 
                     command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
-                    command.Parameters.AddWithValue("@key", key);
+                    command.Parameters.AddWithValue("@key", SqlColumn.ToBytes(key));
 
                     using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                     {
@@ -264,7 +264,7 @@
                     sb.Append(" = @key");
 
                     command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
-                    command.Parameters.AddWithValue("@key", key);
+                    command.Parameters.AddWithValue("@key", SqlColumn.ToBytes(key));
 
                     return await command.ExecuteNonQueryAsync().ConfigureAwait(false) == 1;
                 }
@@ -314,8 +314,8 @@
                     
                     command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
 
-                    if (hasMin) command.Parameters.AddWithValue("@min", minKey);
-                    if (hasMax) command.Parameters.AddWithValue("@max", maxKey);
+                    if (hasMin) command.Parameters.AddWithValue("@min", SqlColumn.ToBytes(minKey));
+                    if (hasMax) command.Parameters.AddWithValue("@max", SqlColumn.ToBytes(maxKey));
 
                     var result = new List<T>();
                     using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
