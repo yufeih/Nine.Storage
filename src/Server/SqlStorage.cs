@@ -26,16 +26,16 @@
             this.tableName = tableName ?? typeof(T).Name;
             this.converter = converter;
 
-            using (var reader = CreateTableIfNotExist())
+            using (var schema = CreateTableIfNotExist())
             {
                 if (autoSchema)
                 {
-                    UpgradeSchema(reader.GetSchemaTable());
+                    UpgradeSchema(schema);
                 }
             }
         }
 
-        private SqlDataReader CreateTableIfNotExist()
+        private DataTable CreateTableIfNotExist()
         {
             using (var command = connection.CreateCommand())
             {
@@ -43,7 +43,10 @@
 
                 try
                 {
-                    return command.ExecuteReader();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        return reader.GetSchemaTable();
+                    }
                 }
                 catch (SqlException e) when (e.ErrorCode == -2146232060) { } // 0x80131904
             }
@@ -53,7 +56,11 @@
                 var columnText = $"{ string.Concat(columns.Select(c => $"{ c.Name } { c.ToDbTypeText() }, ")) }";
                 var constraint = $"constraint [PK_{ tableName }] primary key ({ SqlColumn.KeyColumnName })";
                 command.CommandText = $"create table { tableName } ({ columnText } { constraint })";
-                return command.ExecuteReader();
+
+                using (var reader = command.ExecuteReader())
+                {
+                    return reader.GetSchemaTable();
+                }
             }
         }
 
@@ -132,14 +139,16 @@
                 command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
                 command.Parameters.AddWithValue("@key", key);
 
-                try
+                using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                 {
-                    await command.ExecuteReaderAsync().ConfigureAwait(false);
-                    return null;
-                }
-                catch (SqlException e) when (e.ErrorCode == -2146232060) // 0x80131904
-                {
-                    return null;
+                    if (!reader.Read()) return null;
+
+                    var result = new T();
+                    for (int i = 0; i < columns.Count; i++)
+                    {
+                        columns[i].FromSqlValue(result, reader, converter);
+                    }
+                    return result;
                 }
             }
         }
