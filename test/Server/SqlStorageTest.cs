@@ -37,6 +37,8 @@
         [Fact]
         public async Task add_new_column_when_poco_is_upgraded()
         {
+            if (string.IsNullOrEmpty(Connection.Current.Sql)) return;
+
             var name = "TestStorageObject" + (int.MaxValue - Environment.TickCount).ToString();
             var oldStorage = new SqlStorage<TestStorageObject1>(Connection.Current.Sql, name, true);
             await oldStorage.Put(new TestStorageObject1 { Id = "1", Name = "n1" });
