@@ -93,10 +93,10 @@
             return primaryKey.Concat(properties.Concat(fields).OrderBy(x => x.Name));
         }
 
-        public string ToDbTypeText()
+        public string ToDbTypeText(bool forceNullable = false)
         {
             var result = ToDbTypeTextCore();
-            return isNullable ? result + " null" : result;
+            return (isNullable || forceNullable) ? result + " null" : result;
         }
 
         private string ToDbTypeTextCore()

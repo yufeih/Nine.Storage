@@ -25,16 +25,14 @@
             this.tableName = tableName ?? typeof(T).Name;
             this.converter = converter;
 
-            using (var schema = CreateTableIfNotExist())
+            var schema = CreateTableIfNotExist();
+            if (autoSchema)
             {
-                if (autoSchema)
-                {
-                    UpgradeSchema(schema);
-                }
+                UpgradeSchema(schema);
             }
         }
 
-        private DataTable CreateTableIfNotExist()
+        private string[] CreateTableIfNotExist()
         {
             using (var connection = new SqlConnection(connectionString))
             {
@@ -47,7 +45,7 @@
                     {
                         using (var reader = command.ExecuteReader())
                         {
-                            return reader.GetSchemaTable();
+                            return Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToArray();
                         }
                     }
                     catch (SqlException e) when (e.ErrorCode == -2146232060) { } // 0x80131904
@@ -59,28 +57,62 @@
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    var columnText = $"{ string.Concat(columns.Select(c => $"{ c.Name } { c.ToDbTypeText() }, ")) }";
-                    var constraint = $"constraint [PK_{ tableName }] primary key ({ SqlColumn.KeyColumnName })";
-                    command.CommandText = $"create table { tableName } ({ columnText } { constraint })";
+                    var sb = StringBuilderCache.Acquire(260);
 
-                    using (var reader = command.ExecuteReader())
+                    sb.Append("create table ");
+                    sb.Append(tableName);
+                    sb.Append(" (");
+
+                    for (int i = 0; i < columns.Count; i++)
                     {
-                        return reader.GetSchemaTable();
+                        sb.Append(columns[i].Name);
+                        sb.Append(" ");
+                        sb.Append(columns[i].ToDbTypeText());
+                        sb.Append(",");
                     }
+
+                    sb.Append("constraint [PK_");
+                    sb.Append(tableName);
+                    sb.Append("] primary key (");
+                    sb.Append(SqlColumn.KeyColumnName);
+                    sb.Append("))");
+
+                    command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
+                    command.ExecuteNonQuery();
+                    return columns.Select(c => c.Name).ToArray();
                 }
             }
         }
 
-        private void UpgradeSchema(DataTable schema)
+        private void UpgradeSchema(string[] columnNames)
         {
-            var columnsToAdd = columns.ToList();
-            var schemaColumnNames = schema.Columns.OfType<DataColumn>().Select(c => c.ColumnName).ToList();
+            var columnsToAdd = columns.Skip(1).ToList(); // Skip _Key
 
-            columnsToAdd.RemoveAll(c => schemaColumnNames.Contains(c.Name));
+            columnsToAdd.RemoveAll(c => columnNames.Contains(c.Name));
 
-            if (columnsToAdd.Count > 0)
+            if (columnsToAdd.Count <= 0) return;
+
+            using (var connection = new SqlConnection(connectionString))
             {
-                throw new NotImplementedException();
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    var sb = StringBuilderCache.Acquire(260);
+
+                    for (int i = 0; i < columnsToAdd.Count; i++)
+                    {
+                        sb.Append("alter table ");
+                        sb.Append(tableName);
+                        sb.Append(" add ");
+                        sb.Append(columnsToAdd[i].Name);
+                        sb.Append(" ");
+                        sb.Append(columnsToAdd[i].ToDbTypeText(true));
+                        sb.Append(";");
+                    }
+
+                    command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
@@ -311,7 +343,7 @@
                     }
                     sb.Append(" order by ");
                     sb.Append(SqlColumn.KeyColumnName);
-                    
+
                     command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
 
                     if (hasMin) command.Parameters.AddWithValue("@min", SqlColumn.ToBytes(minKey));
