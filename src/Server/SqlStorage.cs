@@ -148,7 +148,15 @@
                     for (int i = 0; i < columns.Count; i++)
                     {
                         var columnValue = columns[i].ToSqlValue(value, converter);
-                        command.Parameters.AddWithValue("@" + i, columnValue);
+                        if (columnValue is DateTime)
+                        {
+                            // Ensure we are using DateTime2 to prevent precision loss
+                            command.Parameters.Add("@" + i, SqlDbType.DateTime2).Value = columnValue;
+                        }
+                        else
+                        {
+                            command.Parameters.AddWithValue("@" + i, columnValue);
+                        }
                     }
 
                     try
@@ -225,7 +233,15 @@
                     for (int i = 0; i < columns.Count; i++)
                     {
                         var columnValue = columns[i].ToSqlValue(value, converter);
-                        command.Parameters.AddWithValue("@" + i, columnValue);
+                        if (columnValue is DateTime)
+                        {
+                            // Ensure we are using DateTime2 to prevent precision loss
+                            command.Parameters.Add("@" + i, SqlDbType.DateTime2).Value = columnValue;
+                        }
+                        else
+                        {
+                            command.Parameters.AddWithValue("@" + i, columnValue);
+                        }
                     }
 
                     await command.ExecuteNonQueryAsync().ConfigureAwait(false);
@@ -295,7 +311,7 @@
                     }
                     sb.Append(" order by ");
                     sb.Append(SqlColumn.KeyColumnName);
-
+                    
                     command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
 
                     if (hasMin) command.Parameters.AddWithValue("@min", minKey);
