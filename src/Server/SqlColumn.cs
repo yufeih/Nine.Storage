@@ -11,7 +11,8 @@
 
     class SqlColumn
     {
-        public const int MaxKeySizeInBytes = 1024;
+        // http://stackoverflow.com/questions/2863993/is-of-a-type-that-is-invalid-for-use-as-a-key-column-in-an-index
+        public const int MaxColumnSizeInBytes = 900;
         public const string KeyColumnName = "_Key";
 
         private static readonly Encoding utf8 = new UTF8Encoding(false, false);
@@ -84,7 +85,7 @@
             {
                 new SqlColumn(typeof(byte[]), false)
                 {
-                    Name = KeyColumnName, capacity = MaxKeySizeInBytes,
+                    Name = KeyColumnName, capacity = MaxColumnSizeInBytes,
                     getter = (target) => utf8.GetBytes(((IKeyed)target).GetKey()),
                     setter = (target, value) => { },
                 }
@@ -103,16 +104,40 @@
         {
             SqlDbType result;
 
-            var size = capacity <= 0 ? "max" : capacity.ToString();
+            var size = capacity <= 0 ? MaxColumnSizeInBytes : capacity;
 
             if (type == typeof(byte[])) return $"varbinary({ size })";
             if (typeToDbType.TryGetValue(type, out result)) return result.ToString().ToLowerInvariant();
             if (type.IsEnum) return "int";
 
-            return $"nvarchar({ size })";
+            return $"varchar({ size })";
         }
 
-        public object ToSqlValue(object value, TextConverter converter)
+        public object ToSqlValue(object value, bool truncate, TextConverter converter)
+        {
+            var result = ToSqlValue(value, converter);
+
+            if (truncate)
+            {
+                var str = result as string;
+                if (str != null && str.Length > MaxColumnSizeInBytes)
+                {
+                    return str.Substring(0, MaxColumnSizeInBytes);
+                }
+
+                var bytes = result as byte[];
+                if (bytes != null && bytes.Length > MaxColumnSizeInBytes)
+                {
+                    var truncatedBytes = new byte[MaxColumnSizeInBytes];
+                    Array.Copy(bytes, truncatedBytes, MaxColumnSizeInBytes);
+                    return truncatedBytes;
+                }
+            }
+
+            return result;
+        }
+
+        private object ToSqlValue(object value, TextConverter converter)
         {
             value = getter(value);
 

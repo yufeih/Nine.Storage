@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using System.Linq;
     using System.Threading.Tasks;
     using ProtoBuf;
     using Xunit;
@@ -58,6 +60,33 @@
                 x => Assert.Equal("n3", x.Name));
 
             Assert.Equal(StringComparison.InvariantCulture, (await newStorage.Get("3")).Enum);
+        }
+
+        [Fact]
+        public void create_index_on_properties()
+        {
+            var name = "TestStorageObject" + (int.MaxValue - Environment.TickCount).ToString();
+            var storage = new SqlStorage<TestStorageObject>(Connection.Current.Sql, name, true);
+            Assert.Equal(storage, storage.WithIndex(nameof(TestStorageObject.Name), nameof(TestStorageObject.NullableTime)));
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task should_throw_when_properties_exceed_max_length(bool truncate)
+        {
+            var name = "TestStorageObject" + (int.MaxValue - Environment.TickCount).ToString();
+            var storage = new SqlStorage<TestStorageObject>(Connection.Current.Sql, name, true) { Truncate = truncate };
+            var str = new string(Enumerable.Repeat(0, 1000).Select(i => '-').ToArray());
+
+            if (truncate)
+            {
+                await storage.Put(new TestStorageObject("1") { Name = str });
+            }
+            else
+            {
+                await Assert.ThrowsAnyAsync<SqlException>(() => storage.Put(new TestStorageObject("1") { Name = str }));
+            }
         }
     }
 }

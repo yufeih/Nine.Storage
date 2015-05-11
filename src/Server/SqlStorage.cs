@@ -17,6 +17,8 @@
         private readonly string connectionString;
         private readonly string tableName;
 
+        public bool Truncate { get; set; }
+
         public SqlStorage(string connectionString, string tableName = null, bool autoSchema = false, TextConverter converter = null)
         {
             if (string.IsNullOrEmpty(connectionString)) throw new ArgumentNullException(nameof(connectionString));
@@ -116,6 +118,39 @@
             }
         }
 
+        public SqlStorage<T> WithIndex(params string[] propertyNames)
+        {
+            if (propertyNames.Length <= 0) return this;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    var sb = StringBuilderCache.Acquire(260);
+
+                    foreach (var propertyName in propertyNames)
+                    {
+                        sb.Append("if not exists (select * from sys.indexes where object_id = object_id(N'");
+                        sb.Append(tableName);
+                        sb.Append("') and name = 'Index_");
+                        sb.Append(propertyName);
+                        sb.Append("') create nonclustered index Index_");
+                        sb.Append(propertyName);
+                        sb.Append(" on ");
+                        sb.Append(tableName);
+                        sb.Append("(");
+                        sb.Append(propertyName);
+                        sb.Append(")\n");
+                    }
+
+                    command.CommandText = StringBuilderCache.GetStringAndRelease(sb);
+                    command.ExecuteNonQuery();
+                    return this;
+                }
+            }
+        }
+
         public async Task<T> Get(string key)
         {
             using (var connection = new SqlConnection(connectionString))
@@ -179,7 +214,7 @@
 
                     for (int i = 0; i < columns.Count; i++)
                     {
-                        var columnValue = columns[i].ToSqlValue(value, converter);
+                        var columnValue = columns[i].ToSqlValue(value, Truncate, converter);
                         if (columnValue is DateTime)
                         {
                             // Ensure we are using DateTime2 to prevent precision loss
@@ -264,7 +299,7 @@
 
                     for (int i = 0; i < columns.Count; i++)
                     {
-                        var columnValue = columns[i].ToSqlValue(value, converter);
+                        var columnValue = columns[i].ToSqlValue(value, Truncate, converter);
                         if (columnValue is DateTime)
                         {
                             // Ensure we are using DateTime2 to prevent precision loss
