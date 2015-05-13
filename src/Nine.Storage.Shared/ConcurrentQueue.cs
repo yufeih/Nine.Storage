@@ -8,7 +8,7 @@
 // A lock-free, concurrent queue primitive, and its associated debugger view type.
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
+#if PCL
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -806,4 +806,4 @@ namespace System.Collections.Concurrent
         public volatile bool _value;
     }
 }
-
+#endif
