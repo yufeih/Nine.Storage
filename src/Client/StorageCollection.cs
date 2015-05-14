@@ -119,17 +119,6 @@
 
         private async Task<int> LoadMoreItemsCoreAsync(int count)
         {
-            if (!subscribed)
-            {
-                subscribed = true;
-
-                if (observableStorage != null)
-                {
-                    // If there are any actions happened before the subscription is set, thoses changes will be lost
-                    subscription = observableStorage.On<T>(OnStorageChanged);
-                }
-            }
-
             if (IsLoading || !HasMoreItems || count <= 0) return 0;
 
             if (cursor != null && string.CompareOrdinal(cursor, maxKey) >= 0)
@@ -143,8 +132,20 @@
                 IsLoading = true;
                 OnPropertyChanged("IsLoading");
 
+                if (!subscribed)
+                {
+                    subscribed = true;
+
+                    if (observableStorage != null)
+                    {
+                        // If there are any actions happened before the subscription is set, thoses changes will be lost
+                        subscription = observableStorage.On<T>(OnStorageChanged);
+                    }
+                }
+
                 var items = await storage.Range<T>(cursor, maxKey, count);
                 var itemCount = items.Count();
+
                 if (itemCount <= 0)
                 {
                     HasMoreItems = false;
@@ -160,7 +161,8 @@
                     if (item == null) continue;
 
                     var key = item.GetKey();
-                    if (string.CompareOrdinal(key, cursor) > 0) cursor = key;
+                    
+                    if (string.CompareOrdinal(key, cursor) > 0) cursor = StorageKey.Increment(key);
                     if (TryFindIndex(key, out index)) continue;
                     var value = convert(item, default(TViewModel));
 
@@ -175,7 +177,7 @@
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, addedItems));
                 }
 
-                if (addedCount <= 0 || itemCount < count || string.CompareOrdinal(cursor, maxKey) >= 0)
+                if (addedCount <= 0 || string.CompareOrdinal(cursor, maxKey) >= 0)
                 {
                     HasMoreItems = false;
                 }
