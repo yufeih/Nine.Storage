@@ -134,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="SqlStorageTest.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="BlobStorageTest.cs" />
     <Compile Include="MemoryCacheTest.cs" />

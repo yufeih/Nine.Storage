@@ -131,15 +131,19 @@
     <Compile Include="..\Portable\Helpers\Sha1.cs">
       <Link>Sha1.cs</Link>
     </Compile>
+    <Compile Include="..\Portable\Helpers\StringBuilderCache.cs">
+      <Link>StringBuilderCache.cs</Link>
+    </Compile>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Azure\BatchedTableStorage.cs" />
     <Compile Include="Azure\BlobStorage.cs" />
     <Compile Include="Azure\KeyedTableEntityFormatter.cs" />
     <Compile Include="Azure\KeyedTableEntity.cs" />
     <Compile Include="Azure\TableStorage.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ElasticSearchStorage.cs" />
     <Compile Include="IOExtensions.cs" />
+    <Compile Include="SqlColumn.cs" />
+    <Compile Include="SqlStorage.cs" />
     <Compile Include="MemoryCacheStorage.cs" />
     <Compile Include="MemcachedStorage.cs" />
     <Compile Include="MongoStorage.cs" />
