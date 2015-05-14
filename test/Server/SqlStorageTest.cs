@@ -65,6 +65,8 @@
         [Fact]
         public void create_index_on_properties()
         {
+            if (string.IsNullOrEmpty(Connection.Current.Sql)) return;
+
             var name = "TestStorageObject" + (int.MaxValue - Environment.TickCount).ToString();
             var storage = new SqlStorage<TestStorageObject>(Connection.Current.Sql, name, true);
             Assert.Equal(storage, storage.WithIndex(nameof(TestStorageObject.Name), nameof(TestStorageObject.NullableTime)));
@@ -75,6 +77,8 @@
         [InlineData(false)]
         public async Task should_throw_when_properties_exceed_max_length(bool truncate)
         {
+            if (string.IsNullOrEmpty(Connection.Current.Sql)) return;
+
             var name = "TestStorageObject" + (int.MaxValue - Environment.TickCount).ToString();
             var storage = new SqlStorage<TestStorageObject>(Connection.Current.Sql, name, true) { Truncate = truncate };
             var str = new string(Enumerable.Repeat(0, 1000).Select(i => '-').ToArray());
