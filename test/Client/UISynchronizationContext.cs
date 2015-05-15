@@ -4,7 +4,7 @@ namespace System.Threading
     using System.Diagnostics;
 
     [DebuggerStepThrough]
-    sealed class UISynchronizationContext : SynchronizationContext, IDisposable
+    class UISynchronizationContext : SynchronizationContext, IDisposable
     {
         struct WorkItem
         {
@@ -22,9 +22,9 @@ namespace System.Threading
 
         private bool disposed;
         private Thread uiThread;
-        private SynchronizationContext previous = Current;
+        private SynchronizationContext previous = SynchronizationContext.Current;
         private readonly BlockingCollection<WorkItem> workItems = new BlockingCollection<WorkItem>();
-        
+
         private void EnsureUIThread()
         {
             if (uiThread == null)
@@ -47,25 +47,29 @@ namespace System.Threading
             while (!disposed)
             {
                 var currentItem = workItems.Take();
-                currentItem.callback(currentItem.state);
-                if (currentItem.handle != null)
+
+                try
                 {
-                    currentItem.handle.Set();
+                    currentItem.callback(currentItem.state);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
+                finally
+                {
+                    if (currentItem.handle != null)
+                    {
+                        currentItem.handle.Set();
+                    }
                 }
             }
         }
 
         public override void Post(SendOrPostCallback d, object state)
         {
-            if (Thread.CurrentThread == uiThread)
-            {
-                d(state);
-            }
-            else
-            {
-                EnsureUIThread();
-                workItems.Add(new WorkItem { callback = d, state = state });
-            }
+            EnsureUIThread();
+            workItems.Add(new WorkItem { callback = d, state = state });
         }
 
         public override void Send(SendOrPostCallback d, object state)
@@ -86,7 +90,6 @@ namespace System.Threading
         public void Dispose()
         {
             disposed = true;
-            workItems.Dispose();
             SetSynchronizationContext(previous);
         }
     }
