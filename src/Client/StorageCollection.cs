@@ -192,7 +192,7 @@
 
                 foreach (var change in pendingChanges)
                 {
-                    OnStorageChanged(change);
+                    OnStorageChangedCore(change);
                 }
                 pendingChanges.Clear();
             }
@@ -342,5 +342,15 @@
         public StorageCollection(IStorage storage, string minKey, string maxKey)
             : base(storage, minKey, maxKey, (x, e) => x)
         { }
+        
+        public new StorageCollection<T> WithAllItems(int batchSize = 100)
+        {
+            return (StorageCollection<T>)base.WithAllItems(batchSize);
+        }
+
+        public new StorageCollection<T> WithItems(int count, int batchSize = 100)
+        {
+            return (StorageCollection<T>)base.WithItems(count, batchSize);
+        }
     }
 }
