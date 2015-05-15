@@ -86,6 +86,10 @@
                     {
                         component = ((ulong)(((TimeSpan)value).Ticks + long.MaxValue + 1)).ToString("D20");
                     }
+                    else if (type == typeof(bool))
+                    {
+                        component = (bool)value ? "1" : "0";
+                    }
                     else if (type.GetTypeInfo().IsEnum)
                     {
                         component = value.ToString();
@@ -213,6 +217,12 @@
                 else if (type == typeof(TimeSpan))
                 {
                     return (T)(object)TimeSpan.FromTicks((long)(ulong.Parse(value) - long.MaxValue - 1));
+                }
+                else if (type == typeof(bool))
+                {
+                    int intVal;
+                    if (int.TryParse(value, out intVal)) return (T)(object)(intVal != 0);
+                    return (T)(object)bool.Parse(value);
                 }
                 else
                 {
