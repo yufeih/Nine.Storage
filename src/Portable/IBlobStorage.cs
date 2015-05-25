@@ -54,18 +54,18 @@
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class BlobStorageExtensions
     {
-        public static async Task<string> Download(this IBlobStorage blob, string sha, CancellationToken cancellationToken = default(CancellationToken))
+        public static async Task<string> Download(this IBlobStorage blob, string key, CancellationToken cancellationToken = default(CancellationToken))
         {
-            await blob.Get(sha, null, cancellationToken).ConfigureAwait(false);
-            return await blob.GetUri(sha).ConfigureAwait(false);
+            await blob.Get(key, null, cancellationToken).ConfigureAwait(false);
+            return await blob.GetUri(key).ConfigureAwait(false);
         }
 
-        public static async Task Download(this IBlobStorage blob, string sha, Action<BlobProgress> progress, CancellationToken cancellationToken = default(CancellationToken))
+        public static async Task Download(this IBlobStorage blob, string key, Action<BlobProgress> progress, CancellationToken cancellationToken = default(CancellationToken))
         {
             var info = new BlobProgress { State = BlobProgressState.Running };
             progress(info);
 
-            if (string.IsNullOrEmpty(sha))
+            if (string.IsNullOrEmpty(key))
             {
                 info.State = BlobProgressState.Failed;
                 progress(info);
@@ -75,8 +75,8 @@
             try
             {
                 var progressInBytes = new Progress<ProgressInBytes>(p => { info.Progress = p; progress(info); });
-                await blob.Get(sha, progressInBytes, cancellationToken).ConfigureAwait(false);
-                info.Uri = await blob.GetUri(sha).ConfigureAwait(false);
+                await blob.Get(key, progressInBytes, cancellationToken).ConfigureAwait(false);
+                info.Uri = await blob.GetUri(key).ConfigureAwait(false);
                 info.State = BlobProgressState.Succeeded;
                 progress(info);
             }
