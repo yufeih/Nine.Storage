@@ -72,14 +72,10 @@
 
         public static async Task Download(this IBlobStorage blob, string key, Action<BlobProgress> progress, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (string.IsNullOrEmpty(key)) return;
+
             progress(new BlobProgress(null, BlobProgressState.Running, default(ProgressInBytes)));
-
-            if (string.IsNullOrEmpty(key))
-            {
-                progress(new BlobProgress(null, BlobProgressState.Failed, default(ProgressInBytes)));
-                return;
-            }
-
+            
             try
             {
                 var sizeInBytes = 0;
