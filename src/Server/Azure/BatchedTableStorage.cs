@@ -24,23 +24,6 @@
         /// The partition count determines the number of partitions to be used for the storage.
         /// Operations across the partitions cannot be batched. And a batched operation can contain
         /// a maximum of 100 operations within a single batch.
-        /// 
-        /// There are also trade-offs when choosing partition count:
-        /// - When choose a smaller number, it is more likely that operations will be batched into a single operation
-        ///   thus we are more likely to do batch insert.
-        /// - When choose a higher number, it is better for scalability since different partitions can be distributed
-        ///   to different storage nodes.
-        ///   
-        /// I am using the following formula to calculate the default partition count:
-        /// - The small azure instance has a maximum table insert throughput of around 5,000 records per second using batch insert
-        ///   with the same partition key. We hit more than 90% CPU usage during the test so this means we've pushed the limit
-        ///   of the machine to just send and receive packages.
-        /// - That means 50 (5,000 / 100) batches per second are the limit of small instance.
-        /// - Then I throw a coin to choose between 32 and 64. 
-        /// - The positive side of the coin is up so I choose 32.
-        /// 
-        /// TODO: When count limit is specified, GetManyAsync will sorted the values based on partition key, 
-        ///       in that case, the returned value will not be correct !!!
         /// </summary>
         private readonly int partitionCount;
         private readonly int partitionKeyLength;
@@ -203,7 +186,7 @@
             }
 
             result.Sort(StorageObjectComparer.Comparer);
-            return result;
+            return count != null ? result.Take(count.Value) : result;
         }
 
         /// <summary>
