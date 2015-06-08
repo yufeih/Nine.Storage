@@ -64,8 +64,8 @@
 
         public StorageCollection(IStorage storage, string minKey, string maxKey, Func<T, TViewModel, TViewModel> convert)
         {
-            if (storage == null) throw new ArgumentException("storage");
-            if (convert == null) throw new ArgumentException("convert");
+            if (storage == null) throw new ArgumentException(nameof(storage));
+            if (convert == null) throw new ArgumentException(nameof(convert));
 
             this.storage = storage;
             this.minKey = minKey;
@@ -96,7 +96,12 @@
         {
             while (HasMoreItems)
             {
-                await LoadMoreItemsCoreAsync(batchSize);
+                var loadedCount = await LoadMoreItemsCoreAsync(batchSize);
+                if (loadedCount < batchSize)
+                {
+                    HasMoreItems = false;
+                    OnPropertyChanged(nameof(HasMoreItems));
+                }
             }
         }
 
@@ -110,9 +115,11 @@
             var total = 0;
             while (total < count)
             {
-                var current = await LoadMoreItemsCoreAsync(Math.Min(batchSize, count - total));
-                if (current <= 0) return total;
-                total += current;
+                var requestCount = Math.Min(batchSize, count - total);
+                var resultCount = await LoadMoreItemsCoreAsync(requestCount);
+                if (resultCount <= 0) return total;
+                if (resultCount < requestCount) return total + resultCount;
+                total += resultCount;
             }
             return total;
         }
@@ -121,14 +128,14 @@
         {
             if (IsLoading || !HasMoreItems || count <= 0) return 0;
 
-            if (cursor != null && string.CompareOrdinal(cursor, maxKey) >= 0)
-            {
-                HasMoreItems = false;
-                return 0;
-            }
-
             try
             {
+                if (cursor != null && string.CompareOrdinal(cursor, maxKey) >= 0)
+                {
+                    HasMoreItems = false;
+                    return 0;
+                }
+
                 IsLoading = true;
                 OnPropertyChanged("IsLoading");
 
@@ -173,7 +180,7 @@
                 var addedCount = collection.Count - originalCount;
                 if (addedCount > 0)
                 {
-                    OnPropertyChanged("Count");
+                    OnPropertyChanged(nameof(Count));
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, addedItems));
                 }
 
@@ -187,8 +194,8 @@
             finally
             {
                 IsLoading = false;
-                OnPropertyChanged("IsLoading");
-                OnPropertyChanged("HasMoreItems");
+                OnPropertyChanged(nameof(IsLoading));
+                OnPropertyChanged(nameof(HasMoreItems));
 
                 foreach (var change in pendingChanges)
                 {
@@ -234,7 +241,7 @@
                     var value = convert(change.Value, default(TViewModel));
                     collection.Insert(index, new Entry { Key = key, Data = change.Value, Value = value });
 
-                    OnPropertyChanged("Count");
+                    OnPropertyChanged(nameof(Count));
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index));
                 }
             }
@@ -245,7 +252,7 @@
                     var entry = collection[index];
                     collection.RemoveAt(index);
 
-                    OnPropertyChanged("Count");
+                    OnPropertyChanged(nameof(Count));
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, entry.Value, index));
                 }
             }
