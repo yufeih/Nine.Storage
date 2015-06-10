@@ -1,46 +1,45 @@
 ﻿{
-    "version": "1.2.0-alpha-*",
-    "description": "A key value pair storage to run on a client device",
-    "authors": [ "Yufei Huang" ],
-    "tags": [ "PCL", "Portable", "storage", "key", "value", "kv storage" ],
+  "version": "1.2.0-alpha-*",
+  "description": "A key value pair storage to run on a client device",
+  "authors": [ "Yufei Huang" ],
+  "tags": [ "PCL", "Portable", "storage", "key", "value", "kv storage" ],
 
-    "iconUrl": "https://avatars3.githubusercontent.com/u/9212229?s=64",
-    "projectUrl": "https://github.com/yufeih/Nine.Storage",
-    "licenseUrl": "https://github.com/yufeih/Nine.Storage/blob/master/LICENSE",
+  "iconUrl": "https://avatars3.githubusercontent.com/u/9212229?s=64",
+  "projectUrl": "https://github.com/studio-nine/Nine.Storage",
+  "licenseUrl": "https://github.com/studio-nine/Nine.Storage/blob/master/LICENSE",
 
-    "dependencies": {
-        "Newtonsoft.Json": "6.0.8",
-        "Nine.Storage": "1.2.0-alpha-*",
-        "Nine.Storage.Shared": "",
-        "Nine.Formatting": "1.0.11-alpha-*",
-        "PCLStorage": "1.0.2",
-        "protobuf-net": "2.0.0.668",
-        "SQLite.Net-PCL": "3.0.5"
-    },
+  "compile": [ "../shared/*.cs" ],
 
-    "frameworks": {
-        ".NETPortable,Version=v4.5,Profile=Profile78": {
-            "frameworkAssemblies": {
-                "System.Collections": "",
-                "System.Diagnostics.Debug": "",
-                "System.Diagnostics.Tools": "",
-                "System.Globalization": "",
-                "System.IO": "",
-                "System.Linq": "",
-                "System.ObjectModel": "",
-                "System.Reflection": "",
-                "System.Reflection.Extensions": "",
-                "System.Runtime": "",
-                "System.Runtime.Extensions": "",
-                "System.Text.Encoding": "",
-                "System.Text.Encoding.Extensions": "",
-                "System.Threading": "",
-                "System.Threading.Tasks": ""
-            },
+  "dependencies": {
+    "Nine.Formatting": "1.0.11-alpha-*",
+    "Nine.Storage": "",
+    "PCLStorage": "1.0.2",
+    "SQLite.Net-PCL": "3.0.5"
+  },
 
-            "compilationOptions": {
-                "define": [ "PCL" ]
-            }
-        }
+  "frameworks": {
+    ".NETPortable,Version=v4.5,Profile=Profile78": {
+      "frameworkAssemblies": {
+        "System.Collections": "",
+        "System.Diagnostics.Debug": "",
+        "System.Diagnostics.Tools": "",
+        "System.Globalization": "",
+        "System.IO": "",
+        "System.Linq": "",
+        "System.ObjectModel": "",
+        "System.Reflection": "",
+        "System.Reflection.Extensions": "",
+        "System.Runtime": "",
+        "System.Runtime.Extensions": "",
+        "System.Text.Encoding": "",
+        "System.Text.Encoding.Extensions": "",
+        "System.Threading": "",
+        "System.Threading.Tasks": ""
+      },
+
+      "compilationOptions": {
+        "define": [ "PCL" ]
+      }
     }
+  }
 }

@@ -1,51 +1,49 @@
 ﻿{
-    "version": "1.2.0-alpha-*",
-    "description": "Contains basic contracts for a key value pair storage system",
-    "authors": [ "Yufei Huang" ],
-    "tags": [ "PCL", "Portable", "storage", "key", "value", "kv storage" ],
+  "version": "1.2.0-alpha-*",
+  "description": "Contains basic contracts for a key value pair storage system",
+  "authors": [ "Yufei Huang" ],
+  "tags": [ "PCL", "Portable", "storage", "key", "value", "kv storage" ],
 
-    "iconUrl": "https://avatars3.githubusercontent.com/u/9212229?s=64",
-    "projectUrl": "https://github.com/yufeih/Nine.Storage",
-    "licenseUrl": "https://github.com/yufeih/Nine.Storage/blob/master/LICENSE",
+  "iconUrl": "https://avatars3.githubusercontent.com/u/9212229?s=64",
+  "projectUrl": "https://github.com/studio-nine/Nine.Storage",
+  "licenseUrl": "https://github.com/studio-nine/Nine.Storage/blob/master/LICENSE",
 
-    "dependencies": {
-        "Nine.Storage.Shared": ""
+  "compile": [ "../shared/*.cs" ],
+
+  "frameworks": {
+    "dnx451": { },
+    "dnxcore50": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.0-beta-*",
+        "System.Collections": "4.0.10-beta-*",
+        "System.Collections.Concurrent": "4.0.10-beta-*",
+        "System.Diagnostics.Debug": "4.0.10-beta-*",
+        "System.Globalization": "4.0.10-beta-*",
+        "System.Linq": "4.0.0-beta-22816",
+        "System.Reflection.Extensions": "4.0.0-beta-*",
+        "System.Runtime.Extensions": "4.0.10-beta-*",
+        "System.Threading": "4.0.10-beta-*"
+      }
     },
+    ".NETPortable,Version=v4.5,Profile=Profile78": {
+      "frameworkAssemblies": {
+        "System.Collections": "",
+        "System.Diagnostics.Tools": "",
+        "System.Diagnostics.Debug": "",
+        "System.Globalization": "",
+        "System.IO": "",
+        "System.Linq": "",
+        "System.Reflection": "",
+        "System.Reflection.Extensions": "",
+        "System.Runtime": "",
+        "System.Runtime.Extensions": "",
+        "System.Threading": "",
+        "System.Threading.Tasks": ""
+      },
 
-    "frameworks": {
-        "dnx451": { },
-        "dnxcore50": {
-            "dependencies": {
-                "Microsoft.CSharp": "4.0.0-beta-*",
-                "System.Collections": "4.0.10-beta-*",
-                "System.Collections.Concurrent": "4.0.10-beta-*",
-                "System.Diagnostics.Debug": "4.0.10-beta-*",
-                "System.Globalization": "4.0.10-beta-*",
-                "System.Linq": "4.0.0-beta-22816",
-                "System.Reflection.Extensions": "4.0.0-beta-*",
-                "System.Runtime.Extensions": "4.0.10-beta-*",
-                "System.Threading": "4.0.10-beta-*"
-            }
-        },
-        ".NETPortable,Version=v4.5,Profile=Profile78": {
-            "frameworkAssemblies": {
-                "System.Collections": "",
-                "System.Diagnostics.Tools": "",
-                "System.Diagnostics.Debug": "",
-                "System.Globalization": "",
-                "System.IO": "",
-                "System.Linq": "",
-                "System.Reflection": "",
-                "System.Reflection.Extensions": "",
-                "System.Runtime": "",
-                "System.Runtime.Extensions": "",
-                "System.Threading": "",
-                "System.Threading.Tasks": ""
-            },
-
-            "compilationOptions": {
-                "define": [ "PCL" ]
-            }
-        }
+      "compilationOptions": {
+        "define": [ "PCL" ]
+      }
     }
+  }
 }
