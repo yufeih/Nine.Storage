@@ -121,7 +121,7 @@
                 if (string.IsNullOrEmpty(path)) return null;
                 return await FileSystem.Current.GetFileFromPathAsync(path, cancellationToken).ConfigureAwait(false);
             }
-            catch (FileNotFoundException)
+            catch
             {
                 return null;
             }

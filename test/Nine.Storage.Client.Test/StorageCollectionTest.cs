@@ -8,7 +8,7 @@
     using System.Threading.Tasks;
     using Xunit;
 
-    sealed class StorageCollectionTest : IDisposable
+    public class StorageCollectionTest : IDisposable
     {
         private readonly UISynchronizationContext syncContext = UISynchronizationContext.BindToCurrent();
 
@@ -26,6 +26,7 @@
 
             Assert.Equal(6, collection.Count);
             Assert.False(collection.HasMoreItems);
+            Assert.Equal(collection.Select(e => e.Id), Enumerable.Range(0, 6).Select(i => i.ToString()));
         }
 
         [Fact]
@@ -38,15 +39,23 @@
             Assert.True(collection.HasMoreItems);
             Assert.Equal(0, collection.Count);
 
-            await collection.LoadMoreItemsAsync(4);
+            await collection.LoadMoreItemsAsync(2);
+
+            Assert.Equal(2, collection.Count);
+            Assert.Equal(collection.Select(e => e.Id), Enumerable.Range(0, 2).Select(i => i.ToString()));
+
+            await collection.LoadMoreItemsAsync(2);
 
             Assert.Equal(4, collection.Count);
+            Assert.Equal(collection.Select(e => e.Id), Enumerable.Range(0, 4).Select(i => i.ToString()));
+
             Assert.False(collection.IsLoading);
             Assert.True(collection.HasMoreItems);
 
             await collection.LoadMoreItemsAsync(10);
             Assert.Equal(6, collection.Count);
             Assert.False(collection.HasMoreItems);
+            Assert.Equal(collection.Select(e => e.Id), Enumerable.Range(0, 6).Select(i => i.ToString()));
         }
 
         [Fact]

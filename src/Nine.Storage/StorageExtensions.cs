@@ -33,6 +33,7 @@
 
         public static IAsyncEnumerator<T> All<T>(this IStorage<T> storage, string prefix, int? batchSize = 1000) where T : class, IKeyed, new()
         {
+            // TODO: All does not work well with BatchedTableStorage...
             var continuation = prefix;
             var end = StorageKey.Increment(continuation);
             return AsyncEnumerator.Create(new Func<Task<AsyncEnumerationResult<T>>>(async () =>

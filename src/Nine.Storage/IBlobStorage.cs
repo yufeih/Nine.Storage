@@ -8,12 +8,15 @@
 
     public struct ProgressInBytes
     {
-        public int Bytes;
-        public int TotalBytes;
+        public readonly int Bytes;
+        public readonly int TotalBytes;
 
-        public float Percentage
+        public float Percentage => TotalBytes > 0 ? (float)Bytes / TotalBytes : 0;
+
+        public ProgressInBytes(int bytes, int totalBytes)
         {
-            get { return TotalBytes > 0 ? (float)Bytes / TotalBytes : 0; } 
+            this.Bytes = bytes;
+            this.TotalBytes = totalBytes;
         }
     }
 
@@ -25,11 +28,18 @@
         Failed,
     }
 
-    public class BlobProgress
+    public struct BlobProgress
     {
-        public string Uri { get; set; }
-        public BlobProgressState State { get; set; }
-        public ProgressInBytes Progress { get; set; }
+        public readonly string Uri;
+        public readonly BlobProgressState State;
+        public readonly ProgressInBytes Progress;
+
+        public BlobProgress(string uri, BlobProgressState state, ProgressInBytes progress)
+        {
+            this.Uri = uri;
+            this.State = state;
+            this.Progress = progress;
+        }
     }
 
     public interface IBlobStorage
@@ -54,36 +64,37 @@
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class BlobStorageExtensions
     {
-        public static async Task<string> Download(this IBlobStorage blob, string sha, CancellationToken cancellationToken = default(CancellationToken))
+        public static async Task<string> Download(this IBlobStorage blob, string key, CancellationToken cancellationToken = default(CancellationToken))
         {
-            await blob.Get(sha, null, cancellationToken).ConfigureAwait(false);
-            return await blob.GetUri(sha).ConfigureAwait(false);
+            await blob.Get(key, null, cancellationToken).ConfigureAwait(false);
+            return await blob.GetUri(key).ConfigureAwait(false);
         }
 
-        public static async Task Download(this IBlobStorage blob, string sha, Action<BlobProgress> progress, CancellationToken cancellationToken = default(CancellationToken))
+        public static async Task Download(this IBlobStorage blob, string key, Action<BlobProgress> progress, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var info = new BlobProgress { State = BlobProgressState.Running };
-            progress(info);
+            if (string.IsNullOrEmpty(key)) return;
 
-            if (string.IsNullOrEmpty(sha))
-            {
-                info.State = BlobProgressState.Failed;
-                progress(info);
-                return;
-            }
-
+            progress(new BlobProgress(null, BlobProgressState.Running, default(ProgressInBytes)));
+            
             try
             {
-                var progressInBytes = new Progress<ProgressInBytes>(p => { info.Progress = p; progress(info); });
-                await blob.Get(sha, progressInBytes, cancellationToken).ConfigureAwait(false);
-                info.Uri = await blob.GetUri(sha).ConfigureAwait(false);
-                info.State = BlobProgressState.Succeeded;
-                progress(info);
+                var sizeInBytes = 0;
+                var progressReporter = new Progress<ProgressInBytes>(p => progress(new BlobProgress(null, BlobProgressState.Running, p)));
+                using (var stream = await blob.Get(key, progressReporter, cancellationToken).ConfigureAwait(false))
+                {
+                    try
+                    {
+                        sizeInBytes = (int)stream.Length;
+                    }
+                    catch (NotSupportedException) { }
+                }
+
+                var uri = await blob.GetUri(key).ConfigureAwait(false);
+                progress(new BlobProgress(uri, BlobProgressState.Succeeded, new ProgressInBytes(sizeInBytes, sizeInBytes)));
             }
             catch
             {
-                info.State = BlobProgressState.Failed;
-                progress(info);
+                progress(new BlobProgress(null, BlobProgressState.Failed, default(ProgressInBytes)));
             }
         }
     }

@@ -22,7 +22,7 @@
         public Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken)) => blob.Get(VerifySha1(key), progress, cancellationToken);
         public Task<string> Put(Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken)) => Put(null, stream, progress, cancellationToken);
 
-        public Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (string.IsNullOrEmpty(key))
             {
@@ -37,7 +37,13 @@
                 key = Sha1.ComputeHashString(stream);
                 stream.Seek(0, SeekOrigin.Begin);
             }
-            return blob.Put(key, stream, progress, cancellationToken);
+
+            if (await blob.Exists(key).ConfigureAwait(false))
+            {
+                return key;
+            }
+
+            return await blob.Put(key, stream, progress, cancellationToken).ConfigureAwait(false);
         }
 
         private string VerifySha1(string key)

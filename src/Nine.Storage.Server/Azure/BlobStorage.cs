@@ -10,12 +10,20 @@
 
     public class BlobStorage : IBlobStorage
     {
-        private static readonly MemoryCache contentCache = new MemoryCache(typeof(BlobStorage).Name);
+        private readonly CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromMinutes(30) };
+        private readonly MemoryCache contentCache = new MemoryCache(typeof(BlobStorage).Name);
 
         public readonly CloudBlobContainer Container;
 
         public Uri BaseUri { get; private set; }
         public string ContainerName { get; private set; }
+        public bool Cache { get; set; } = true;
+
+        public TimeSpan SlidingExpiration
+        {
+            get { return policy.SlidingExpiration; }
+            set { policy.SlidingExpiration = value; }
+        }
 
         private BlobStorage(CloudBlobContainer container)
         {
@@ -70,22 +78,26 @@
             using (var stream = await Container.GetBlockBlobReference(key).OpenReadAsync(cancellationToken).ConfigureAwait(false))
             {
                 var bytes = await stream.ReadBytesAsync(8 * 1024, cancellationToken).ConfigureAwait(false);
-                contentCache.Add(key, bytes, new DateTimeOffset(DateTime.UtcNow.AddMinutes(10)));
+                if (Cache)
+                {
+                    contentCache.Add(key, bytes, policy);
+                }
                 return new MemoryStream(bytes);
             }
         }
 
         public async Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            CloudBlockBlob blob;
-
-            if (!string.IsNullOrEmpty(key))
+            if (Cache)
             {
-                blob = Container.GetBlockBlobReference(key);
-                if (await blob.ExistsAsync(cancellationToken)) return key;
+                var ms = new MemoryStream();
+                await stream.CopyToAsync(ms);
+                contentCache.Add(key, ms.ToArray(), policy);
+                ms.Seek(0, SeekOrigin.Begin);
+                stream = ms;
             }
-
-            blob = Container.GetBlockBlobReference(key);
+            
+            var blob = Container.GetBlockBlobReference(key);
             await blob.UploadFromStreamAsync(stream, cancellationToken).ConfigureAwait(false);
 
             return key;

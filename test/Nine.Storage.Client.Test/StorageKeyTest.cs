@@ -47,6 +47,7 @@
         [Fact]
         public static void parse_should_be_correct()
         {
+            ParseShouldEqual(new[] { true, false });
             ParseShouldEqual(new[] { ulong.MinValue, (ulong)48786, ulong.MaxValue });
             ParseShouldEqual(new[] { long.MinValue, -20, 0, 48786, long.MaxValue });
             ParseShouldEqual(new[] { uint.MinValue, (uint)48786, uint.MaxValue });

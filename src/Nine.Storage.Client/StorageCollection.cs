@@ -64,8 +64,8 @@
 
         public StorageCollection(IStorage storage, string minKey, string maxKey, Func<T, TViewModel, TViewModel> convert)
         {
-            if (storage == null) throw new ArgumentException("storage");
-            if (convert == null) throw new ArgumentException("convert");
+            if (storage == null) throw new ArgumentException(nameof(storage));
+            if (convert == null) throw new ArgumentException(nameof(convert));
 
             this.storage = storage;
             this.minKey = minKey;
@@ -96,7 +96,12 @@
         {
             while (HasMoreItems)
             {
-                await LoadMoreItemsCoreAsync(batchSize);
+                var loadedCount = await LoadMoreItemsCoreAsync(batchSize);
+                if (loadedCount < batchSize)
+                {
+                    HasMoreItems = false;
+                    OnPropertyChanged(nameof(HasMoreItems));
+                }
             }
         }
 
@@ -110,41 +115,44 @@
             var total = 0;
             while (total < count)
             {
-                var current = await LoadMoreItemsCoreAsync(Math.Min(batchSize, count - total));
-                if (current <= 0) return total;
-                total += current;
+                var requestCount = Math.Min(batchSize, count - total);
+                var resultCount = await LoadMoreItemsCoreAsync(requestCount);
+                if (resultCount <= 0) return total;
+                if (resultCount < requestCount) return total + resultCount;
+                total += resultCount;
             }
             return total;
         }
 
         private async Task<int> LoadMoreItemsCoreAsync(int count)
         {
-            if (!subscribed)
-            {
-                subscribed = true;
-
-                if (observableStorage != null)
-                {
-                    // If there are any actions happened before the subscription is set, thoses changes will be lost
-                    subscription = observableStorage.On<T>(OnStorageChanged);
-                }
-            }
-
             if (IsLoading || !HasMoreItems || count <= 0) return 0;
-
-            if (cursor != null && string.CompareOrdinal(cursor, maxKey) >= 0)
-            {
-                HasMoreItems = false;
-                return 0;
-            }
 
             try
             {
+                if (cursor != null && string.CompareOrdinal(cursor, maxKey) >= 0)
+                {
+                    HasMoreItems = false;
+                    return 0;
+                }
+
                 IsLoading = true;
                 OnPropertyChanged("IsLoading");
 
+                if (!subscribed)
+                {
+                    subscribed = true;
+
+                    if (observableStorage != null)
+                    {
+                        // If there are any actions happened before the subscription is set, thoses changes will be lost
+                        subscription = observableStorage.On<T>(OnStorageChanged);
+                    }
+                }
+
                 var items = await storage.Range<T>(cursor, maxKey, count);
                 var itemCount = items.Count();
+
                 if (itemCount <= 0)
                 {
                     HasMoreItems = false;
@@ -160,7 +168,8 @@
                     if (item == null) continue;
 
                     var key = item.GetKey();
-                    if (string.CompareOrdinal(key, cursor) > 0) cursor = key;
+                    
+                    if (string.CompareOrdinal(key, cursor) > 0) cursor = StorageKey.Increment(key);
                     if (TryFindIndex(key, out index)) continue;
                     var value = convert(item, default(TViewModel));
 
@@ -171,11 +180,11 @@
                 var addedCount = collection.Count - originalCount;
                 if (addedCount > 0)
                 {
-                    OnPropertyChanged("Count");
+                    OnPropertyChanged(nameof(Count));
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, addedItems));
                 }
 
-                if (addedCount <= 0 || itemCount < count || string.CompareOrdinal(cursor, maxKey) >= 0)
+                if (addedCount <= 0 || string.CompareOrdinal(cursor, maxKey) >= 0)
                 {
                     HasMoreItems = false;
                 }
@@ -185,12 +194,12 @@
             finally
             {
                 IsLoading = false;
-                OnPropertyChanged("IsLoading");
-                OnPropertyChanged("HasMoreItems");
+                OnPropertyChanged(nameof(IsLoading));
+                OnPropertyChanged(nameof(HasMoreItems));
 
                 foreach (var change in pendingChanges)
                 {
-                    OnStorageChanged(change);
+                    OnStorageChangedCore(change);
                 }
                 pendingChanges.Clear();
             }
@@ -232,7 +241,7 @@
                     var value = convert(change.Value, default(TViewModel));
                     collection.Insert(index, new Entry { Key = key, Data = change.Value, Value = value });
 
-                    OnPropertyChanged("Count");
+                    OnPropertyChanged(nameof(Count));
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index));
                 }
             }
@@ -243,7 +252,7 @@
                     var entry = collection[index];
                     collection.RemoveAt(index);
 
-                    OnPropertyChanged("Count");
+                    OnPropertyChanged(nameof(Count));
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, entry.Value, index));
                 }
             }
@@ -340,5 +349,15 @@
         public StorageCollection(IStorage storage, string minKey, string maxKey)
             : base(storage, minKey, maxKey, (x, e) => x)
         { }
+        
+        public new StorageCollection<T> WithAllItems(int batchSize = 100)
+        {
+            return (StorageCollection<T>)base.WithAllItems(batchSize);
+        }
+
+        public new StorageCollection<T> WithItems(int count, int batchSize = 100)
+        {
+            return (StorageCollection<T>)base.WithItems(count, batchSize);
+        }
     }
 }

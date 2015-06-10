@@ -35,7 +35,7 @@
   "libraries": {
     "Microsoft.CSharp/4.0.0-beta-22816": {
       "serviceable": false,
-      "sha": "FGnaYvmoVLd0QTnOyHfm+C79a9CGqQAoh76Ix9++a4SdeaAB8PgpB2Vi/Uc5jcp491QvPyPQjtXCuhRfqWvNkw==",
+      "sha": "h+75iL9JfUbT0P8xOm9u0XSvk5+8GUD92VVwjbvJHqIcM23DVv2AjYVhVjTm6y923lNLn+qh/h4ViinL9RME2Q==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
@@ -68,8 +68,12 @@
             "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/Microsoft.CSharp.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/Microsoft.CSharp.dll"
+          ]
         }
       },
       "files": [
@@ -83,15 +87,19 @@
         "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/Microsoft.CSharp.dll"
       ]
     },
-    "System.Collections/4.0.10-beta-22906": {
+    "System.Collections/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "/8LyoJZV+hzuej25Qrx8NjjO51SAk2IrLVUxECYVB4ymA2jlsDPdfqP4LVVmPigmakmbHcLaah1Wfti2hBTk6Q==",
+      "sha": "pFwiLMtcsvAx8ZFsSIDVSuPAXXW2z1gkmE/YqiMELlxPVHKyJGrUZoJCIBfVg1HERxMnd1dyj7ffqj5Nx3mzGQ==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816"
           },
-          "frameworkAssemblies": [],
+          "frameworkAssemblies": [
+            "mscorlib",
+            "System",
+            "System.Core"
+          ],
           "runtimeAssemblies": [
             "lib/net45/System.Collections.dll"
           ],
@@ -101,7 +109,7 @@
         },
         "DNXCore,Version=v5.0": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -113,17 +121,21 @@
         },
         ".NETPortable,Version=v4.5,Profile=Profile78": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Collections.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Collections.dll"
+          ]
         }
       },
       "files": [
         "License.rtf",
-        "System.Collections.4.0.10-beta-22906.nupkg",
-        "System.Collections.4.0.10-beta-22906.nupkg.sha512",
+        "System.Collections.4.0.10-beta-22816.nupkg",
+        "System.Collections.4.0.10-beta-22816.nupkg.sha512",
         "System.Collections.nuspec",
         "lib/aspnetcore50/System.Collections.dll",
         "lib/contract/System.Collections.dll",
@@ -131,16 +143,19 @@
         "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Collections.dll"
       ]
     },
-    "System.Collections.Concurrent/4.0.10-beta-22906": {
+    "System.Collections.Concurrent/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "6wjmvnVdbdl6txM1f7Ot4G3YPsqtYUw192bamZQ8zYja+f/54UF9cwHj06q292gGGEVFKOviq++ErpJqvvOYlw==",
+      "sha": "IWT4zcq0JdzU5HvJuHZbBFIntFfjmKzkfPbUWw5gwbso5nejOfVSCiRgJmUmEex0R5oJN+sX8gSrJrofzoXrww==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906",
-            "System.Threading.Tasks": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816",
+            "System.Threading.Tasks": "4.0.10-beta-22816"
           },
-          "frameworkAssemblies": [],
+          "frameworkAssemblies": [
+            "mscorlib",
+            "System"
+          ],
           "runtimeAssemblies": [
             "lib/net45/System.Collections.Concurrent.dll"
           ],
@@ -150,8 +165,8 @@
         },
         "DNXCore,Version=v5.0": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906",
-            "System.Threading.Tasks": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816",
+            "System.Threading.Tasks": "4.0.10-beta-22816"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -163,18 +178,22 @@
         },
         ".NETPortable,Version=v4.5,Profile=Profile78": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906",
-            "System.Threading.Tasks": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816",
+            "System.Threading.Tasks": "4.0.10-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Collections.Concurrent.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Collections.Concurrent.dll"
+          ]
         }
       },
       "files": [
         "License.rtf",
-        "System.Collections.Concurrent.4.0.10-beta-22906.nupkg",
-        "System.Collections.Concurrent.4.0.10-beta-22906.nupkg.sha512",
+        "System.Collections.Concurrent.4.0.10-beta-22816.nupkg",
+        "System.Collections.Concurrent.4.0.10-beta-22816.nupkg.sha512",
         "System.Collections.Concurrent.nuspec",
         "lib/aspnetcore50/System.Collections.Concurrent.dll",
         "lib/contract/System.Collections.Concurrent.dll",
@@ -182,15 +201,18 @@
         "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Collections.Concurrent.dll"
       ]
     },
-    "System.Diagnostics.Debug/4.0.10-beta-22906": {
+    "System.Diagnostics.Debug/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "YzPvhqRzUblst0hSdazhJaLxDHR7cqOJJ66nC6pGcIeG2PxpC+z5oazhdzsQ0Y+/kURc34shb4+/bzrzfJ0GbA==",
+      "sha": "sFAWo06FoJmZLT0oH/HzbpWUdaEPK6ao58ttrdqnQ6QXRtTH85NXHRrhxpU/tDSODX1fPuwIEf+i5vSVJvoCOQ==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816"
           },
-          "frameworkAssemblies": [],
+          "frameworkAssemblies": [
+            "mscorlib",
+            "System"
+          ],
           "runtimeAssemblies": [
             "lib/net45/System.Diagnostics.Debug.dll"
           ],
@@ -200,7 +222,7 @@
         },
         "DNXCore,Version=v5.0": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -212,17 +234,21 @@
         },
         ".NETPortable,Version=v4.5,Profile=Profile78": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Diagnostics.Debug.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Diagnostics.Debug.dll"
+          ]
         }
       },
       "files": [
         "License.rtf",
-        "System.Diagnostics.Debug.4.0.10-beta-22906.nupkg",
-        "System.Diagnostics.Debug.4.0.10-beta-22906.nupkg.sha512",
+        "System.Diagnostics.Debug.4.0.10-beta-22816.nupkg",
+        "System.Diagnostics.Debug.4.0.10-beta-22816.nupkg.sha512",
         "System.Diagnostics.Debug.nuspec",
         "lib/aspnetcore50/System.Diagnostics.Debug.dll",
         "lib/contract/System.Diagnostics.Debug.dll",
@@ -232,7 +258,7 @@
     },
     "System.Dynamic.Runtime/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "xPMym5hsntfLf/Gisnvk3t25TaZRvwDF46PaszRlB63WsDbAIUXgrsE4ob8ZKTL7+uyGW1HGwOBVlJCP/J1/hA==",
+      "sha": "xq53sL6Md+m46wnLYnmbCvAnbo05vlyDt9v6r1HhXCL4Q7uk66aFKMRg3ca+0uGcOY8AujPhepHBC2lQumJGew==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
@@ -275,8 +301,12 @@
             "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Dynamic.Runtime.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Dynamic.Runtime.dll"
+          ]
         }
       },
       "files": [
@@ -290,15 +320,17 @@
         "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Dynamic.Runtime.dll"
       ]
     },
-    "System.Globalization/4.0.10-beta-22906": {
+    "System.Globalization/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "WdLshYuSBvNEGL8Xl/VUAtEfcNjaSbIM2+u9SRkdJyfcFpBOiWGcLeksPALalHSp/l+kvHmS1X2SQ6np24e/Ew==",
+      "sha": "Eq2937cdQH2G3qij5gZIJ47785OwLK/+AVjyHfJKnWyhAFWoaLnQOVtaXfMVkfvp4AW7eDVkqIv0fSoS6N2q0A==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816"
           },
-          "frameworkAssemblies": [],
+          "frameworkAssemblies": [
+            "mscorlib"
+          ],
           "runtimeAssemblies": [
             "lib/net45/System.Globalization.dll"
           ],
@@ -308,7 +340,7 @@
         },
         "DNXCore,Version=v5.0": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -320,17 +352,21 @@
         },
         ".NETPortable,Version=v4.5,Profile=Profile78": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Globalization.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Globalization.dll"
+          ]
         }
       },
       "files": [
         "License.rtf",
-        "System.Globalization.4.0.10-beta-22906.nupkg",
-        "System.Globalization.4.0.10-beta-22906.nupkg.sha512",
+        "System.Globalization.4.0.10-beta-22816.nupkg",
+        "System.Globalization.4.0.10-beta-22816.nupkg.sha512",
         "System.Globalization.nuspec",
         "lib/aspnetcore50/System.Globalization.dll",
         "lib/contract/System.Globalization.dll",
@@ -340,7 +376,7 @@
     },
     "System.IO/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "/wVhoi2uVXw5IZFU+JrPlyVgKrtMPtzQaYQ3DKUxH9nqiX64BChTFGNDcwZK3iNWTIWESxJhj9JR3lbqbG/PIg==",
+      "sha": "PjyH9UMFVQHSl8g1XR+M6Q/mG2RTpPff42kG9aygXyR/Wyt/O/wOiyxZ2SaYNl8e86yecKRh9SnK2RS9thI4ig==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
@@ -380,8 +416,12 @@
             "System.Threading.Tasks": "4.0.10-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.IO.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.IO.dll"
+          ]
         }
       },
       "files": [
@@ -397,7 +437,7 @@
     },
     "System.Linq/4.0.0-beta-22816": {
       "serviceable": false,
-      "sha": "zBGJfF48L17zFzfs/B8KI1yQklPul0af4a1auQTyUxjdy/HzppkIfoRgrq3yqV+YIPWDkUxu9U9bwjOj90xLXw==",
+      "sha": "QlwRD8FTiYAZ7BxEjB5u9vjKaAHZ6KvuZYm+4tjYduTIWpFI3o34UjowJXCaPlLwc8USRshAXLgnsQ3iaOjv8Q==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
@@ -434,8 +474,12 @@
             "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Linq.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Linq.dll"
+          ]
         }
       },
       "files": [
@@ -451,7 +495,7 @@
     },
     "System.Linq.Expressions/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "qTu/alZVoEBZRIrbLzVlFSndQyhIEXY+qoBockbsUu98TDtd1N9gYiyg7FHeW7Qx1vDGfz1PWfUlYBd4G/ZHkg==",
+      "sha": "daFTEhRXqo1X1EVkTcuqRMDWR3QE5vrk0IY4kkOBjtCASv7YDXsnBJO8BuiZsK1CzEHoxAQiPLs954l86ckRYA==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
@@ -488,8 +532,12 @@
             "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Linq.Expressions.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Linq.Expressions.dll"
+          ]
         }
       },
       "files": [
@@ -505,7 +553,7 @@
     },
     "System.ObjectModel/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "Rtu5FLq7JTtignXiSEKx26Q01NHyoO3pTcYYdwF54kFC64VbHEcvs8b586JyVVpM7Wz0zBmdgHDrH9fv2MgeVw==",
+      "sha": "tWcx/WRx/nlsBCPMtMxeniVqDvfJAfNQcq5eRhBIH4myultIvpuRfC3hy6Bby29/v3Zzy2fPgSyRIPGdOIIX4w==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
@@ -539,8 +587,12 @@
             "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.ObjectModel.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.ObjectModel.dll"
+          ]
         }
       },
       "files": [
@@ -556,7 +608,7 @@
     },
     "System.Reflection/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "vdH/6euCyI/0el+6baAh/pttTZyWDh/PfL2TebSri3+FvNkjIEcE4httMn7J/5Lqz+NMDcLP7wOlY4Aa5EazNg==",
+      "sha": "YzEbWoLTsPOUL4mPRbeRkhfJ12VgIJVy7fwoKnp0RgxXwuQQ2CPFt2E3qjl2TWzMpnhyRBtM2L/qkt4Dlg8Okw==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
@@ -595,8 +647,12 @@
             "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Reflection.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Reflection.dll"
+          ]
         }
       },
       "files": [
@@ -610,16 +666,18 @@
         "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Reflection.dll"
       ]
     },
-    "System.Reflection.Extensions/4.0.0-beta-22906": {
+    "System.Reflection.Extensions/4.0.0-beta-22816": {
       "serviceable": false,
-      "sha": "2TnDiDG3md57JF5c9ee3kR+Jys1ybJjNcD7IUdpvK8L9RE3lIW0FYwZ8X/Q/QeNIegGOT+UtH3552S7JxfKtGA==",
+      "sha": "jioNtekwiaIeTR5S6jz9rDRRkdZ+MQpRtQjl3Jw0JDOJ1EGoJiSW4rM8ve6HQeZzOR3goXwMGCYWgd97l4GomQ==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
-            "System.Reflection": "4.0.0-beta-22906",
-            "System.Runtime": "4.0.0-beta-22906"
+            "System.Reflection": "4.0.10-beta-22816",
+            "System.Runtime": "4.0.20-beta-22816"
           },
-          "frameworkAssemblies": [],
+          "frameworkAssemblies": [
+            "mscorlib"
+          ],
           "runtimeAssemblies": [
             "lib/net45/System.Reflection.Extensions.dll"
           ],
@@ -629,8 +687,8 @@
         },
         "DNXCore,Version=v5.0": {
           "dependencies": {
-            "System.Reflection": "4.0.0-beta-22906",
-            "System.Runtime": "4.0.0-beta-22906"
+            "System.Reflection": "4.0.10-beta-22816",
+            "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -642,18 +700,22 @@
         },
         ".NETPortable,Version=v4.5,Profile=Profile78": {
           "dependencies": {
-            "System.Reflection": "4.0.0-beta-22906",
-            "System.Runtime": "4.0.0-beta-22906"
+            "System.Reflection": "4.0.10-beta-22816",
+            "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Reflection.Extensions.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Reflection.Extensions.dll"
+          ]
         }
       },
       "files": [
         "License.rtf",
-        "System.Reflection.Extensions.4.0.0-beta-22906.nupkg",
-        "System.Reflection.Extensions.4.0.0-beta-22906.nupkg.sha512",
+        "System.Reflection.Extensions.4.0.0-beta-22816.nupkg",
+        "System.Reflection.Extensions.4.0.0-beta-22816.nupkg.sha512",
         "System.Reflection.Extensions.nuspec",
         "lib/aspnetcore50/System.Reflection.Extensions.dll",
         "lib/contract/System.Reflection.Extensions.dll",
@@ -663,7 +725,7 @@
     },
     "System.Reflection.Primitives/4.0.0-beta-22816": {
       "serviceable": false,
-      "sha": "LXGxjPbmTit9COY1WKRG89Eya58UFVqebeNvGDCrX/c/72OP9XX00+wUUE34WFDioKeVBjofOySFdtKMVsDq1Q==",
+      "sha": "EJwj21pXCKrEixqXZ0mcJXYwDaTMTX9csa3Gcrm9i0UwemWaUPMHU94Y3crDuvk5h+urJlm6rk8xuEXIgmTFzg==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
@@ -696,8 +758,12 @@
             "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Reflection.Primitives.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Reflection.Primitives.dll"
+          ]
         }
       },
       "files": [
@@ -711,13 +777,18 @@
         "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Reflection.Primitives.dll"
       ]
     },
-    "System.Runtime/4.0.20-beta-22906": {
+    "System.Runtime/4.0.20-beta-22816": {
       "serviceable": false,
-      "sha": "uHOyllqTT/rBeL8xUxNGSaZPL8l2CyRkBPsKniFs+Glf45OXcvdUabSqMEmkU3a+iGxNsiBU14EFlK55Ur5oCw==",
+      "sha": "BEN6F4aNjbBdDxM8Xhb/MCSDhYmtvA29c1HUBvn0aNAVXaIJECLy2w5YkcscdklIieZCrcYeG2UzIgWlr4+GeQ==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {},
-          "frameworkAssemblies": [],
+          "frameworkAssemblies": [
+            "mscorlib",
+            "System",
+            "System.ComponentModel.Composition",
+            "System.Core"
+          ],
           "runtimeAssemblies": [
             "lib/net45/System.Runtime.dll"
           ],
@@ -738,14 +809,18 @@
         ".NETPortable,Version=v4.5,Profile=Profile78": {
           "dependencies": {},
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Runtime.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Runtime.dll"
+          ]
         }
       },
       "files": [
         "License.rtf",
-        "System.Runtime.4.0.20-beta-22906.nupkg",
-        "System.Runtime.4.0.20-beta-22906.nupkg.sha512",
+        "System.Runtime.4.0.20-beta-22816.nupkg",
+        "System.Runtime.4.0.20-beta-22816.nupkg.sha512",
         "System.Runtime.nuspec",
         "lib/aspnetcore50/System.Runtime.dll",
         "lib/contract/System.Runtime.dll",
@@ -753,15 +828,18 @@
         "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Runtime.dll"
       ]
     },
-    "System.Runtime.Extensions/4.0.10-beta-22906": {
+    "System.Runtime.Extensions/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "NhmOlF7d8q4zKYwC9sKri4R5SUdbXUHaA1e42J/4s/9YyP/I/+iTvrTkCcsq1/GQA3mJln8TCwYFhlSJy/EBuA==",
+      "sha": "VyMZA1a7c1j9lbSarndGwFLEpip5uhl3oZTjW2fR8Lte0lWKB8Aro8rRoEHsWd5vUd3/kYDOvIXvGpCKBMlW1g==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
-            "System.Runtime": "4.0.20-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816"
           },
-          "frameworkAssemblies": [],
+          "frameworkAssemblies": [
+            "mscorlib",
+            "System"
+          ],
           "runtimeAssemblies": [
             "lib/net45/System.Runtime.Extensions.dll"
           ],
@@ -771,7 +849,7 @@
         },
         "DNXCore,Version=v5.0": {
           "dependencies": {
-            "System.Runtime": "4.0.20-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -783,17 +861,21 @@
         },
         ".NETPortable,Version=v4.5,Profile=Profile78": {
           "dependencies": {
-            "System.Runtime": "4.0.20-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Runtime.Extensions.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Runtime.Extensions.dll"
+          ]
         }
       },
       "files": [
         "License.rtf",
-        "System.Runtime.Extensions.4.0.10-beta-22906.nupkg",
-        "System.Runtime.Extensions.4.0.10-beta-22906.nupkg.sha512",
+        "System.Runtime.Extensions.4.0.10-beta-22816.nupkg",
+        "System.Runtime.Extensions.4.0.10-beta-22816.nupkg.sha512",
         "System.Runtime.Extensions.nuspec",
         "lib/aspnetcore50/System.Runtime.Extensions.dll",
         "lib/contract/System.Runtime.Extensions.dll",
@@ -803,7 +885,7 @@
     },
     "System.Text.Encoding/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "QDKTAvat7aDGMWnVkGm6tJvvmc2zSTa/p8M4/OEBBkZKNx4SGkeGEjFUhl7b6AXZ220m4dACygkiAVoB/LqMHw==",
+      "sha": "4Isk8Lg2mkSex8N1ufJfazDo9Z0zTvx7FRh7LYiIqUJJSmPMenMXoFYMtm3tQ+sUWz23qMlIrOvT9BuIBnmRQg==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
@@ -836,8 +918,12 @@
             "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Text.Encoding.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Text.Encoding.dll"
+          ]
         }
       },
       "files": [
@@ -851,16 +937,20 @@
         "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Text.Encoding.dll"
       ]
     },
-    "System.Threading/4.0.10-beta-22906": {
+    "System.Threading/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "L6jkOfAJdDj0auAhI+7yXwEb/BKzL2xQubIr0aXUpT/uB/HFqqMRd9B9McdyNkZR8d5BX38T8XounuKXHstUWA==",
+      "sha": "GO4X3FuGlw4DJH+UbbKDXKnyyWiwlPJIX+Ys0UCzSdAPneBA42dPb2+kRakWy+wo6n6Gcv7ckkfa3j8MSSxbhg==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906",
-            "System.Threading.Tasks": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816",
+            "System.Threading.Tasks": "4.0.10-beta-22816"
           },
-          "frameworkAssemblies": [],
+          "frameworkAssemblies": [
+            "mscorlib",
+            "System",
+            "System.Core"
+          ],
           "runtimeAssemblies": [
             "lib/net45/System.Threading.dll"
           ],
@@ -870,8 +960,8 @@
         },
         "DNXCore,Version=v5.0": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906",
-            "System.Threading.Tasks": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816",
+            "System.Threading.Tasks": "4.0.10-beta-22816"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -883,18 +973,22 @@
         },
         ".NETPortable,Version=v4.5,Profile=Profile78": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22906",
-            "System.Threading.Tasks": "4.0.0-beta-22906"
+            "System.Runtime": "4.0.20-beta-22816",
+            "System.Threading.Tasks": "4.0.10-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Threading.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Threading.dll"
+          ]
         }
       },
       "files": [
         "License.rtf",
-        "System.Threading.4.0.10-beta-22906.nupkg",
-        "System.Threading.4.0.10-beta-22906.nupkg.sha512",
+        "System.Threading.4.0.10-beta-22816.nupkg",
+        "System.Threading.4.0.10-beta-22816.nupkg.sha512",
         "System.Threading.nuspec",
         "lib/aspnetcore50/System.Threading.dll",
         "lib/contract/System.Threading.dll",
@@ -904,7 +998,7 @@
     },
     "System.Threading.Tasks/4.0.10-beta-22816": {
       "serviceable": false,
-      "sha": "e7TcoQuIPQ4bvkkCY2ulU8NFvj8XqYxsGpD3fAq1KajAlpx5j327Q13lKxlGPb7ouHQydKHCy5G1ZGuydb0DAA==",
+      "sha": "KhcVrI2JzX1oHigWTbf4F/2uhPSkhjquLPYbBVCLe9HGxLDJk2WLgmTbJk7fIus6xWWnWJmhOp0rHERU9M2SQw==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
@@ -938,8 +1032,12 @@
             "System.Runtime": "4.0.20-beta-22816"
           },
           "frameworkAssemblies": [],
-          "runtimeAssemblies": [],
-          "compileAssemblies": []
+          "runtimeAssemblies": [
+            "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Threading.Tasks.dll"
+          ],
+          "compileAssemblies": [
+            "lib/contract/System.Threading.Tasks.dll"
+          ]
         }
       },
       "files": [
