@@ -25,17 +25,6 @@
         "System.Runtime": "4.0.10.0",
         "System.Runtime.Caching": "4.0.0.0"
       }
-    },
-    //"dnxcore50": {
-    //  "dependencies": {
-    //    "Microsoft.CSharp": "4.0.0-beta-22816",
-    //    "System.Collections": "4.0.10-beta-22816",
-    //    "System.Collections.Concurrent": "4.0.0-beta-22816",
-    //    "System.Linq": "4.0.0-beta-22816",
-    //    "System.Reflection.Extensions": "4.0.0-beta-22816",
-    //    "System.Runtime.Extensions": "4.0.10-beta-22816",
-    //    "System.Threading": "4.0.10-beta-22816"
-    //  }
-    //}
+    }
   }
 }
