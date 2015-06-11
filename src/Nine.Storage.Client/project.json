@@ -1,0 +1,53 @@
+﻿{
+  "version": "1.2.0-alpha-*",
+  "description": "A key value pair storage to run on a client device",
+  "authors": [ "Yufei Huang" ],
+  "tags": [ "PCL", "Portable", "storage", "key", "value", "kv storage" ],
+
+  "iconUrl": "https://avatars3.githubusercontent.com/u/9212229?s=64",
+  "projectUrl": "https://github.com/studio-nine/Nine.Storage",
+  "licenseUrl": "https://github.com/studio-nine/Nine.Storage/blob/master/LICENSE",
+
+  "compile": [ "../shared/*.cs" ],
+
+  "dependencies": {
+    "Nine.Formatting": "1.0.11-alpha-*",
+    "Nine.Storage": "1.2.0-alpha-*",
+    "PCLStorage": "1.0.2",
+    "SQLite.Net-PCL": "3.0.5"
+  },
+
+  "frameworks": {
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.Collections": "4.0.0.0",
+        "System.IO": "4.0.0.0",
+        "System.Runtime": "4.0.10.0",
+        "System.Threading.Tasks": "4.0.0.0"
+      }
+    },
+    ".NETPortable,Version=v4.5,Profile=Profile78": {
+      "frameworkAssemblies": {
+        "System.Collections": "",
+        "System.Diagnostics.Debug": "",
+        "System.Diagnostics.Tools": "",
+        "System.Globalization": "",
+        "System.IO": "",
+        "System.Linq": "",
+        "System.ObjectModel": "",
+        "System.Reflection": "",
+        "System.Reflection.Extensions": "",
+        "System.Runtime": "",
+        "System.Runtime.Extensions": "",
+        "System.Text.Encoding": "",
+        "System.Text.Encoding.Extensions": "",
+        "System.Threading": "",
+        "System.Threading.Tasks": ""
+      },
+
+      "compilationOptions": {
+        "define": [ "PCL" ]
+      }
+    }
+  }
+}
