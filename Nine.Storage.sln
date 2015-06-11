@@ -1,23 +1,39 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22609.0
+VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6939EB8B-3039-4DAC-BB35-DB3BE837EAB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nine.Storage", "src\Portable\Nine.Storage.csproj", "{4C65A2E5-5C95-410D-9E5F-E394CD3E2B21}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nine.Storage.Client", "src\Client\Nine.Storage.Client.csproj", "{F7626FD5-5224-4AE0-A1CF-29BD780065C5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nine.Storage.Server", "src\Server\Nine.Storage.Server.csproj", "{E4A9D22D-9C83-4E9A-B742-5FE300190667}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{393314BF-60D9-4A7A-BEAC-E0B48FCC7DFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nine.Storage.Test", "test\Portable\Nine.Storage.Test.csproj", "{179E55BE-4F97-4175-9FA3-52F57231E318}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nine.Storage", "src\Nine.Storage\Nine.Storage.xproj", "{4C65A2E5-5C95-410D-9E5F-E394CD3E2B21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nine.Storage.Client.Test", "test\Client\Nine.Storage.Client.Test.csproj", "{F6CDD330-93C2-4243-85EE-482F3B94978A}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nine.Storage.Client", "src\Nine.Storage.Client\Nine.Storage.Client.xproj", "{F7626FD5-5224-4AE0-A1CF-29BD780065C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nine.Storage.Server.Test", "test\Server\Nine.Storage.Server.Test.csproj", "{C0A539A8-27B7-421A-82D1-4A674329A8FD}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nine.Storage.Server", "src\Nine.Storage.Server\Nine.Storage.Server.xproj", "{E4A9D22D-9C83-4E9A-B742-5FE300190667}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nine.Storage.Client.Test", "test\Nine.Storage.Client.Test\Nine.Storage.Client.Test.xproj", "{6E6ED68B-F4C8-474E-BA98-18024C2F7600}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nine.Storage.Server.Test", "test\Nine.Storage.Server.Test\Nine.Storage.Server.Test.xproj", "{58A62A76-3DFD-4596-A4D1-5CC29333D6DF}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nine.Storage.Test", "test\Nine.Storage.Test\Nine.Storage.Test.xproj", "{E50FB8C5-9648-402B-9BA1-890158786B69}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2BFEF0FE-97CC-423F-BB54-D81E35D5B22F}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{63165125-FCB0-4C82-B99B-CFD3097EA984}"
+	ProjectSection(SolutionItems) = preProject
+		src\shared\ConcurrentDictionary.cs = src\shared\ConcurrentDictionary.cs
+		src\shared\ConcurrentQueue.cs = src\shared\ConcurrentQueue.cs
+		src\shared\LamportTimestamp.cs = src\shared\LamportTimestamp.cs
+		src\shared\LazyAsync.cs = src\shared\LazyAsync.cs
+		src\shared\ObjectHelper.cs = src\shared\ObjectHelper.cs
+		src\shared\Sha1.cs = src\shared\Sha1.cs
+		src\shared\StringBuilderCache.cs = src\shared\StringBuilderCache.cs
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,18 +53,18 @@ Global
 		{E4A9D22D-9C83-4E9A-B742-5FE300190667}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4A9D22D-9C83-4E9A-B742-5FE300190667}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4A9D22D-9C83-4E9A-B742-5FE300190667}.Release|Any CPU.Build.0 = Release|Any CPU
-		{179E55BE-4F97-4175-9FA3-52F57231E318}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{179E55BE-4F97-4175-9FA3-52F57231E318}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{179E55BE-4F97-4175-9FA3-52F57231E318}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{179E55BE-4F97-4175-9FA3-52F57231E318}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F6CDD330-93C2-4243-85EE-482F3B94978A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6CDD330-93C2-4243-85EE-482F3B94978A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6CDD330-93C2-4243-85EE-482F3B94978A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6CDD330-93C2-4243-85EE-482F3B94978A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C0A539A8-27B7-421A-82D1-4A674329A8FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C0A539A8-27B7-421A-82D1-4A674329A8FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C0A539A8-27B7-421A-82D1-4A674329A8FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C0A539A8-27B7-421A-82D1-4A674329A8FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E6ED68B-F4C8-474E-BA98-18024C2F7600}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E6ED68B-F4C8-474E-BA98-18024C2F7600}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E6ED68B-F4C8-474E-BA98-18024C2F7600}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E6ED68B-F4C8-474E-BA98-18024C2F7600}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58A62A76-3DFD-4596-A4D1-5CC29333D6DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58A62A76-3DFD-4596-A4D1-5CC29333D6DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58A62A76-3DFD-4596-A4D1-5CC29333D6DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58A62A76-3DFD-4596-A4D1-5CC29333D6DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E50FB8C5-9648-402B-9BA1-890158786B69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E50FB8C5-9648-402B-9BA1-890158786B69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E50FB8C5-9648-402B-9BA1-890158786B69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E50FB8C5-9648-402B-9BA1-890158786B69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,8 +73,8 @@ Global
 		{4C65A2E5-5C95-410D-9E5F-E394CD3E2B21} = {6939EB8B-3039-4DAC-BB35-DB3BE837EAB5}
 		{F7626FD5-5224-4AE0-A1CF-29BD780065C5} = {6939EB8B-3039-4DAC-BB35-DB3BE837EAB5}
 		{E4A9D22D-9C83-4E9A-B742-5FE300190667} = {6939EB8B-3039-4DAC-BB35-DB3BE837EAB5}
-		{179E55BE-4F97-4175-9FA3-52F57231E318} = {393314BF-60D9-4A7A-BEAC-E0B48FCC7DFC}
-		{F6CDD330-93C2-4243-85EE-482F3B94978A} = {393314BF-60D9-4A7A-BEAC-E0B48FCC7DFC}
-		{C0A539A8-27B7-421A-82D1-4A674329A8FD} = {393314BF-60D9-4A7A-BEAC-E0B48FCC7DFC}
+		{6E6ED68B-F4C8-474E-BA98-18024C2F7600} = {393314BF-60D9-4A7A-BEAC-E0B48FCC7DFC}
+		{58A62A76-3DFD-4596-A4D1-5CC29333D6DF} = {393314BF-60D9-4A7A-BEAC-E0B48FCC7DFC}
+		{E50FB8C5-9648-402B-9BA1-890158786B69} = {393314BF-60D9-4A7A-BEAC-E0B48FCC7DFC}
 	EndGlobalSection
 EndGlobal
