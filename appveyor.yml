@@ -7,11 +7,8 @@ install:
   - dnvm install 1.0.0-beta4
   - dnu restore
 test_script:
-  - pushd test\Nine.Storage.Client.Test
-  - dnx . test
-  - popd
-  - pushd test\Nine.Storage.Server.Test
-  - dnx . test
+  - dnx test\Nine.Storage.Client.Test test
+  - dnx test\Nine.Storage.Server.Test test
 deploy:
 - provider: NuGet
   api_key:
