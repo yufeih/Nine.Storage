@@ -7,6 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using PCLStorage;
+    using FileAccess = PCLStorage.FileAccess;
 
     public class FileBlobStorage : IBlobStorage
     {

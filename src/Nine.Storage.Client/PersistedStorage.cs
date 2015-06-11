@@ -10,6 +10,7 @@
     using System.Threading.Tasks;
     using Nine.Formatting;
     using PCLStorage;
+    using FileAccess = PCLStorage.FileAccess;
 
     public class PersistedStorage<T> : IStorage<T> where T : class, IKeyed, new()
     {
