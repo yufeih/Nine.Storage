@@ -24,29 +24,6 @@
         "System.Runtime": "4.0.10.0",
         "System.Threading.Tasks": "4.0.0.0"
       }
-    },
-    ".NETPortable,Version=v4.5,Profile=Profile78": {
-      "frameworkAssemblies": {
-        "System.Collections": "",
-        "System.Diagnostics.Debug": "",
-        "System.Diagnostics.Tools": "",
-        "System.Globalization": "",
-        "System.IO": "",
-        "System.Linq": "",
-        "System.ObjectModel": "",
-        "System.Reflection": "",
-        "System.Reflection.Extensions": "",
-        "System.Runtime": "",
-        "System.Runtime.Extensions": "",
-        "System.Text.Encoding": "",
-        "System.Text.Encoding.Extensions": "",
-        "System.Threading": "",
-        "System.Threading.Tasks": ""
-      },
-
-      "compilationOptions": {
-        "define": [ "PCL" ]
-      }
     }
   }
 }
