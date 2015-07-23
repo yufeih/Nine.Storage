@@ -8,11 +8,10 @@
   "projectUrl": "https://github.com/studio-nine/Nine.Storage",
   "licenseUrl": "https://github.com/studio-nine/Nine.Storage/blob/master/LICENSE",
 
-  "compile": [ "../shared/*.cs" ],
-
   "dependencies": {
     "Nine.Formatting": "1.0.11-alpha-*",
     "Nine.Storage": "1.2.0-alpha-*",
+    "Nine.Storage.Shared": { "version": "", "type": "build" },
     "PCLStorage": "1.0.2",
     "SQLite.Net-PCL": "3.0.5"
   },

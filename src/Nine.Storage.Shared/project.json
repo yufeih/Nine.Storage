@@ -1,16 +1,5 @@
 ﻿{
-  "version": "1.2.0-alpha-*",
-  "description": "Contains basic contracts for a key value pair storage system",
-  "authors": [ "Yufei Huang" ],
-  "tags": [ "PCL", "Portable", "storage", "key", "value", "kv storage" ],
-
-  "iconUrl": "https://avatars3.githubusercontent.com/u/9212229?s=64",
-  "projectUrl": "https://github.com/studio-nine/Nine.Storage",
-  "licenseUrl": "https://github.com/studio-nine/Nine.Storage/blob/master/LICENSE",
-
-  "dependencies": {
-    "Nine.Storage.Shared": { "version": "", "type": "build" }
-  },
+  "shared": [ "**/*.cs" ],
 
   "frameworks": {
     "dnx451": {
