@@ -14,6 +14,8 @@
         private readonly string baseDirectory;
         private readonly ConcurrentDictionary<string, LazyAsync<string>> puts = new ConcurrentDictionary<string, LazyAsync<string>>(StringComparer.OrdinalIgnoreCase);
 
+        public string LocalStoragePath => FileSystem.Current.LocalStorage.Path;
+
         public FileBlobStorage(string baseDirectory = "Blobs")
         {
             if (baseDirectory != null && Path.IsPathRooted(baseDirectory))
@@ -47,7 +49,6 @@
         public async Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (stream == null || key == null) return null;
-            if (await GetFileAsync(key, cancellationToken).ConfigureAwait(false) != null) return key;
 
             var result = await puts.GetOrAdd(key, k => new LazyAsync<string>(() => PutCoreAsync(stream, key, progress), true)).GetValueAsync().ConfigureAwait(false);
 
