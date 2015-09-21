@@ -66,7 +66,7 @@
     {
         public static async Task<string> Download(this IBlobStorage blob, string key, CancellationToken cancellationToken = default(CancellationToken))
         {
-            await blob.Get(key, null, cancellationToken).ConfigureAwait(false);
+            using (await blob.Get(key, null, cancellationToken).ConfigureAwait(false)) { };
             return await blob.GetUri(key).ConfigureAwait(false);
         }
 
