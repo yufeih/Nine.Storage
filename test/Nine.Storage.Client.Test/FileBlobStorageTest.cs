@@ -10,8 +10,7 @@
             return new[]
             {
                 new TestFactory<IBlobStorage>(nameof(MemoryBlobStorage), () => new MemoryBlobStorage()),
-                new TestFactory<IBlobStorage>(nameof(FileBlobStorage), () => new FileBlobStorage()),
-                new TestFactory<IBlobStorage>(nameof(FileBlobStorage) + ".CustomPath", () => new FileBlobStorage("Nine.BlobStorageTest")),
+                new TestFactory<IBlobStorage>(nameof(FileBlobStorage), () => new FileBlobStorage("obj/blobs")),
             };
         }
     }

@@ -19,7 +19,7 @@
         [Fact]
         public async Task it_should_reused_existing_instance_for_get()
         {
-            var persisted = new PersistedStorage<TestStorageObject>(Guid.NewGuid().ToString());
+            var persisted = new MemoryStorage<TestStorageObject>();
             var storage = new ObservableStorage<TestStorageObject>(persisted, true);
 
             await persisted.Put(new TestStorageObject("1"));
@@ -39,7 +39,7 @@
         [Fact]
         public async Task it_should_reused_existing_instance_for_put()
         {
-            var persisted = new PersistedStorage<TestStorageObject>(Guid.NewGuid().ToString());
+            var persisted = new MemoryStorage<TestStorageObject>();
             var storage = new ObservableStorage<TestStorageObject>(persisted, true);
 
             await storage.Put(new TestStorageObject("id") { Name = "1" });

@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.2.0-alpha-*",
+  "version": "1.2.0-alpha-2",
   "description": "A portable lightweight constructor injection library for singleton objects",
   "authors": [ "Yufei Huang" ],
   "tags": [ "PCL", "Portable", "IOC", "Constructor Injection", "Dependency Injection" ],
@@ -11,18 +11,23 @@
     "EnyimMemcached": "2.13.0",
     "mongocsharpdriver": "1.10.0",
     "NEST": "1.5.1",
-    "Nine.Formatting": "1.0.16-alpha",
+    "Nine.Formatting": "1.2.0-alpha",
     "Nine.Storage": "",
-    "Nine.Storage.Shared": { "version": "", "type": "build" },
+    "Nine.Storage.Shared": {
+      "version": "",
+      "type": "build"
+    },
     "StackExchange.Redis": "1.0.450",
     "WindowsAzure.Storage": "4.3.0"
   },
 
   "frameworks": {
-    "dnx451": {
+    "dnx46": {
       "frameworkAssemblies": {
-        "System.Runtime": "4.0.10.0",
-        "System.Runtime.Caching": "4.0.0.0"
+        "System.Runtime": "4.0.20.0",
+        "System.IO": "4.0.0.0",
+        "System.Runtime.Caching": "4.0.0.0",
+        "System.Threading.Tasks": "4.0.10.0"
       }
     }
   }

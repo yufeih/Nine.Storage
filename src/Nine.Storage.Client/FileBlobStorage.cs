@@ -1,165 +1,105 @@
 ﻿namespace Nine.Storage
 {
     using System;
-    using System.Collections.Concurrent;
-    using System.Diagnostics;
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
-    using PCLStorage;
-    using FileAccess = PCLStorage.FileAccess;
 
     public class FileBlobStorage : IBlobStorage
     {
-        private readonly string baseDirectory;
-        private readonly ConcurrentDictionary<string, LazyAsync<string>> puts = new ConcurrentDictionary<string, LazyAsync<string>>(StringComparer.OrdinalIgnoreCase);
-
-        public string LocalStoragePath => FileSystem.Current.LocalStorage.Path;
+        private readonly string _baseDirectory;
 
         public FileBlobStorage(string baseDirectory = "Blobs")
         {
-            if (baseDirectory != null && Path.IsPathRooted(baseDirectory))
-            {
-                throw new NotSupportedException("baseDirectory cannot be rooted.");
-            }
+            if (string.IsNullOrEmpty(baseDirectory)) throw new ArgumentException(nameof(baseDirectory));
 
-            this.baseDirectory = baseDirectory;
+            _baseDirectory = baseDirectory;
         }
 
-        public async Task<bool> Exists(string key)
+        public Task<bool> Exists(string key)
         {
-            if (string.IsNullOrEmpty(key)) return false;
-            return await GetFileAsync(key).ConfigureAwait(false) != null;
+            if (string.IsNullOrEmpty(key)) return Task.FromResult(false);
+
+            return Task.FromResult(File.Exists(GetFilePath(key)));
         }
 
-        public async Task<string> GetUri(string key)
+        public Task<string> GetUri(string key)
         {
-            if (string.IsNullOrEmpty(key)) return null;
-            var file = await GetFileAsync(key).ConfigureAwait(false);
-            return file != null ? file.Path : null;
+            if (string.IsNullOrEmpty(key)) return Task.FromResult<string>(null);
+
+            return Task.FromResult(Path.GetFullPath(GetFilePath(key)));
         }
 
-        public async Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (string.IsNullOrEmpty(key)) return null;
-            var file = await GetFileAsync(key, cancellationToken).ConfigureAwait(false);
-            return file != null ? await file.OpenAsync(FileAccess.Read, cancellationToken).ConfigureAwait(false) : null;
+            if (string.IsNullOrEmpty(key)) return Task.FromResult<Stream>(null);
+
+            return Task.FromResult<Stream>(File.OpenRead(GetFilePath(key)));
         }
 
-        public async Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (stream == null || key == null) return null;
+            if (stream == null || key == null) return Task.FromResult<string>(null);
 
-            var result = await puts.GetOrAdd(key, k => new LazyAsync<string>(() => PutCoreAsync(stream, key, progress), true)).GetValueAsync().ConfigureAwait(false);
-
-            LazyAsync<string> temp;
-            puts.TryRemove(key, out temp);
-            return result; 
-        }
-
-        private async Task<string> PutCoreAsync(Stream stream, string key, IProgress<ProgressInBytes> progress)
-        {
             var tempId = "." + Guid.NewGuid().ToString("N").Substring(0, 5) + ".tmp";
-            var tempFile = await CreateFileIfNotExistAsync(key + tempId).ConfigureAwait(false);
-            using (var output = await tempFile.OpenAsync(FileAccess.ReadAndWrite).ConfigureAwait(false))
+
+            var tempPath = GetFilePath(key + tempId);
+
+            var directory = Path.GetDirectoryName(tempPath);
+
+            if (!Directory.Exists(directory))
             {
-                await stream.CopyToAsync(output).ConfigureAwait(false);
+                Directory.CreateDirectory(directory);
             }
-
-            // Check again if someone else has already got the file
-            if (await GetFileAsync(key) != null) return key;
-
-            var failed = true;
+            
+            using (var output = File.Create(tempPath))
+            {
+                stream.CopyTo(output);
+            }
 
             try
             {
-                var filename = tempFile.Path.Substring(0, tempFile.Path.Length - tempId.Length);
-                await tempFile.MoveAsync(filename).ConfigureAwait(false);
-                failed = false;
-            }
-            // This can happen if multiple threads trying to do the remove at the same time.
-            catch (IOException) { }
-            catch (UnauthorizedAccessException) { }
-            catch (Exception e) { Debug.WriteLine(e); }
+                var filename = tempPath.Substring(0, tempPath.Length - tempId.Length);
 
-            if (failed)
-            {
-                try
-                {
-                    await tempFile.DeleteAsync().ConfigureAwait(false);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                }
-            }
-
-            return key;
-        }
-
-        public async Task DeleteAsync(string key)
-        {
-            var file = await GetFileAsync(key).ConfigureAwait(false);
-            if (file != null) await file.DeleteAsync();
-        }
-
-        public async Task DeleteAllAsync()
-        {
-            var path = FileSystem.Current.LocalStorage.Path;
-            if (!string.IsNullOrEmpty(baseDirectory))
-            {
-                path = PortablePath.Combine(path, baseDirectory);
-            }
-
-            var folder = await FileSystem.Current.GetFolderFromPathAsync(path).ConfigureAwait(false);
-            if (folder != null) await folder.DeleteAsync().ConfigureAwait(false);
-        }
-
-        private async Task<IFile> GetFileAsync(string key, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            try
-            {
-                var path = GetUriCore(key);
-                if (string.IsNullOrEmpty(path)) return null;
-                return await FileSystem.Current.GetFileFromPathAsync(path, cancellationToken).ConfigureAwait(false);
+                File.Move(tempPath, filename);
             }
             catch
             {
-                return null;
+                // This can happen if multiple threads trying to do the remove at the same time.
             }
+            finally
+            {
+                try
+                {
+                    File.Delete(tempPath);
+                }
+                catch { }
+            }
+
+            return Task.FromResult(key);
         }
 
-        private async Task<IFile> CreateFileIfNotExistAsync(string key)
+        public Task DeleteAsync(string key)
         {
-            if (key == null || key.Length < 2)
-            {
-                throw new ArgumentException("key");
-            }
+            var path = GetFilePath(key);
 
-            var path = key.Substring(0, 2);
-            if (!string.IsNullOrEmpty(baseDirectory))
-            {
-                path = PortablePath.Combine(baseDirectory, path);
-            }
+            if (File.Exists(path)) File.Delete(GetFilePath(key));
 
-            var storage = FileSystem.Current.LocalStorage;
-            await storage.CreateFolderAsync(path, CreationCollisionOption.OpenIfExists).ConfigureAwait(false);
-
-            var filename = PortablePath.Combine(path, key);
-            return await storage.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting).ConfigureAwait(false);
+            return Task.CompletedTask;
         }
 
-        private string GetUriCore(string key)
+        public Task DeleteAllAsync()
+        {
+            Directory.Delete(_baseDirectory, true);
+
+            return Task.CompletedTask;
+        }
+
+        private string GetFilePath(string key)
         {
             if (string.IsNullOrEmpty(key) || key.Length < 2) return null;
-
-            var path = PortablePath.Combine(key.Substring(0, 2), key);
-            if (!string.IsNullOrEmpty(baseDirectory))
-            {
-                path = PortablePath.Combine(baseDirectory, path);
-            }
-
-            return PortablePath.Combine(FileSystem.Current.LocalStorage.Path, path);
+            
+            return Path.Combine(_baseDirectory, key.Substring(0, 2), key);
         }
     }
 }
