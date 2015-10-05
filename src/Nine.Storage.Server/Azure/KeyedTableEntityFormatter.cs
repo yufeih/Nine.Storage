@@ -78,7 +78,7 @@
 
                 if (property.PropertyType.IsEnum)
                 {
-                    properties.Add(property.Name, EntityProperty.GeneratePropertyForInt((int)property.GetValue(Data)));
+                    properties.Add(property.Name, EntityProperty.GeneratePropertyForString(property.GetValue(Data).ToString()));
                 }
                 else if (property.PropertyType == typeof(TimeSpan))
                 {
