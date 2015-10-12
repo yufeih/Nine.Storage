@@ -13,8 +13,9 @@
     {
         private const SQLiteOpenFlags SqliteOpenFlags = SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.FullMutex;
 
-        private readonly SQLiteConnection db;
-        private readonly IFormatter formatter;
+        private readonly SQLiteConnection _db;
+        private readonly IFormatter _formatter;
+        private readonly object _lock = new object();
 
         class Table
         {
@@ -25,70 +26,85 @@
 
         public SqliteStorage(string databasePath, ISQLitePlatform platform, IFormatter formatter = null)
         {
-            this.formatter = formatter ?? new JsonFormatter();
-            this.db = new SQLiteConnection(platform, databasePath, SqliteOpenFlags);
-            this.db.CreateTable<Table>();
+            _formatter = formatter ?? new JsonFormatter();
+            _db = new SQLiteConnection(platform, databasePath, SqliteOpenFlags);
+            _db.CreateTable<Table>();
         }
 
         public Task<bool> Add(T value)
         {
-            try
+            lock (_lock)
             {
-                return Task.FromResult(db.Insert(new Table { Key = value.GetKey(), Value = formatter.ToBytes(value) }) == 1);
-            }
-            catch (SQLiteException)
-            {
-                return Task.FromResult(false);
+                try
+                {
+                    return Task.FromResult(_db.Insert(new Table { Key = value.GetKey(), Value = _formatter.ToBytes(value) }) == 1);
+                }
+                catch (SQLiteException)
+                {
+                    return Task.FromResult(false);
+                }
             }
         }
 
         public Task<bool> Delete(string key)
         {
-            return Task.FromResult(db.Delete<Table>(key) == 1);
+            lock (_lock)
+            {
+                return Task.FromResult(_db.Delete<Table>(key) == 1);
+            }
         }
 
         public Task<T> Get(string key)
         {
-            var query = "select * from \"Table\" where \"Key\" = ?";
-            var bytes = db.Query<Table>(query, key).SingleOrDefault()?.Value;
-            return Task.FromResult(bytes != null ? formatter.FromBytes<T>(bytes) : null);
+            lock (_lock)
+            {
+                var query = "select * from \"Table\" where \"Key\" = ?";
+                var bytes = _db.Query<Table>(query, key).SingleOrDefault()?.Value;
+                return Task.FromResult(bytes != null ? _formatter.FromBytes<T>(bytes) : null);
+            }
         }
 
         public Task Put(T value)
         {
-            return Task.FromResult(db.InsertOrReplace(new Table { Key = value.GetKey(), Value = formatter.ToBytes(value) }) == 1);
+            lock (_lock)
+            {
+                return Task.FromResult(_db.InsertOrReplace(new Table { Key = value.GetKey(), Value = _formatter.ToBytes(value) }) == 1);
+            }
         }
 
         public Task<IEnumerable<T>> Range(string minKey, string maxKey, int? count = default(int?))
         {
-            var limit = new Func<string, string>(x => count != null ? x += " limit " + count.Value : x);
-
-            List<Table> result = null;
-
-            if (string.IsNullOrEmpty(minKey))
+            lock (_lock)
             {
-                if (string.IsNullOrEmpty(maxKey))
+                var limit = new Func<string, string>(x => count != null ? x += " limit " + count.Value : x);
+
+                List<Table> result = null;
+
+                if (string.IsNullOrEmpty(minKey))
                 {
-                    result = db.Query<Table>(limit("select * from \"Table\""));
+                    if (string.IsNullOrEmpty(maxKey))
+                    {
+                        result = _db.Query<Table>(limit("select * from \"Table\""));
+                    }
+                    else
+                    {
+                        result = _db.Query<Table>(limit("select * from \"Table\" where \"Key\" < ?"), maxKey);
+                    }
                 }
                 else
                 {
-                    result = db.Query<Table>(limit("select * from \"Table\" where \"Key\" < ?"), maxKey);
+                    if (string.IsNullOrEmpty(maxKey))
+                    {
+                        result = _db.Query<Table>(limit("select * from \"Table\" where \"Key\" >= ?"), minKey);
+                    }
+                    else
+                    {
+                        result = _db.Query<Table>(limit("select * from \"Table\" where \"Key\" >= ? and \"Key\" < ?"), minKey, maxKey);
+                    }
                 }
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(maxKey))
-                {
-                    result = db.Query<Table>(limit("select * from \"Table\" where \"Key\" >= ?"), minKey);
-                }
-                else
-                {
-                    result = db.Query<Table>(limit("select * from \"Table\" where \"Key\" >= ? and \"Key\" < ?"), minKey, maxKey);
-                }
-            }
 
-            return Task.FromResult(result.Select(row => formatter.FromBytes<T>(row.Value)));
+                return Task.FromResult(result.Select(row => _formatter.FromBytes<T>(row.Value)));
+            }
         }
     }
 }
