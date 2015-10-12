@@ -11,6 +11,8 @@
 
     public class SqliteStorage<T> : IStorage<T> where T : class, IKeyed, new()
     {
+        private const SQLiteOpenFlags SqliteOpenFlags = SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.FullMutex;
+
         private readonly SQLiteConnection db;
         private readonly IFormatter formatter;
 
@@ -24,7 +26,7 @@
         public SqliteStorage(string databasePath, ISQLitePlatform platform, IFormatter formatter = null)
         {
             this.formatter = formatter ?? new JsonFormatter();
-            this.db = new SQLiteConnection(platform, databasePath);
+            this.db = new SQLiteConnection(platform, databasePath, SqliteOpenFlags);
             this.db.CreateTable<Table>();
         }
 
