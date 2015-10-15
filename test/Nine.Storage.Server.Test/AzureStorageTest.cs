@@ -16,13 +16,13 @@
                     typeof(BatchedTableStorage<>),
                     () => new BatchedTableStorage<TestStorageObject>(
                         Connection.Current.AzureStorage,
-                        "BatchedTableStorage" + Environment.TickCount.ToString()));
+                        "BatchedTableStorage" + Guid.NewGuid().ToString("N")));
 
                 yield return new TestFactory<IStorage<TestStorageObject>>(
                     typeof(TableStorage<>),
                     () => new TableStorage<TestStorageObject>(
                         Connection.Current.AzureStorage,
-                        "TableStorage" + Environment.TickCount.ToString()));
+                        "TableStorage" + Guid.NewGuid().ToString("N")));
             }
 
             yield return new TestFactory<IStorage<TestStorageObject>>("dummy", () => new MemoryStorage<TestStorageObject>());
