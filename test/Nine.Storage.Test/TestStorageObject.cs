@@ -4,7 +4,22 @@
     using ProtoBuf;
 
     [ProtoContract]
-    public class TestStorageObject : IKeyed, ITimestamped
+    public class TestStorageObject : TestStorageObjectBase
+    {
+        public TestStorageObject()
+        {
+            Time3 = DateTime.UtcNow;
+        }
+
+        public TestStorageObject(object id)
+        {
+            Time3 = DateTime.UtcNow;
+            Id = id.ToString();
+        }
+    }
+
+    [ProtoContract]
+    public class TestStorageObjectBase : IKeyed, ITimestamped
     {
         [ProtoMember(1)]
         public string Id { get; set; }
@@ -24,17 +39,6 @@
         public TimeSpan TimeSpan { get; set; }
         [ProtoMember(9)]
         public DateTime Time3 { get; set; }
-
-        public TestStorageObject()
-        {
-            Time3 = DateTime.UtcNow;
-        }
-
-        public TestStorageObject(object id)
-        {
-            Time3 = DateTime.UtcNow;
-            Id = id.ToString();
-        }
 
         public string GetKey()
         {
