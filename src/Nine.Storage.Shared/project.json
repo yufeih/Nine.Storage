@@ -1,3 +1,7 @@
 ﻿{
-  "shared": [ "**/*.cs" ]
+  "shared": [ "**/*.cs" ],
+
+  "frameworks": {
+    "dotnet5.4": { }
+  }
 }

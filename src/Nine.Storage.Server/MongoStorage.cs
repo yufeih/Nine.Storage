@@ -3,11 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization;
-    using MongoDB.Bson.Serialization.Options;
     using MongoDB.Bson.Serialization.Serializers;
     using MongoDB.Driver;
     using MongoDB.Driver.Builders;
@@ -28,7 +26,7 @@
         {
             // http://alexmg.com/datetime-precision-with-mongodb-and-the-c-driver/
             // http://stackoverflow.com/questions/16185262/what-is-new-way-of-setting-datetimeserializationoptions-defaults-in-mongodb-c-sh
-            BsonSerializer.RegisterSerializer(typeof(DateTime), new DateTimeSerializer(new DateTimeSerializationOptions(DateTimeKind.Utc, BsonType.Document)));
+            BsonSerializer.RegisterSerializer(typeof(DateTime), new DateTimeSerializer(DateTimeKind.Utc, BsonType.Document));
         }
 
         public MongoStorage(string connection, string collectionName = null)
@@ -65,7 +63,7 @@
         {
             try
             {
-                return Task.FromResult(collection.Insert(new StorageObject { Id = value.GetKey(), Value = value }).Ok);
+                return Task.FromResult(collection.Insert(new StorageObject { Id = value.GetKey(), Value = value }).DocumentsAffected == 1);
             }
             catch (MongoDuplicateKeyException)
             {
