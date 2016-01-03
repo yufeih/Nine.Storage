@@ -4,7 +4,10 @@
     using ProtoBuf;
 
     [ProtoContract]
-    public class BasicTypes
+    public class BasicTypes : BasicTypesBase { }
+
+    [ProtoContract]
+    public class BasicTypesBase
     {
         [ProtoMember(1)]
         public short Short = short.MinValue;

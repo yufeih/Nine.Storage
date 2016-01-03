@@ -11,18 +11,18 @@
 
     class KeyedTableEntityFormatter<T>
     {
-        private readonly TextConverter converter;
-        private readonly PropertyInfo[] additionalProperties;
+        private readonly TextConverter _converter;
+        private readonly PropertyInfo[] _additionalProperties;
 
         public KeyedTableEntityFormatter(TextConverter converter)
         {
-            this.converter = converter;
-            this.additionalProperties = GetReflectedProperties(converter).ToArray();
+            _converter = converter;
+            _additionalProperties = GetReflectedProperties(converter).ToArray();
         }
 
         public void ReadEntity(T Data, IDictionary<string, EntityProperty> properties, OperationContext operationContext)
         {
-            foreach (var property in additionalProperties)
+            foreach (var property in _additionalProperties)
             {
                 EntityProperty entityProperty;
                 if (properties.TryGetValue(property.Name, out entityProperty))
@@ -56,7 +56,7 @@
                     }
                     else if (entityProperty.PropertyType == EdmType.String)
                     {
-                        property.SetValue(Data, converter.FromText(property.PropertyType, entityProperty.StringValue));
+                        property.SetValue(Data, _converter.FromText(property.PropertyType, entityProperty.StringValue));
                     }
                     properties.Remove(property.Name);
                 }
@@ -69,7 +69,7 @@
         {
             var properties = TableEntity.WriteUserObject(Data, operationContext);
 
-            foreach (var property in additionalProperties)
+            foreach (var property in _additionalProperties)
             {
                 if (properties.ContainsKey(property.Name))
                 {
@@ -86,7 +86,7 @@
                 }
                 else
                 {
-                    properties.Add(property.Name, EntityProperty.GeneratePropertyForString(converter.ToText(property.GetValue(Data))));
+                    properties.Add(property.Name, EntityProperty.GeneratePropertyForString(_converter.ToText(property.GetValue(Data))));
                 }
             }
 
@@ -95,16 +95,23 @@
 
         private IEnumerable<PropertyInfo> GetReflectedProperties(TextConverter converter)
         {
-            foreach (var property in typeof(T).GetTypeInfo().DeclaredProperties)
+            var type = typeof(T);
+
+            while (type != null)
             {
-                if (property.GetMethod != null && property.GetMethod.IsPublic &&
-                    property.SetMethod != null && property.SetMethod.IsPublic &&
-                    property.GetIndexParameters().Length <= 0)
+                foreach (var property in type.GetTypeInfo().DeclaredProperties)
                 {
-                    if (property.PropertyType.IsEnum) yield return property;
-                    if (property.PropertyType == typeof(TimeSpan)) yield return property;
-                    if (converter != null && converter.CanConvert(property.PropertyType)) yield return property;
+                    if (property.GetMethod != null && property.GetMethod.IsPublic &&
+                        property.SetMethod != null && property.SetMethod.IsPublic &&
+                        property.GetIndexParameters().Length <= 0)
+                    {
+                        if (property.PropertyType.IsEnum) yield return property;
+                        if (property.PropertyType == typeof(TimeSpan)) yield return property;
+                        if (converter != null && converter.CanConvert(property.PropertyType)) yield return property;
+                    }
                 }
+
+                type = type.BaseType;
             }
         }
     }
