@@ -11,6 +11,7 @@
     "EnyimMemcached": "2.13.0",
     "mongocsharpdriver": "2.2.0",
     "NEST": "1.7.1",
+    "Newtonsoft.Json": "8.0.1",
     "Nine.Formatting": "1.2.1-alpha-*",
     "Nine.Storage": "",
     "Nine.Storage.Shared": { "type": "build" },
@@ -19,12 +20,9 @@
   },
 
   "frameworks": {
-    "net46": {
+    "dnx46": {
       "frameworkAssemblies": {
-        "System.Runtime": "4.0.20.0",
-        "System.IO": "4.0.0.0",
-        "System.Runtime.Caching": "4.0.0.0",
-        "System.Threading.Tasks": "4.0.10.0"
+        "System.Runtime.Caching": "4.0.0.0"
       }
     }
   }

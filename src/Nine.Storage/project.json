@@ -15,8 +15,16 @@
   "frameworks": {
     "dotnet5.4": {
       "dependencies": {
-        "Microsoft.CSharp": "4.0.0",
-        "System.Collections.Concurrent": "4.0.0"
+        "System.Collections": "4.0.10",
+        "System.Collections.Concurrent": "4.0.0",
+        "System.Linq": "4.0.0",
+        "System.Runtime": "4.0.20",
+        "System.Threading": "4.0.10"
+      }
+    },
+    "dnx46": {
+      "frameworkAssemblies": {
+        "System.Runtime": "4.0.20.0"
       }
     }
   }

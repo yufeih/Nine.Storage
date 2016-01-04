@@ -30,18 +30,6 @@
           "lib/net40/Microsoft.Azure.KeyVault.Core.dll": {}
         }
       },
-      "Microsoft.CSharp/4.0.0": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp"
-        ],
-        "compile": {
-          "ref/net45/_._": {}
-        },
-        "runtime": {
-          "lib/net45/_._": {}
-        }
-      },
       "Microsoft.Data.Edm/5.6.4": {
         "type": "package",
         "compile": {
@@ -354,7 +342,7 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.1-alpha-1": {
+      "Nine.Formatting/1.2.1-alpha-3": {
         "type": "package",
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
@@ -364,7 +352,6 @@
           "Microsoft.CSharp",
           "mscorlib",
           "System",
-          "System.Collections.Concurrent",
           "System.Core"
         ],
         "compile": {
@@ -376,20 +363,22 @@
       },
       "Nine.Storage/1.2.0-alpha-4": {
         "type": "project",
-        "framework": ".NETPlatform,Version=v5.4",
+        "framework": "DNX,Version=v4.6",
         "dependencies": {
-          "Microsoft.CSharp": "4.0.0",
-          "Nine.Storage.Shared": null,
-          "System.Collections.Concurrent": "4.0.0"
-        }
+          "Nine.Storage.Shared": null
+        },
+        "frameworkAssemblies": [
+          "System.Runtime"
+        ]
       },
       "Nine.Storage.Server/1.2.0-alpha-4": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.6",
+        "framework": "DNX,Version=v4.6",
         "dependencies": {
           "EnyimMemcached": "2.13.0",
           "mongocsharpdriver": "2.2.0",
           "NEST": "1.7.1",
+          "Newtonsoft.Json": "8.0.1",
           "Nine.Formatting": "1.2.1-alpha",
           "Nine.Storage": null,
           "Nine.Storage.Shared": null,
@@ -397,25 +386,22 @@
           "WindowsAzure.Storage": "6.2.0"
         },
         "frameworkAssemblies": [
-          "System.IO",
-          "System.Runtime",
-          "System.Runtime.Caching",
-          "System.Threading.Tasks"
+          "System.Runtime.Caching"
         ]
       },
       "Nine.Storage.Shared/1.0.0": {
         "type": "project",
-        "framework": ".NETPlatform,Version=v5.4"
+        "framework": "DNX,Version=v4.5.1"
       },
       "Nine.Storage.Test/1.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
+          "Newtonsoft.Json": "8.0.1",
           "Nine.Storage": null,
           "Nine.Storage.Shared": null,
-          "protobuf-net": "2.0.0.668",
-          "xunit": "2.1.0",
-          "xunit.runner.dnx": "2.1.0"
+          "protobuf-net": "2.1.0-alpha-1",
+          "xunit": "2.1.0"
         }
       },
       "protobuf-net/2.1.0-alpha-1": {
@@ -451,15 +437,6 @@
         },
         "runtime": {
           "lib/net46/StackExchange.Redis.dll": {}
-        }
-      },
-      "System.Collections.Concurrent/4.0.0": {
-        "type": "package",
-        "compile": {
-          "ref/net45/_._": {}
-        },
-        "runtime": {
-          "lib/net45/_._": {}
         }
       },
       "System.Reflection.Emit/4.0.1-beta-23516": {
@@ -667,18 +644,6 @@
           "lib/net40/Microsoft.Azure.KeyVault.Core.dll": {}
         }
       },
-      "Microsoft.CSharp/4.0.0": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp"
-        ],
-        "compile": {
-          "ref/net45/_._": {}
-        },
-        "runtime": {
-          "lib/net45/_._": {}
-        }
-      },
       "Microsoft.Data.Edm/5.6.4": {
         "type": "package",
         "compile": {
@@ -991,7 +956,7 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.1-alpha-1": {
+      "Nine.Formatting/1.2.1-alpha-3": {
         "type": "package",
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
@@ -1001,7 +966,6 @@
           "Microsoft.CSharp",
           "mscorlib",
           "System",
-          "System.Collections.Concurrent",
           "System.Core"
         ],
         "compile": {
@@ -1013,20 +977,22 @@
       },
       "Nine.Storage/1.2.0-alpha-4": {
         "type": "project",
-        "framework": ".NETPlatform,Version=v5.4",
+        "framework": "DNX,Version=v4.6",
         "dependencies": {
-          "Microsoft.CSharp": "4.0.0",
-          "Nine.Storage.Shared": null,
-          "System.Collections.Concurrent": "4.0.0"
-        }
+          "Nine.Storage.Shared": null
+        },
+        "frameworkAssemblies": [
+          "System.Runtime"
+        ]
       },
       "Nine.Storage.Server/1.2.0-alpha-4": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.6",
+        "framework": "DNX,Version=v4.6",
         "dependencies": {
           "EnyimMemcached": "2.13.0",
           "mongocsharpdriver": "2.2.0",
           "NEST": "1.7.1",
+          "Newtonsoft.Json": "8.0.1",
           "Nine.Formatting": "1.2.1-alpha",
           "Nine.Storage": null,
           "Nine.Storage.Shared": null,
@@ -1034,25 +1000,22 @@
           "WindowsAzure.Storage": "6.2.0"
         },
         "frameworkAssemblies": [
-          "System.IO",
-          "System.Runtime",
-          "System.Runtime.Caching",
-          "System.Threading.Tasks"
+          "System.Runtime.Caching"
         ]
       },
       "Nine.Storage.Shared/1.0.0": {
         "type": "project",
-        "framework": ".NETPlatform,Version=v5.4"
+        "framework": "DNX,Version=v4.5.1"
       },
       "Nine.Storage.Test/1.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
+          "Newtonsoft.Json": "8.0.1",
           "Nine.Storage": null,
           "Nine.Storage.Shared": null,
-          "protobuf-net": "2.0.0.668",
-          "xunit": "2.1.0",
-          "xunit.runner.dnx": "2.1.0"
+          "protobuf-net": "2.1.0-alpha-1",
+          "xunit": "2.1.0"
         }
       },
       "protobuf-net/2.1.0-alpha-1": {
@@ -1088,15 +1051,6 @@
         },
         "runtime": {
           "lib/net46/StackExchange.Redis.dll": {}
-        }
-      },
-      "System.Collections.Concurrent/4.0.0": {
-        "type": "package",
-        "compile": {
-          "ref/net45/_._": {}
-        },
-        "runtime": {
-          "lib/net45/_._": {}
         }
       },
       "System.Reflection.Emit/4.0.1-beta-23516": {
@@ -1304,18 +1258,6 @@
           "lib/net40/Microsoft.Azure.KeyVault.Core.dll": {}
         }
       },
-      "Microsoft.CSharp/4.0.0": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp"
-        ],
-        "compile": {
-          "ref/net45/_._": {}
-        },
-        "runtime": {
-          "lib/net45/_._": {}
-        }
-      },
       "Microsoft.Data.Edm/5.6.4": {
         "type": "package",
         "compile": {
@@ -1628,7 +1570,7 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.1-alpha-1": {
+      "Nine.Formatting/1.2.1-alpha-3": {
         "type": "package",
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
@@ -1638,7 +1580,6 @@
           "Microsoft.CSharp",
           "mscorlib",
           "System",
-          "System.Collections.Concurrent",
           "System.Core"
         ],
         "compile": {
@@ -1650,20 +1591,22 @@
       },
       "Nine.Storage/1.2.0-alpha-4": {
         "type": "project",
-        "framework": ".NETPlatform,Version=v5.4",
+        "framework": "DNX,Version=v4.6",
         "dependencies": {
-          "Microsoft.CSharp": "4.0.0",
-          "Nine.Storage.Shared": null,
-          "System.Collections.Concurrent": "4.0.0"
-        }
+          "Nine.Storage.Shared": null
+        },
+        "frameworkAssemblies": [
+          "System.Runtime"
+        ]
       },
       "Nine.Storage.Server/1.2.0-alpha-4": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.6",
+        "framework": "DNX,Version=v4.6",
         "dependencies": {
           "EnyimMemcached": "2.13.0",
           "mongocsharpdriver": "2.2.0",
           "NEST": "1.7.1",
+          "Newtonsoft.Json": "8.0.1",
           "Nine.Formatting": "1.2.1-alpha",
           "Nine.Storage": null,
           "Nine.Storage.Shared": null,
@@ -1671,25 +1614,22 @@
           "WindowsAzure.Storage": "6.2.0"
         },
         "frameworkAssemblies": [
-          "System.IO",
-          "System.Runtime",
-          "System.Runtime.Caching",
-          "System.Threading.Tasks"
+          "System.Runtime.Caching"
         ]
       },
       "Nine.Storage.Shared/1.0.0": {
         "type": "project",
-        "framework": ".NETPlatform,Version=v5.4"
+        "framework": "DNX,Version=v4.5.1"
       },
       "Nine.Storage.Test/1.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
+          "Newtonsoft.Json": "8.0.1",
           "Nine.Storage": null,
           "Nine.Storage.Shared": null,
-          "protobuf-net": "2.0.0.668",
-          "xunit": "2.1.0",
-          "xunit.runner.dnx": "2.1.0"
+          "protobuf-net": "2.1.0-alpha-1",
+          "xunit": "2.1.0"
         }
       },
       "protobuf-net/2.1.0-alpha-1": {
@@ -1725,15 +1665,6 @@
         },
         "runtime": {
           "lib/net46/StackExchange.Redis.dll": {}
-        }
-      },
-      "System.Collections.Concurrent/4.0.0": {
-        "type": "package",
-        "compile": {
-          "ref/net45/_._": {}
-        },
-        "runtime": {
-          "lib/net45/_._": {}
         }
       },
       "System.Reflection.Emit/4.0.1-beta-23516": {
@@ -1972,47 +1903,6 @@
         "Microsoft.Azure.KeyVault.Core.1.0.0.nupkg",
         "Microsoft.Azure.KeyVault.Core.1.0.0.nupkg.sha512",
         "Microsoft.Azure.KeyVault.Core.nuspec"
-      ]
-    },
-    "Microsoft.CSharp/4.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "oWqeKUxHXdK6dL2CFjgMcaBISbkk+AqEg+yvJHE4DElNzS4QaTsCflgkkqZwVlWby1Dg9zo9n+iCAMFefFdJ/A==",
-      "files": [
-        "lib/dotnet/Microsoft.CSharp.dll",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net45/_._",
-        "lib/netcore50/Microsoft.CSharp.dll",
-        "lib/win8/_._",
-        "lib/wp80/_._",
-        "lib/wpa81/_._",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "Microsoft.CSharp.4.0.0.nupkg",
-        "Microsoft.CSharp.4.0.0.nupkg.sha512",
-        "Microsoft.CSharp.nuspec",
-        "ref/dotnet/de/Microsoft.CSharp.xml",
-        "ref/dotnet/es/Microsoft.CSharp.xml",
-        "ref/dotnet/fr/Microsoft.CSharp.xml",
-        "ref/dotnet/it/Microsoft.CSharp.xml",
-        "ref/dotnet/ja/Microsoft.CSharp.xml",
-        "ref/dotnet/ko/Microsoft.CSharp.xml",
-        "ref/dotnet/Microsoft.CSharp.dll",
-        "ref/dotnet/Microsoft.CSharp.xml",
-        "ref/dotnet/ru/Microsoft.CSharp.xml",
-        "ref/dotnet/zh-hans/Microsoft.CSharp.xml",
-        "ref/dotnet/zh-hant/Microsoft.CSharp.xml",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net45/_._",
-        "ref/netcore50/Microsoft.CSharp.dll",
-        "ref/netcore50/Microsoft.CSharp.xml",
-        "ref/win8/_._",
-        "ref/wp80/_._",
-        "ref/wpa81/_._",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._"
       ]
     },
     "Microsoft.Data.Edm/5.6.4": {
@@ -2355,16 +2245,16 @@
         "tools/install.ps1"
       ]
     },
-    "Nine.Formatting/1.2.1-alpha-1": {
+    "Nine.Formatting/1.2.1-alpha-3": {
       "type": "package",
-      "sha512": "CIMiU8uGumVG6e9LpRq39ezd+gRj8Ni+VMEHKDQ2Hwdk+0FGwXV6lzghXXB5Tes7Rq6H9HlcfqfHnyq7a7TEJA==",
+      "sha512": "WZVWD2EgmE5UafNCWhxA0H7n3rKlDWpDs9fyrm2pi5eSbHA+dCGguyxbp9CF+vThevaJjLoENUB5zFE4lLzmxA==",
       "files": [
         "lib/dnx451/Nine.Formatting.dll",
         "lib/dnx451/Nine.Formatting.xml",
         "lib/dotnet5.4/Nine.Formatting.dll",
         "lib/dotnet5.4/Nine.Formatting.xml",
-        "Nine.Formatting.1.2.1-alpha-1.nupkg",
-        "Nine.Formatting.1.2.1-alpha-1.nupkg.sha512",
+        "Nine.Formatting.1.2.1-alpha-3.nupkg",
+        "Nine.Formatting.1.2.1-alpha-3.nupkg.sha512",
         "Nine.Formatting.nuspec"
       ]
     },
@@ -2406,56 +2296,10 @@
         "StackExchange.Redis.nuspec"
       ]
     },
-    "System.Collections.Concurrent/4.0.0": {
-      "type": "package",
-      "sha512": "1f5SWoX7UlFkvUt7A8JoG5lXgZDw4cRAcKG8Eaxa+3Sq6e/UgVWl2YWew1evJv+p+edNNlIIorDfREKcoEDHGw==",
-      "files": [
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net45/_._",
-        "lib/win8/_._",
-        "lib/wpa81/_._",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "License.rtf",
-        "ref/dotnet/de/System.Collections.Concurrent.xml",
-        "ref/dotnet/es/System.Collections.Concurrent.xml",
-        "ref/dotnet/fr/System.Collections.Concurrent.xml",
-        "ref/dotnet/it/System.Collections.Concurrent.xml",
-        "ref/dotnet/ja/System.Collections.Concurrent.xml",
-        "ref/dotnet/ko/System.Collections.Concurrent.xml",
-        "ref/dotnet/ru/System.Collections.Concurrent.xml",
-        "ref/dotnet/System.Collections.Concurrent.dll",
-        "ref/dotnet/System.Collections.Concurrent.xml",
-        "ref/dotnet/zh-hans/System.Collections.Concurrent.xml",
-        "ref/dotnet/zh-hant/System.Collections.Concurrent.xml",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net45/_._",
-        "ref/netcore50/de/System.Collections.Concurrent.xml",
-        "ref/netcore50/es/System.Collections.Concurrent.xml",
-        "ref/netcore50/fr/System.Collections.Concurrent.xml",
-        "ref/netcore50/it/System.Collections.Concurrent.xml",
-        "ref/netcore50/ja/System.Collections.Concurrent.xml",
-        "ref/netcore50/ko/System.Collections.Concurrent.xml",
-        "ref/netcore50/ru/System.Collections.Concurrent.xml",
-        "ref/netcore50/System.Collections.Concurrent.dll",
-        "ref/netcore50/System.Collections.Concurrent.xml",
-        "ref/netcore50/zh-hans/System.Collections.Concurrent.xml",
-        "ref/netcore50/zh-hant/System.Collections.Concurrent.xml",
-        "ref/win8/_._",
-        "ref/wpa81/_._",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "System.Collections.Concurrent.4.0.0.nupkg",
-        "System.Collections.Concurrent.4.0.0.nupkg.sha512",
-        "System.Collections.Concurrent.nuspec"
-      ]
-    },
     "System.Reflection.Emit/4.0.1-beta-23516": {
       "type": "package",
       "serviceable": true,
-      "sha512": "4w2Piqjq8CKVQwvHHz4Fpsl5rcX4T49A+g1JXGqAOLXZYlkSpC6Dep9OZZZ6Z/LbruUQtuZN9MxLZHZJ1io2CQ==",
+      "sha512": "3j5EhKPGh7cbUu5QLP1RAabvjNIpJOr5hA1Ip5UQ4ozccUb6Fd3SZiP4VKpqm/RyVAZDnOc9vdNuazZebtJeHw==",
       "files": [
         "lib/DNXCore50/System.Reflection.Emit.dll",
         "lib/MonoAndroid10/_._",

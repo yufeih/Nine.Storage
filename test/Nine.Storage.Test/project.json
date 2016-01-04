@@ -1,13 +1,19 @@
 ﻿{
   "dependencies": {
+    "Newtonsoft.Json": "8.0.1",
     "Nine.Storage": "",
     "Nine.Storage.Shared": { "type": "build" },
-    "protobuf-net": "2.0.0.668",
-    "xunit": "2.1.0",
-    "xunit.runner.dnx": "2.1.0-*"
+    "protobuf-net": "2.1.0-alpha-1",
+    "xunit": "2.1.0"
   },
   
   "frameworks": {
+    "dotnet5.4": {
+      "dependencies": {
+        "System.IO": "4.0.10",
+        "System.Runtime": "4.0.20"
+      }
+    },
     "dnx46": { }
   }
 }
