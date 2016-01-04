@@ -11,7 +11,7 @@
     "EnyimMemcached": "2.13.0",
     "mongocsharpdriver": "2.2.0",
     "NEST": "1.7.1",
-    "Nine.Formatting": "1.2.1-alpha",
+    "Nine.Formatting": "1.2.1-alpha-*",
     "Nine.Storage": "",
     "Nine.Storage.Shared": { "type": "build" },
     "StackExchange.Redis": "1.1.0-alpha2",
