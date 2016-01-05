@@ -1,4 +1,11 @@
 ﻿{
+  "version": "1.2.0-alpha-4",
+  "authors": [ "Yufei Huang" ],
+
+  "iconUrl": "https://avatars3.githubusercontent.com/u/9212229?s=64",
+  "projectUrl": "https://github.com/studio-nine/Nine.Storage",
+  "licenseUrl": "https://github.com/studio-nine/Nine.Storage/blob/master/LICENSE",
+
   "dependencies": {
     "Newtonsoft.Json": "8.0.1",
     "Nine.Storage": "",
@@ -6,7 +13,7 @@
     "protobuf-net": "2.1.0-alpha-1",
     "xunit": "2.1.0"
   },
-  
+
   "frameworks": {
     "dotnet5.4": {
       "dependencies": {
