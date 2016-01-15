@@ -1,6 +1,5 @@
 ﻿{
   "dependencies": {
-    "Nine.Storage.Shared": { "type": "build" },
     "Nine.Storage.Server": "",
     "Nine.Storage.Test": "",
     "xunit": "2.1.0",

@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.2.0-alpha-4",
+  "version": "1.4.0-*",
   "description": "A portable lightweight constructor injection library for singleton objects",
   "authors": [ "Yufei Huang" ],
   "tags": [ "PCL", "Portable", "IOC", "Constructor Injection", "Dependency Injection" ],
@@ -7,14 +7,18 @@
   "projectUrl": "https://github.com/studio-nine/Nine.Storage",
   "licenseUrl": "https://github.com/studio-nine/Nine.Storage/blob/master/LICENSE",
 
+  "compile": [
+    "../../Common/src/IOExtensions.cs",
+    "../../Common/src/LazyAsync.cs"
+  ],
+
   "dependencies": {
     "EnyimMemcached": "2.13.0",
     "mongocsharpdriver": "2.2.0",
     "NEST": "1.7.1",
     "Newtonsoft.Json": "8.0.1",
     "Nine.Formatting": "1.2.1-alpha-*",
-    "Nine.Storage": "",
-    "Nine.Storage.Shared": { "type": "build" },
+    "Nine.Storage.Abstractions": "",
     "StackExchange.Redis": "1.1.0-alpha2",
     "WindowsAzure.Storage": "6.2.0"
   },

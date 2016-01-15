@@ -361,17 +361,14 @@
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Storage/1.2.0-alpha-4": {
+      "Nine.Storage.Abstractions/1.4.0-alpha": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
-        "dependencies": {
-          "Nine.Storage.Shared": null
-        },
         "frameworkAssemblies": [
           "System.Runtime"
         ]
       },
-      "Nine.Storage.Server/1.2.0-alpha-4": {
+      "Nine.Storage.Server/1.4.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
@@ -380,8 +377,7 @@
           "NEST": "1.7.1",
           "Newtonsoft.Json": "8.0.1",
           "Nine.Formatting": "1.2.1-alpha",
-          "Nine.Storage": null,
-          "Nine.Storage.Shared": null,
+          "Nine.Storage.Abstractions": null,
           "StackExchange.Redis": "1.1.0-alpha2",
           "WindowsAzure.Storage": "6.2.0"
         },
@@ -389,17 +385,12 @@
           "System.Runtime.Caching"
         ]
       },
-      "Nine.Storage.Shared/1.0.0": {
-        "type": "project",
-        "framework": "DNX,Version=v4.5.1"
-      },
-      "Nine.Storage.Test/1.0.0": {
+      "Nine.Storage.Test/1.4.0-alpha": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
-          "Nine.Storage": null,
-          "Nine.Storage.Shared": null,
+          "Nine.Storage.Abstractions": null,
           "protobuf-net": "2.1.0-alpha-1",
           "xunit": "2.1.0"
         }
@@ -975,17 +966,14 @@
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Storage/1.2.0-alpha-4": {
+      "Nine.Storage.Abstractions/1.4.0-alpha": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
-        "dependencies": {
-          "Nine.Storage.Shared": null
-        },
         "frameworkAssemblies": [
           "System.Runtime"
         ]
       },
-      "Nine.Storage.Server/1.2.0-alpha-4": {
+      "Nine.Storage.Server/1.4.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
@@ -994,8 +982,7 @@
           "NEST": "1.7.1",
           "Newtonsoft.Json": "8.0.1",
           "Nine.Formatting": "1.2.1-alpha",
-          "Nine.Storage": null,
-          "Nine.Storage.Shared": null,
+          "Nine.Storage.Abstractions": null,
           "StackExchange.Redis": "1.1.0-alpha2",
           "WindowsAzure.Storage": "6.2.0"
         },
@@ -1003,17 +990,12 @@
           "System.Runtime.Caching"
         ]
       },
-      "Nine.Storage.Shared/1.0.0": {
-        "type": "project",
-        "framework": "DNX,Version=v4.5.1"
-      },
-      "Nine.Storage.Test/1.0.0": {
+      "Nine.Storage.Test/1.4.0-alpha": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
-          "Nine.Storage": null,
-          "Nine.Storage.Shared": null,
+          "Nine.Storage.Abstractions": null,
           "protobuf-net": "2.1.0-alpha-1",
           "xunit": "2.1.0"
         }
@@ -1589,17 +1571,14 @@
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Storage/1.2.0-alpha-4": {
+      "Nine.Storage.Abstractions/1.4.0-alpha": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
-        "dependencies": {
-          "Nine.Storage.Shared": null
-        },
         "frameworkAssemblies": [
           "System.Runtime"
         ]
       },
-      "Nine.Storage.Server/1.2.0-alpha-4": {
+      "Nine.Storage.Server/1.4.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
@@ -1608,8 +1587,7 @@
           "NEST": "1.7.1",
           "Newtonsoft.Json": "8.0.1",
           "Nine.Formatting": "1.2.1-alpha",
-          "Nine.Storage": null,
-          "Nine.Storage.Shared": null,
+          "Nine.Storage.Abstractions": null,
           "StackExchange.Redis": "1.1.0-alpha2",
           "WindowsAzure.Storage": "6.2.0"
         },
@@ -1617,17 +1595,12 @@
           "System.Runtime.Caching"
         ]
       },
-      "Nine.Storage.Shared/1.0.0": {
-        "type": "project",
-        "framework": "DNX,Version=v4.5.1"
-      },
-      "Nine.Storage.Test/1.0.0": {
+      "Nine.Storage.Test/1.4.0-alpha": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
-          "Nine.Storage": null,
-          "Nine.Storage.Shared": null,
+          "Nine.Storage.Abstractions": null,
           "protobuf-net": "2.1.0-alpha-1",
           "xunit": "2.1.0"
         }
@@ -1846,19 +1819,15 @@
     }
   },
   "libraries": {
-    "Nine.Storage/1.2.0-alpha-4": {
+    "Nine.Storage.Abstractions/1.4.0-alpha": {
       "type": "project",
-      "path": "../../src/Nine.Storage/project.json"
+      "path": "../../src/Nine.Storage.Abstractions/project.json"
     },
-    "Nine.Storage.Server/1.2.0-alpha-4": {
+    "Nine.Storage.Server/1.4.0": {
       "type": "project",
       "path": "../../src/Nine.Storage.Server/project.json"
     },
-    "Nine.Storage.Shared/1.0.0": {
-      "type": "project",
-      "path": "../../src/Nine.Storage.Shared/project.json"
-    },
-    "Nine.Storage.Test/1.0.0": {
+    "Nine.Storage.Test/1.4.0-alpha": {
       "type": "project",
       "path": "../Nine.Storage.Test/project.json"
     },
@@ -2299,7 +2268,7 @@
     "System.Reflection.Emit/4.0.1-beta-23516": {
       "type": "package",
       "serviceable": true,
-      "sha512": "3j5EhKPGh7cbUu5QLP1RAabvjNIpJOr5hA1Ip5UQ4ozccUb6Fd3SZiP4VKpqm/RyVAZDnOc9vdNuazZebtJeHw==",
+      "sha512": "4w2Piqjq8CKVQwvHHz4Fpsl5rcX4T49A+g1JXGqAOLXZYlkSpC6Dep9OZZZ6Z/LbruUQtuZN9MxLZHZJ1io2CQ==",
       "files": [
         "lib/DNXCore50/System.Reflection.Emit.dll",
         "lib/MonoAndroid10/_._",
@@ -2563,7 +2532,6 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Nine.Storage.Shared ",
       "Nine.Storage.Server ",
       "Nine.Storage.Test ",
       "xunit >= 2.1.0",
