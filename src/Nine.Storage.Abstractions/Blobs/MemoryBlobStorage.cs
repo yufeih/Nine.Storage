@@ -35,5 +35,12 @@
             _store.GetOrAdd(key, bytes);
             return Task.FromResult(key);
         }
+
+        public virtual Task Delete(string key)
+        {
+            byte[] removed;
+            _store.TryRemove(key, out removed);
+            return Task.CompletedTask;
+        }
     }
 }

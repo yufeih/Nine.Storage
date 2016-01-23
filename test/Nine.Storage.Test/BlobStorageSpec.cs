@@ -35,15 +35,20 @@
 
             stream.Seek(0, SeekOrigin.Begin);
             var name = Guid.NewGuid().ToString();
-            var key = await storage.Put(name, stream).ConfigureAwait(false);
+            var key = await storage.Put(name, stream);
 
             Assert.Equal(name, key);
             Assert.True(await storage.Exists(key));
 
-            var read = await storage.Get(key).ConfigureAwait(false);
-            var stored = await read.ReadBytesAsync();
+            using (var read = await storage.Get(key))
+            {
+                var stored = await read.ReadBytesAsync();
+                Assert.Equal(bytes, stored);
+            }
 
-            Assert.Equal(bytes, stored);
+            await storage.Delete(key);
+            Assert.False(await storage.Exists(key));
+            Assert.Null(await storage.Get(key));
         }
 
         [Theory, MemberData("Data")]

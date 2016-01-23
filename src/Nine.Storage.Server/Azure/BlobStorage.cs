@@ -120,5 +120,14 @@
 
             return key;
         }
+
+        public async Task Delete(string key)
+        {
+            _contentCache.Remove(key);
+
+            var container = await _container.GetValueAsync().ConfigureAwait(false);
+
+            await container.GetBlockBlobReference(key).DeleteAsync().ConfigureAwait(false);
+        }
     }
 }

@@ -34,7 +34,11 @@
         {
             if (string.IsNullOrEmpty(key)) return Task.FromResult<Stream>(null);
 
-            return Task.FromResult<Stream>(File.OpenRead(GetFilePath(key)));
+            var path = GetFilePath(key);
+
+            if (!File.Exists(path)) return Task.FromResult<Stream>(null);
+
+            return Task.FromResult<Stream>(File.OpenRead(path));
         }
 
         public Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
@@ -79,16 +83,16 @@
             return Task.FromResult(key);
         }
 
-        public Task DeleteAsync(string key)
+        public Task Delete(string key)
         {
             var path = GetFilePath(key);
 
-            if (File.Exists(path)) File.Delete(GetFilePath(key));
+            if (File.Exists(path)) File.Delete(path);
 
             return Task.CompletedTask;
         }
 
-        public Task DeleteAllAsync()
+        public Task DeleteAll()
         {
             Directory.Delete(_baseDirectory, true);
 

@@ -51,6 +51,8 @@
         Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken));
 
         Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        Task Delete(string key);
     }
 
     /// <summary>
