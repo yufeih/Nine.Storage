@@ -1,4 +1,4 @@
-﻿namespace Nine.Storage
+﻿namespace Nine.Storage.Caching
 {
     using System;
     using System.Collections.Generic;

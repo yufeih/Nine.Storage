@@ -2,10 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Elasticsearch.Net;
     using Nest;
+    using Nine.Storage.Batching;
 
     public class ElasticSearchStorage<T> : IBulkStorage<T> where T : class, IKeyed, new()
     {

@@ -1,4 +1,4 @@
-﻿namespace Nine.Storage
+﻿namespace Nine.Storage.Syncing
 {
     using System;
     using System.ComponentModel;

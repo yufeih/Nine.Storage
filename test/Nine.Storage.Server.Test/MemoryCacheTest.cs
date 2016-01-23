@@ -1,4 +1,4 @@
-﻿namespace Nine.Storage
+﻿namespace Nine.Storage.Caching
 {
     using System;
     using System.Collections.Generic;
@@ -34,7 +34,7 @@
 
             for (int i = 0; i < 100; i++)
             {
-                await storage.Get<TestStorageObject>("1");
+                await storage.Get("1");
             }
 
             Assert.Equal(1, missCount);
@@ -44,7 +44,7 @@
         public async Task add_should_not_respect_cache()
         {
             var storage = new CachedStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>(), new MemoryCacheStorage<TestStorageObject>());
-            await storage.Get<TestStorageObject>("1");
+            await storage.Get("1");
             Assert.True(await storage.Add(new TestStorageObject("1")));
         }
     }

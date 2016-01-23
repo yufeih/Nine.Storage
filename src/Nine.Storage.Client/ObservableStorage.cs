@@ -5,6 +5,7 @@
     using System.Collections.Concurrent;
     using System.Threading.Tasks;
     using System.Linq;
+    using Nine.Storage.Syncing;
 
     public class ObservableStorage<T> : SyncSource<T>, IStorage<T> where T : class, IKeyed, new()
     {

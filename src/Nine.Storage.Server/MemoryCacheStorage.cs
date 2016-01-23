@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Runtime.Caching;
     using System.Threading.Tasks;
+    using Nine.Storage.Caching;
 
     /// <summary>
     /// Represents a single instance memory cached storage system that is based on System.Runtime.Caching.MemoryCache.

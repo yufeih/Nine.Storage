@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Nine.Storage.Caching;
 
     public class MemoryStorage<T> : IStorage<T>, ICache<T> where T : class, IKeyed, new()
     {

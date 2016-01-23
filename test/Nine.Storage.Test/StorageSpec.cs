@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Xunit;
+    using Nine.Storage.Compatibility;
 
     public abstract class StorageSpec<TData> : ITestFactoryData<IStorage<TestStorageObject>> where TData : ITestFactoryData<IStorage<TestStorageObject>>, new()
     {

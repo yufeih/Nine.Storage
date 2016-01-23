@@ -11,6 +11,7 @@
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Table;
     using Nine.Formatting;
+    using Nine.Storage.Batching;
 
     /// <summary>
     /// Represents a deferred storage where write operations are buffered and inserted into azure table in batches.

@@ -1,4 +1,4 @@
-﻿namespace Nine.Storage
+﻿namespace Nine.Storage.Blobs
 {
     using System;
     using System.Collections.Concurrent;

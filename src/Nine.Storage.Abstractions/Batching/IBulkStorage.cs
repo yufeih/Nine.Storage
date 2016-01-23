@@ -1,4 +1,4 @@
-﻿namespace Nine.Storage
+﻿namespace Nine.Storage.Batching
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;

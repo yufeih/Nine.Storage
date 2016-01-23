@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using SQLite.Net.Platform.Win32;
     using Xunit;
+    using Nine.Storage.Caching;
 
     public class StorageTest : StorageSpec<StorageTest>
     {
