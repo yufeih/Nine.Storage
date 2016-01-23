@@ -1,5 +1,5 @@
 ﻿{
-  "version": "2.0.0-alpha",
+  "version": "2.0.0-*",
   "description": "A key value pair storage to run on a client device",
   "authors": [ "Yufei Huang" ],
   "tags": [ "PCL", "Portable", "storage", "key", "value", "kv storage" ],
