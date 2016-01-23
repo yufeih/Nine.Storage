@@ -22,7 +22,8 @@
         "System.Collections.Concurrent": "4.0.0",
         "System.Linq": "4.0.0",
         "System.Runtime": "4.0.20",
-        "System.Threading": "4.0.10"
+        "System.Threading": "4.0.10",
+        "System.Threading.Tasks": "4.0.10"
       }
     },
     "dnx46": {

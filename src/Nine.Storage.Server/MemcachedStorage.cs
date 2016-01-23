@@ -62,7 +62,7 @@
         public Task Put(string key, T value)
         {
             cache.Store(StoreMode.Set, key, formatter.ToBytes(value));
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         public Task<bool> Delete(string key)
