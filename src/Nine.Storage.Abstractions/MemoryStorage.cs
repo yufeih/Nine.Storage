@@ -4,16 +4,20 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Threading.Tasks;
     using Nine.Storage.Caching;
 
-    public class MemoryStorage<T> : IStorage<T>, ICache<T> where T : class, IKeyed, new()
+    public class MemoryStorage<T> : IStorage<T>, ICache<T>
     {
         private readonly bool weak;
         private readonly ConcurrentDictionary<string, Entry> items = new ConcurrentDictionary<string, Entry>();
 
         public MemoryStorage() { }
-        public MemoryStorage(bool useWeakReference) { this.weak = useWeakReference; }
+        public MemoryStorage(bool useWeakReference)
+        {
+            this.weak = useWeakReference && !typeof(T).GetTypeInfo().IsValueType;
+        }
 
         public bool TryGet(string key, out T value)
         {
@@ -36,7 +40,7 @@
         public Task<T> Get(string key)
         {
             T result;
-            return Task.FromResult(TryGet(key, out result) ? result : null);
+            return Task.FromResult(TryGet(key, out result) ? result : default(T));
         }
 
         public Task<IEnumerable<T>> Range(string minKey = null, string maxKey = null, int? count = null)
@@ -58,14 +62,14 @@
             return Task.FromResult<IEnumerable<T>>(result.ToArray());
         }
 
-        public Task<bool> Add(T value)
+        public Task<bool> Add(string key, T value)
         {
-            return Task.FromResult(items.TryAdd(value.GetKey(), new Entry(value, weak)));
+            return Task.FromResult(items.TryAdd(key, new Entry(value, weak)));
         }
 
-        public Task Put(T value)
+        Task IStorage<T>.Put(string key, T value)
         {
-            Put(value.GetKey(), value);
+            Put(key, value);
             return Task.FromResult(0);
         }
 
@@ -77,14 +81,14 @@
         struct Entry
         {
             private readonly T value;
-            private readonly WeakReference<T> weakValue;
+            private readonly WeakReference weakValue;
 
             public T Value
             {
                 get
                 {
                     T result;
-                    return TryGetValue(out result) ? result : null;
+                    return TryGetValue(out result) ? result : default(T);
                 }
             }
 
@@ -92,8 +96,8 @@
             {
                 if (weak)
                 {
-                    this.value = null;
-                    this.weakValue = new WeakReference<T>(value);
+                    this.value = default(T);
+                    this.weakValue = new WeakReference(value);
                 }
                 else
                 {
@@ -106,7 +110,12 @@
             {
                 if (weakValue != null)
                 {
-                    return weakValue.TryGetTarget(out value);
+                    object obj = weakValue.Target;
+                    if (obj != null && obj is T)
+                    {
+                        value = (T)obj;
+                        return true;
+                    }
                 }
 
                 value = this.value;

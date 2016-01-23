@@ -13,7 +13,7 @@
     /// <summary>
     /// Represents a sorted observable collection that is loaded from a storage and optionally synced with a storage notification source.
     /// </summary>
-    public class StorageCollection<T, TViewModel> : IReadOnlyList<TViewModel>, INotifyCollectionChanged, INotifyPropertyChanged, ISupportIncrementalLoading where T : class, IKeyed, new()
+    public class StorageCollection<T, TViewModel> : IReadOnlyList<TViewModel>, INotifyCollectionChanged, INotifyPropertyChanged, ISupportIncrementalLoading where T : IKeyed
     {
         struct Entry
         {
@@ -341,7 +341,7 @@
     /// <summary>
     /// Represents a sorted observable collection that is loaded from a storage and optionally synced with a storage notification source.
     /// </summary>
-    public class StorageCollection<T> : StorageCollection<T, T> where T : class, IKeyed, new()
+    public class StorageCollection<T> : StorageCollection<T, T> where T : IKeyed
     {
         public StorageCollection(IStorage storage, string prefix)
             : base(storage, prefix, (x, e) => x)

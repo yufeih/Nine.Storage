@@ -122,11 +122,10 @@
         /// <summary>
         /// Adds a new key value to the storage if the key does not already exist.
         /// </summary>
-        public async Task<bool> Add(T value)
+        public async Task<bool> Add(string key, T value)
         {
             try
             {
-                var key = value.GetKey();
                 var entity = treatKeyAsPartitionKey ?
                     new KeyedTableEntity<T>(formatter) { Data = value, PartitionKey = key, RowKey = "" } :
                     new KeyedTableEntity<T>(formatter) { Data = value, PartitionKey = "", RowKey = key };
@@ -146,9 +145,8 @@
         /// Adds a key value pair to the storage if the key does not already exist,
         /// or updates a key value pair in the storage if the key already exists.
         /// </summary>
-        public async Task Put(T value)
+        public async Task Put(string key, T value)
         {
-            var key = value.GetKey();
             var entity = treatKeyAsPartitionKey ?
                 new KeyedTableEntity<T>(formatter) { Data = value, PartitionKey = key, RowKey = "" } :
                 new KeyedTableEntity<T>(formatter) { Data = value, PartitionKey = "", RowKey = key };

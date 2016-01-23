@@ -27,24 +27,24 @@
             }
         }
 
-        public IDisposable On<T>(Action<Delta<T>> action) where T : class, IKeyed, new()
+        public IDisposable On<T>(Action<Delta<T>> action)
         {
             return On<T>(source => source.On(RunOnSynchronizationContext(action)));
         }
 
-        public IDisposable On<T>(string key, Action<Delta<T>> action) where T : class, IKeyed, new()
+        public IDisposable On<T>(string key, Action<Delta<T>> action)
         {
             return On<T>(source => source.On(key, RunOnSynchronizationContext(action)));
         }
 
-        private IDisposable On<T>(Func<ISyncSource, IDisposable> action) where T : class, IKeyed, new()
+        private IDisposable On<T>(Func<ISyncSource, IDisposable> action)
         {
             var sources = selector(typeof(T));
             if (sources == null || !sources.Any()) return null;
             return new Disposable(sources.Select(action));
         }
 
-        private Action<Delta<T>> RunOnSynchronizationContext<T>(Action<Delta<T>> action) where T : class, IKeyed, new()
+        private Action<Delta<T>> RunOnSynchronizationContext<T>(Action<Delta<T>> action)
         {
             return new Action<Delta<T>>(x =>
             {
@@ -76,7 +76,7 @@
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public class SyncSource<T> : ISyncSource<T> where T : class, IKeyed, new()
+    public class SyncSource<T> : ISyncSource<T>
     {
         class Subscription : IDisposable
         {

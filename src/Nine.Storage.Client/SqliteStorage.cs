@@ -9,7 +9,7 @@
     using SQLite.Net.Attributes;
     using System;
 
-    public class SqliteStorage<T> : IStorage<T> where T : class, IKeyed, new()
+    public class SqliteStorage<T> : IStorage<T>
     {
         private const SQLiteOpenFlags SqliteOpenFlags = SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.FullMutex;
 
@@ -31,13 +31,13 @@
             _db.CreateTable<Table>();
         }
 
-        public Task<bool> Add(T value)
+        public Task<bool> Add(string key, T value)
         {
             lock (_lock)
             {
                 try
                 {
-                    return Task.FromResult(_db.Insert(new Table { Key = value.GetKey(), Value = _formatter.ToBytes(value) }) == 1);
+                    return Task.FromResult(_db.Insert(new Table { Key = key, Value = _formatter.ToBytes(value) }) == 1);
                 }
                 catch (SQLiteException)
                 {
@@ -60,15 +60,15 @@
             {
                 var query = "select * from \"Table\" where \"Key\" = ?";
                 var bytes = _db.Query<Table>(query, key).SingleOrDefault()?.Value;
-                return Task.FromResult(bytes != null ? _formatter.FromBytes<T>(bytes) : null);
+                return Task.FromResult(bytes != null ? _formatter.FromBytes<T>(bytes) : default(T));
             }
         }
 
-        public Task Put(T value)
+        public Task Put(string key, T value)
         {
             lock (_lock)
             {
-                return Task.FromResult(_db.InsertOrReplace(new Table { Key = value.GetKey(), Value = _formatter.ToBytes(value) }) == 1);
+                return Task.FromResult(_db.InsertOrReplace(new Table { Key = key, Value = _formatter.ToBytes(value) }) == 1);
             }
         }
 

@@ -9,29 +9,29 @@
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class CompatibilityExtensions
     {
-        public static Task<T> Get<T>(this IStorage<T> storage, params object[] keyComponents) where T : class, IKeyed, new()
+        public static Task<T> Get<T>(this IStorage<T> storage, params object[] keyComponents)
         {
             return storage.Get(StorageKey.Get(keyComponents));
         }
 
-        public static Task<IEnumerable<T>> List<T>(this IStorage<T> storage, params object[] keyComponents) where T : class, IKeyed, new()
+        public static Task<IEnumerable<T>> List<T>(this IStorage<T> storage, params object[] keyComponents)
         {
             var prefix = StorageKey.Get(keyComponents);
             return storage.Range(prefix, StorageKey.Increment(prefix), null);
         }
 
-        public static Task<IEnumerable<T>> Page<T>(this IStorage<T> storage, int? count, params object[] keyComponents) where T : class, IKeyed, new()
+        public static Task<IEnumerable<T>> Page<T>(this IStorage<T> storage, int? count, params object[] keyComponents)
         {
             var prefix = StorageKey.Get(keyComponents);
             return storage.Range(prefix, StorageKey.Increment(prefix), count);
         }
 
-        public static IAsyncEnumerator<T> All<T>(this IStorage<T> storage, int? batchSize = 1000) where T : class, IKeyed, new()
+        public static IAsyncEnumerator<T> All<T>(this IStorage<T> storage, int? batchSize = 1000) where T : IKeyed
         {
             return All(storage, null, batchSize);
         }
 
-        public static IAsyncEnumerator<T> All<T>(this IStorage<T> storage, string prefix, int? batchSize = 1000) where T : class, IKeyed, new()
+        public static IAsyncEnumerator<T> All<T>(this IStorage<T> storage, string prefix, int? batchSize = 1000) where T : IKeyed
         {
             // TODO: All does not work well with BatchedTableStorage...
             var continuation = prefix;
@@ -48,29 +48,29 @@
             }));
         }
 
-        public static Task<T> Get<T>(this IStorage storage, params object[] keyComponents) where T : class, IKeyed, new()
+        public static Task<T> Get<T>(this IStorage storage, params object[] keyComponents)
         {
             return storage.Get<T>(StorageKey.Get(keyComponents));
         }
 
-        public static Task<IEnumerable<T>> List<T>(this IStorage storage, params object[] keyComponents) where T : class, IKeyed, new()
+        public static Task<IEnumerable<T>> List<T>(this IStorage storage, params object[] keyComponents)
         {
             var prefix = StorageKey.Get(keyComponents);
             return storage.Range<T>(prefix, StorageKey.Increment(prefix), null);
         }
 
-        public static Task<IEnumerable<T>> Page<T>(this IStorage storage, int? count, params object[] keyComponents) where T : class, IKeyed, new()
+        public static Task<IEnumerable<T>> Page<T>(this IStorage storage, int? count, params object[] keyComponents)
         {
             var prefix = StorageKey.Get(keyComponents);
             return storage.Range<T>(prefix, StorageKey.Increment(prefix), count);
         }
 
-        public static IAsyncEnumerator<T> All<T>(this IStorage storage, int? batchSize = 1000) where T : class, IKeyed, new()
+        public static IAsyncEnumerator<T> All<T>(this IStorage storage, int? batchSize = 1000) where T : IKeyed
         {
             return All<T>(storage, null, batchSize);
         }
 
-        public static IAsyncEnumerator<T> All<T>(this IStorage storage, string prefix, int? batchSize = 1000) where T : class, IKeyed, new()
+        public static IAsyncEnumerator<T> All<T>(this IStorage storage, string prefix, int? batchSize = 1000) where T : IKeyed
         {
             var continuation = prefix;
             var end = StorageKey.Increment(continuation);

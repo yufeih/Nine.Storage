@@ -70,10 +70,9 @@
             return list;
         }
 
-        public async Task<bool> Add(T value)
+        public async Task<bool> Add(string key, T value)
         {
-            var key = value.GetKey();
-            if (!await storage.Add(value).ConfigureAwait(false)) return false;
+            if (!await storage.Add(key, value).ConfigureAwait(false)) return false;
 
             if (instances != null)
             {
@@ -89,10 +88,8 @@
             return true;
         }
 
-        public async Task Put(T value)
+        public async Task Put(string key, T value)
         {
-            var key = value.GetKey();
-
             if (instances != null)
             {
                 T target;

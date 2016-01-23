@@ -10,7 +10,7 @@
     using MongoDB.Driver;
     using MongoDB.Driver.Builders;
 
-    public class MongoStorage<T> : IStorage<T> where T : class, IKeyed, new()
+    public class MongoStorage<T> : IStorage<T>
     {
         class StorageObject
         {
@@ -40,7 +40,7 @@
         public Task<T> Get(string key)
         {
             var result = collection.FindOneById(key);
-            return Task.FromResult(result != null ? result.Value : null);
+            return Task.FromResult(result != null ? result.Value : default(T));
         }
 
         public Task<IEnumerable<T>> Range(string minKey = null, string maxKey = null, int? count = null)
@@ -59,11 +59,11 @@
             return Task.FromResult(from x in query select x.Value);
         }
 
-        public Task<bool> Add(T value)
+        public Task<bool> Add(string key, T value)
         {
             try
             {
-                return Task.FromResult(collection.Insert(new StorageObject { Id = value.GetKey(), Value = value }).DocumentsAffected == 1);
+                return Task.FromResult(collection.Insert(new StorageObject { Id = key, Value = value }).DocumentsAffected == 1);
             }
             catch (MongoDuplicateKeyException)
             {
@@ -71,9 +71,9 @@
             }
         }
 
-        public Task Put(T value)
+        public Task Put(string key, T value)
         {
-            return Task.FromResult(collection.Save(new StorageObject { Id = value.GetKey(), Value = value }).DocumentsAffected == 1);
+            return Task.FromResult(collection.Save(new StorageObject { Id = key, Value = value }).DocumentsAffected == 1);
         }
 
         public Task<bool> Delete(string key)

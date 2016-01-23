@@ -6,7 +6,7 @@
     /// <summary>
     /// Abstracts a key value pair object storage that supports bulk operations.
     /// </summary>
-    public interface IBulkStorage<T> : IStorage<T> where T : class, IKeyed, new()
+    public interface IBulkStorage<T>
     {
         /// <summary>
         /// Adds a new key value to the storage if the key does not already exist.

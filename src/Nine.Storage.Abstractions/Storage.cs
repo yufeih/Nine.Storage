@@ -45,7 +45,7 @@
             this.StorageProvider = storageProvider;
         }
 
-        public async Task<T> Get<T>(string key) where T : class, IKeyed, new()
+        public async Task<T> Get<T>(string key)
         {
             Interlocked.Increment(ref readCount);
             var storage = await StorageProvider.GetAsync<T>().ConfigureAwait(false);
@@ -53,7 +53,7 @@
             return await storage.Get(key).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<T>> Range<T>(string minKey, string maxKey, int? maxCount = null) where T : class, IKeyed, new()
+        public async Task<IEnumerable<T>> Range<T>(string minKey, string maxKey, int? maxCount = null)
         {
             Interlocked.Increment(ref readCount);
             var storage = await StorageProvider.GetAsync<T>().ConfigureAwait(false);
@@ -61,7 +61,7 @@
             return await storage.Range(minKey, maxKey, maxCount).ConfigureAwait(false);
         }
 
-        public async Task<bool> Add<T>(T value) where T : class, IKeyed, new()
+        public async Task<bool> Add<T>(string key, T value)
         {
             if (value == null) throw new ArgumentNullException("value");
 
@@ -79,10 +79,10 @@
                 // TODO:
                 if (timestamped != null && timestamped.Time == default(DateTime)) timestamped.Time = timestamp.Next();
             }
-            return await storage.Add(value).ConfigureAwait(false);
+            return await storage.Add(key, value).ConfigureAwait(false);
         }
 
-        public async Task Put<T>(T value) where T : class, IKeyed, new()
+        public async Task Put<T>(string key, T value)
         {
             if (value == null) throw new ArgumentNullException("value");
 
@@ -99,10 +99,10 @@
                 var timestamped = value as ITimestamped;
                 if (timestamped != null && timestamped.Time == default(DateTime)) timestamped.Time = timestamp.Next();
             }
-            await storage.Put(value).ConfigureAwait(false);
+            await storage.Put(key, value).ConfigureAwait(false);
         }
 
-        public async Task<bool> Delete<T>(string key) where T : class, IKeyed, new()
+        public async Task<bool> Delete<T>(string key)
         {
             if (Interlocked.Increment(ref writeCount) > 100000)
             {
@@ -115,7 +115,7 @@
             return await storage.Delete(key).ConfigureAwait(false);
         }
 
-        public IDisposable On<T>(Action<Delta<T>> action) where T : class, IKeyed, new()
+        public IDisposable On<T>(Action<Delta<T>> action)
         {
             var result = new OnDisposable();
             initializers.GetOrAdd(typeof(T), type => new ConcurrentQueue<Action<object>>()).Enqueue(state =>
@@ -131,7 +131,7 @@
             return result;
         }
 
-        public IDisposable On<T>(string key, Action<Delta<T>> action) where T : class, IKeyed, new()
+        public IDisposable On<T>(string key, Action<Delta<T>> action)
         {
             var result = new OnDisposable();
             initializers.GetOrAdd(typeof(T), type => new ConcurrentQueue<Action<object>>()).Enqueue(state =>
@@ -147,7 +147,7 @@
             return result;
         }
 
-        private async void EnsureInitialized<T>() where T : class, IKeyed, new()
+        private async void EnsureInitialized<T>()
         {
             EnsureInitialized<T>(await StorageProvider.GetAsync<T>().ConfigureAwait(false));
         }

@@ -8,7 +8,7 @@
     using Nine.Formatting;
     using StackExchange.Redis;
 
-    public class RedisStorage<T> : IStorage<T> where T : class, IKeyed, new()
+    public class RedisStorage<T> : IStorage<T>
     {
         private static readonly IFormatter formatter = new JsonFormatter();
         private static readonly ConcurrentDictionary<string, Lazy<ConnectionMultiplexer>> connections = new ConcurrentDictionary<string, Lazy<ConnectionMultiplexer>>();
@@ -28,7 +28,7 @@
         {
             key = name + "/" + key;
             var value = await db.StringGetAsync(key);
-            if (!value.HasValue) return null;
+            if (!value.HasValue) return default(T);
             return formatter.FromBytes<T>(value);
         }
 
@@ -44,18 +44,16 @@
                    select formatter.FromBytes<T>(value);
         }
 
-        public async Task<bool> Add(T value)
+        public async Task<bool> Add(string key, T value)
         {
-            var key = value.GetKey();
             key = name + "/" + key;
             if (!await db.SortedSetAddAsync(name, key, 0)) return false;
             await db.StringSetAsync(key, formatter.ToBytes(value));
             return true;
         }
 
-        public async Task Put(T value)
+        public async Task Put(string key, T value)
         {
-            var key = value.GetKey();
             key = name + "/" + key;
             await db.StringSetAsync(key, formatter.ToBytes(value));
             await db.SortedSetAddAsync(name, key, 0);

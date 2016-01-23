@@ -13,7 +13,7 @@
         IAsyncEnumerator<T> GetValues(string partition);
     }
 
-    public class StorageDataSource<T> : IPartitionedDataSource<T> where T : class, IKeyed, new()
+    public class StorageDataSource<T> : IPartitionedDataSource<T> where T : IKeyed
     {
         private static readonly string[] validIdChars;
 

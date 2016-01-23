@@ -32,7 +32,7 @@
     /// <summary>
     /// Represents a storage where objects are cached in the cache storage.
     /// </summary>
-    public class CachedStorage<T> : IStorage<T> where T : class, IKeyed, new()
+    public class CachedStorage<T> : IStorage<T>
     {
         /// <summary>
         /// Since MemoryCache does not support null value, this constant identifies values that does
@@ -118,12 +118,10 @@
         /// <summary>
         /// Adds a new key value to the storage if the key does not already exist.
         /// </summary>
-        public async Task<bool> Add(T value)
+        public async Task<bool> Add(string key, T value)
         {
-            if (await persistStorage.Add(value).ConfigureAwait(false))
+            if (await persistStorage.Add(key, value).ConfigureAwait(false))
             {
-                var key = value.GetKey();
-
                 // SHOULD override existing cache using Put !!!
                 cache.Put(key, value);
 
@@ -137,11 +135,9 @@
         /// Adds a key value pair to the storage if the key does not already exist,
         /// or updates a key value pair in the storage if the key already exists.
         /// </summary>
-        public async Task Put(T value)
+        public async Task Put(string key, T value)
         {
-            await persistStorage.Put(value).ConfigureAwait(false);
-
-            var key = value.GetKey();
+            await persistStorage.Put(key, value).ConfigureAwait(false);
             cache.Put(key, value);
             if (rangeCache != null) InvalidateRange(key);
         }

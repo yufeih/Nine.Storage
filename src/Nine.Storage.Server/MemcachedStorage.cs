@@ -10,7 +10,7 @@
     using Enyim.Caching.Memcached;
     using Nine.Formatting;
 
-    public class MemcachedStorage<T> : IDisposable, IStorage<T> where T : class, IKeyed, new()
+    public class MemcachedStorage<T> : IDisposable, IStorage<T>
     {
         private static readonly IFormatter formatter = new JsonFormatter();
         private readonly MemcachedClient cache;
@@ -45,7 +45,7 @@
         public Task<T> Get(string key)
         {
             var result = cache.Get(key) as byte[];
-            if (result == null) return Task.FromResult<T>(null);
+            if (result == null) return Task.FromResult<T>(default(T));
             return Task.FromResult(formatter.FromBytes<T>(result));
         }
 
@@ -54,14 +54,14 @@
             throw new NotSupportedException();
         }
 
-        public Task<bool> Add( T value)
+        public Task<bool> Add(string key, T value)
         {
-            return Task.FromResult(cache.Store(StoreMode.Add, value.GetKey(), formatter.ToBytes(value)));
+            return Task.FromResult(cache.Store(StoreMode.Add, key, formatter.ToBytes(value)));
         }
 
-        public Task Put(T value)
+        public Task Put(string key, T value)
         {
-            cache.Store(StoreMode.Set, value.GetKey(), formatter.ToBytes(value));
+            cache.Store(StoreMode.Set, key, formatter.ToBytes(value));
             return Task.FromResult(0);
         }
 

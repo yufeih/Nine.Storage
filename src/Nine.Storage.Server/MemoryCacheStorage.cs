@@ -9,7 +9,7 @@
     /// <summary>
     /// Represents a single instance memory cached storage system that is based on System.Runtime.Caching.MemoryCache.
     /// </summary>
-    public class MemoryCacheStorage<T> : IStorage<T>, ICache<T>, IDisposable where T : class, IKeyed, new()
+    public class MemoryCacheStorage<T> : IStorage<T>, ICache<T>, IDisposable where T : class
     {
         /// <summary>
         /// Since MemoryCache does not support null value, this constant identifies values that does
@@ -60,14 +60,14 @@
             throw new NotSupportedException();
         }
 
-        public Task<bool> Add(T value)
+        public Task<bool> Add(string key, T value)
         {
-            return Task.FromResult(memoryCache.Add(value.GetKey(), value ?? emptyObject, policy));
+            return Task.FromResult(memoryCache.Add(key, value ?? emptyObject, policy));
         }
 
-        public Task Put(T value)
+        Task IStorage<T>.Put(string key, T value)
         {
-            Put(value.GetKey(), value);
+            Put(key, value);
             return Task.FromResult(0);
         }
 

@@ -194,7 +194,7 @@
         /// Adds a new key value to the storage if the key does not already exist.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public Task<bool> Add(T value)
+        public Task<bool> Add(string key, T value)
         {
             // Azure table entity group transactions does not support attaching
             // many operations to a single entity, so we choose not to support 
@@ -209,9 +209,8 @@
         /// Adds a key value pair to the storage if the key does not already exist,
         /// or updates a key value pair in the storage if the key already exists.
         /// </summary>
-        public async Task Put(T value)
+        public async Task Put(string key, T value)
         {
-            var key = value.GetKey();
             var partitionKey = GetPartitionKey(key);
             await batches[partitionKey].AddAsync(key, value, await table.GetValueAsync().ConfigureAwait(false)).ConfigureAwait(false);
         }
