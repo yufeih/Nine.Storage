@@ -8,11 +8,11 @@
     [EditorBrowsable(EditorBrowsableState.Never)]
     public abstract class StorageProviderBase : IStorageProvider
     {
-        private readonly ConcurrentDictionary<Type, LazyAsync<object>> values = new ConcurrentDictionary<Type, LazyAsync<object>>();
+        private readonly ConcurrentDictionary<Type, LazyAsync<object>> _values = new ConcurrentDictionary<Type, LazyAsync<object>>();
 
         public async Task<IStorage<T>> GetAsync<T>()
         {
-            var factory = values.GetOrAdd(typeof(T), type => new LazyAsync<object>(() => GetStorageCoreAsync<T>()));
+            var factory = _values.GetOrAdd(typeof(T), type => new LazyAsync<object>(() => GetStorageCoreAsync<T>()));
             return (IStorage<T>)(await factory.GetValueAsync().ConfigureAwait(false));
         }
 

@@ -10,31 +10,31 @@
 
     public class MemoryStorage<T> : IStorage<T>, ICache<T>
     {
-        private readonly bool weak;
-        private readonly ConcurrentDictionary<string, Entry> items = new ConcurrentDictionary<string, Entry>();
+        private readonly bool _weak;
+        private readonly ConcurrentDictionary<string, Entry> _items = new ConcurrentDictionary<string, Entry>();
 
         public MemoryStorage() { }
         public MemoryStorage(bool useWeakReference)
         {
-            this.weak = useWeakReference && !typeof(T).GetTypeInfo().IsValueType;
+            this._weak = useWeakReference && !typeof(T).GetTypeInfo().IsValueType;
         }
 
         public bool TryGet(string key, out T value)
         {
             Entry entry;
             value = default(T);
-            return items.TryGetValue(key, out entry) && entry.TryGetValue(out value);
+            return _items.TryGetValue(key, out entry) && entry.TryGetValue(out value);
         }
 
         public void Put(string key, T value)
         {
-            items.AddOrUpdate(key, new Entry(value, weak), (k, v) => new Entry(value, weak));
+            _items.AddOrUpdate(key, new Entry(value, _weak), (k, v) => new Entry(value, _weak));
         }
 
         public bool Delete(string key)
         {
             Entry value;
-            return items.TryRemove(key, out value);
+            return _items.TryRemove(key, out value);
         }
 
         public Task<T> Get(string key)
@@ -46,7 +46,7 @@
         public Task<IEnumerable<T>> Range(string minKey = null, string maxKey = null, int? count = null)
         {
             var result =
-                from x in items
+                from x in _items
                 where (minKey == null || string.CompareOrdinal(x.Key, minKey) >= 0) &&
                       (maxKey == null || string.CompareOrdinal(x.Key, maxKey) < 0)
                 let value = x.Value.Value
@@ -64,7 +64,7 @@
 
         public Task<bool> Add(string key, T value)
         {
-            return Task.FromResult(items.TryAdd(key, new Entry(value, weak)));
+            return Task.FromResult(_items.TryAdd(key, new Entry(value, _weak)));
         }
 
         Task IStorage<T>.Put(string key, T value)
@@ -80,8 +80,8 @@
 
         struct Entry
         {
-            private readonly T value;
-            private readonly WeakReference weakValue;
+            private readonly T _value;
+            private readonly WeakReference _weakValue;
 
             public T Value
             {
@@ -96,21 +96,21 @@
             {
                 if (weak)
                 {
-                    this.value = default(T);
-                    this.weakValue = new WeakReference(value);
+                    _value = default(T);
+                    _weakValue = new WeakReference(value);
                 }
                 else
                 {
-                    this.value = value;
-                    this.weakValue = null;
+                    _value = value;
+                    _weakValue = null;
                 }
             }
 
             public bool TryGetValue(out T value)
             {
-                if (weakValue != null)
+                if (_weakValue != null)
                 {
-                    object obj = weakValue.Target;
+                    object obj = _weakValue.Target;
                     if (obj != null && obj is T)
                     {
                         value = (T)obj;
@@ -118,7 +118,7 @@
                     }
                 }
 
-                value = this.value;
+                value = _value;
                 return true;
             }
         }

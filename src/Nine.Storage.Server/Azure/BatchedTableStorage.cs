@@ -19,23 +19,23 @@
     /// </summary>
     public class BatchedTableStorage<T> : IDisposable, IStorage<T>, IPartitionedDataSource<T> where T : class, IKeyed, new()
     {
-        private const int maxRecords = 100;
+        private const int MaxRecords = 100;
 
         /// <summary>
         /// The partition count determines the number of partitions to be used for the storage.
         /// Operations across the partitions cannot be batched. And a batched operation can contain
         /// a maximum of 100 operations within a single batch.
         /// </summary>
-        private readonly int partitionCount;
-        private readonly int partitionKeyLength;
-        private readonly LazyAsync<CloudTable> table;
-        private readonly Batch[] batches;
+        private readonly int _partitionCount;
+        private readonly int _partitionKeyLength;
+        private readonly LazyAsync<CloudTable> _table;
+        private readonly Batch[] _batches;
 
         /// <summary>
         /// Resolves an entity into a KeyedTableEntity.
         /// </summary>
-        private readonly EntityResolver<KeyedTableEntity<T>> entityResolver;
-        private readonly KeyedTableEntityFormatter<T> formatter;
+        private readonly EntityResolver<KeyedTableEntity<T>> _entityResolver;
+        private readonly KeyedTableEntityFormatter<T> _formatter;
 
         /// <summary>
         /// Initializes a new instance of BatchedTableStorage.
@@ -54,14 +54,14 @@
             if (partitionCount < 1 || partitionCount > 1024) throw new ArgumentOutOfRangeException("partitionCount");
             if (storageAccount == null) throw new ArgumentNullException("storageAccount");
 
-            this.partitionCount = partitionCount;
-            this.partitionKeyLength = partitionKeyLength;
-            this.batches = Enumerable.Range(0, partitionCount).Select(i => new Batch { PartitionKey = i.ToString(), Owner = this }).ToArray();
-            this.formatter = new KeyedTableEntityFormatter<T>(textConverter);
+            _partitionCount = partitionCount;
+            _partitionKeyLength = partitionKeyLength;
+            _batches = Enumerable.Range(0, partitionCount).Select(i => new Batch { PartitionKey = i.ToString(), Owner = this }).ToArray();
+            _formatter = new KeyedTableEntityFormatter<T>(textConverter);
 
-            this.entityResolver = (string partitionKey, string rowKey, DateTimeOffset timestamp, IDictionary<string, EntityProperty> properties, string etag) =>
+            _entityResolver = (string partitionKey, string rowKey, DateTimeOffset timestamp, IDictionary<string, EntityProperty> properties, string etag) =>
             {
-                var entity = new KeyedTableEntity<T>(formatter);
+                var entity = new KeyedTableEntity<T>(_formatter);
                 entity.Data = new T();
                 entity.ETag = etag;
                 entity.Timestamp = timestamp;
@@ -69,7 +69,7 @@
                 return entity;
             };
 
-            this.table = new LazyAsync<CloudTable>(async () =>
+            _table = new LazyAsync<CloudTable>(async () =>
             {
                 var table = storageAccount.CreateCloudTableClient().GetTableReference(tableName ?? typeof(T).Name);
                 await table.CreateIfNotExistsAsync().ConfigureAwait(false);
@@ -80,7 +80,7 @@
         /// <summary>
         /// Calculates the partition key for a given key.
         /// </summary>
-        public int GetPartitionKey(string key) => GetPartitionKey(key, partitionCount, partitionKeyLength);
+        public int GetPartitionKey(string key) => GetPartitionKey(key, _partitionCount, _partitionKeyLength);
 
         /// <summary>
         /// Calculates the partition key for a given key.
@@ -130,10 +130,10 @@
             var partitionKey = GetPartitionKey(key);
 
             // Lookup memory first in case the value has not been flushed to the storage.
-            if (batches[partitionKey].Items.TryGetValue(key, out value)) return value;
+            if (_batches[partitionKey].Items.TryGetValue(key, out value)) return value;
 
             // Lookup the storage for persisted records.
-            var result = await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Retrieve(partitionKey.ToString(), key, entityResolver)).ConfigureAwait(false);
+            var result = await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Retrieve(partitionKey.ToString(), key, _entityResolver)).ConfigureAwait(false);
             if (result == null || result.Result == null) return null;
             return (((KeyedTableEntity<T>)result.Result).Data);
         }
@@ -161,7 +161,7 @@
 
             // Lookup memory first in case the value has not been flushed to the storage.
             result.AddRange(
-                from pair in (partitionKey != null ? batches[partitionKey.Value].Items : batches.SelectMany(x => x.Items))
+                from pair in (partitionKey != null ? _batches[partitionKey.Value].Items : _batches.SelectMany(x => x.Items))
                 let key = pair.Key
                 where (minKey == null || string.CompareOrdinal(key, minKey) >= 0) &&
                       (maxKey == null || string.CompareOrdinal(key, maxKey) < 0)
@@ -180,7 +180,7 @@
             TableContinuationToken continuation = null;
             while (true)
             {
-                var queryResult = await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteQuerySegmentedAsync(query, entityResolver, continuation).ConfigureAwait(false);
+                var queryResult = await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteQuerySegmentedAsync(query, _entityResolver, continuation).ConfigureAwait(false);
                 continuation = queryResult.ContinuationToken;
                 result.AddRange(from item in queryResult.Results select (T)item.Data);
                 if (continuation == null) break;
@@ -212,7 +212,7 @@
         public async Task Put(string key, T value)
         {
             var partitionKey = GetPartitionKey(key);
-            await batches[partitionKey].AddAsync(key, value, await table.GetValueAsync().ConfigureAwait(false)).ConfigureAwait(false);
+            await _batches[partitionKey].AddAsync(key, value, await _table.GetValueAsync().ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -224,11 +224,11 @@
             var partitionKey = GetPartitionKey(key);
 
             // If the value is not committed, don't need to remove from the storage.
-            if (batches[partitionKey].Items.TryRemove(key, out value)) return true;
+            if (_batches[partitionKey].Items.TryRemove(key, out value)) return true;
 
             try
             {
-                await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Delete(new TableEntity { PartitionKey = partitionKey.ToString(), RowKey = key, ETag = "*" })).ConfigureAwait(false);
+                await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Delete(new TableEntity { PartitionKey = partitionKey.ToString(), RowKey = key, ETag = "*" })).ConfigureAwait(false);
                 return true;
             }
             catch (StorageException e)
@@ -246,13 +246,13 @@
         /// </summary>
         public async Task Flush()
         {
-            var tableValue = await table.GetValueAsync().ConfigureAwait(false);
-            await Task.WhenAll(from x in batches select x.FlushAsync(tableValue)).ConfigureAwait(false);
+            var tableValue = await _table.GetValueAsync().ConfigureAwait(false);
+            await Task.WhenAll(from x in _batches select x.FlushAsync(tableValue)).ConfigureAwait(false);
         }
 
         public Task<IEnumerable<string>> GetPartitions()
         {
-            return Task.FromResult(Enumerable.Range(0, partitionCount).Select(i => i.ToString()));
+            return Task.FromResult(Enumerable.Range(0, _partitionCount).Select(i => i.ToString()));
         }
 
         public IAsyncEnumerator<T> GetValues(string partition)
@@ -262,7 +262,7 @@
 
             return AsyncEnumerator.Create(new Func<Task<AsyncEnumerationResult<T>>>(async () =>
             {
-                var queryResult = await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteQuerySegmentedAsync(query, entityResolver, continuation).ConfigureAwait(false);
+                var queryResult = await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteQuerySegmentedAsync(query, _entityResolver, continuation).ConfigureAwait(false);
                 continuation = queryResult.ContinuationToken;
                 return new AsyncEnumerationResult<T>
                 {
@@ -313,7 +313,7 @@
             {
                 HasValue = 1;
                 Items.AddOrUpdate(key, value, (a, b) => value);
-                if (Items.Count >= maxRecords)
+                if (Items.Count >= MaxRecords)
                 {
                     return FlushAsync(table);
                 }
@@ -343,9 +343,9 @@
                 var batch = new TableBatchOperation();
                 foreach (var item in items)
                 {
-                    var entity = new KeyedTableEntity<T>(Owner.formatter) { Data = item.Value, PartitionKey = PartitionKey, RowKey = item.Key };
+                    var entity = new KeyedTableEntity<T>(Owner._formatter) { Data = item.Value, PartitionKey = PartitionKey, RowKey = item.Key };
                     batch.Add(TableOperation.InsertOrReplace(entity));
-                    if (++count >= maxRecords)
+                    if (++count >= MaxRecords)
                     {
                         yield return batch;
                         count = 0;

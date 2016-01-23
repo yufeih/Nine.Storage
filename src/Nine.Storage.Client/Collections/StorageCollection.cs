@@ -22,28 +22,28 @@
             public T Data;
         }
 
-        private readonly SynchronizationContext syncContext = SynchronizationContext.Current;
-        private readonly List<Entry> collection = new List<Entry>();
-        private readonly Func<T, TViewModel, TViewModel> convert;
+        private readonly SynchronizationContext _syncContext = SynchronizationContext.Current;
+        private readonly List<Entry> _collection = new List<Entry>();
+        private readonly Func<T, TViewModel, TViewModel> _convert;
 
-        private IStorage storage;
-        private readonly ISyncSource observableStorage;
-        private readonly List<Delta<T>> pendingChanges = new List<Delta<T>>();
+        private readonly IStorage _storage;
+        private readonly ISyncSource _observableStorage;
+        private readonly List<Delta<T>> _pendingChanges = new List<Delta<T>>();
 
-        private readonly string minKey;
-        private readonly string maxKey;
+        private readonly string _minKey;
+        private readonly string _maxKey;
 
-        private bool subscribed;
-        private IDisposable subscription;
+        private bool _subscribed;
+        private IDisposable _subscription;
 
-        private string cursor;
+        private string _cursor;
 
-        public int Count { get { return collection.Count; } }
-        public TViewModel this[int index] { get { return collection[index].Value; } }
+        public int Count { get { return _collection.Count; } }
+        public TViewModel this[int index] { get { return _collection[index].Value; } }
 
-        public IStorage Storage { get { return storage; } }
-        public string MinKey { get { return minKey; } }
-        public string MaxKey { get { return maxKey; } }
+        public IStorage Storage { get { return _storage; } }
+        public string MinKey { get { return _minKey; } }
+        public string MaxKey { get { return _maxKey; } }
 
         public bool IsLoading { get; private set; }
         public bool HasMoreItems { get; private set; }
@@ -68,15 +68,15 @@
             if (storage == null) throw new ArgumentException(nameof(storage));
             if (convert == null) throw new ArgumentException(nameof(convert));
 
-            this.storage = storage;
-            this.minKey = minKey;
-            this.maxKey = maxKey;
-            this.cursor = minKey;
-            this.convert = convert;
+            _storage = storage;
+            _minKey = minKey;
+            _maxKey = maxKey;
+            _cursor = minKey;
+            _convert = convert;
 
-            this.HasMoreItems = true;
+            HasMoreItems = true;
 
-            this.observableStorage = storage as ISyncSource;
+            _observableStorage = storage as ISyncSource;
         }
 
 #pragma warning disable CS4014
@@ -131,7 +131,7 @@
 
             try
             {
-                if (cursor != null && string.CompareOrdinal(cursor, maxKey) >= 0)
+                if (_cursor != null && string.CompareOrdinal(_cursor, _maxKey) >= 0)
                 {
                     HasMoreItems = false;
                     return 0;
@@ -140,18 +140,18 @@
                 IsLoading = true;
                 OnPropertyChanged("IsLoading");
 
-                if (!subscribed)
+                if (!_subscribed)
                 {
-                    subscribed = true;
+                    _subscribed = true;
 
-                    if (observableStorage != null)
+                    if (_observableStorage != null)
                     {
                         // If there are any actions happened before the subscription is set, thoses changes will be lost
-                        subscription = observableStorage.On<T>(OnStorageChanged);
+                        _subscription = _observableStorage.On<T>(OnStorageChanged);
                     }
                 }
 
-                var items = await storage.Range<T>(cursor, maxKey, count);
+                var items = await _storage.Range<T>(_cursor, _maxKey, count);
                 var itemCount = items.Count();
 
                 if (itemCount <= 0)
@@ -161,7 +161,7 @@
                 }
 
                 var addedItems = new List<TViewModel>(itemCount);
-                var originalCount = collection.Count;
+                var originalCount = _collection.Count;
                 var index = 0;
 
                 foreach (var item in items)
@@ -170,22 +170,22 @@
 
                     var key = item.GetKey();
                     
-                    if (string.CompareOrdinal(key, cursor) > 0) cursor = StorageKey.Increment(key);
+                    if (string.CompareOrdinal(key, _cursor) > 0) _cursor = StorageKey.Increment(key);
                     if (TryFindIndex(key, out index)) continue;
-                    var value = convert(item, default(TViewModel));
+                    var value = _convert(item, default(TViewModel));
 
-                    collection.Insert(index, new Entry { Key = key, Data = item, Value = value });
+                    _collection.Insert(index, new Entry { Key = key, Data = item, Value = value });
                     addedItems.Add(value);
                 }
 
-                var addedCount = collection.Count - originalCount;
+                var addedCount = _collection.Count - originalCount;
                 if (addedCount > 0)
                 {
                     OnPropertyChanged(nameof(Count));
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, addedItems));
                 }
 
-                if (addedCount <= 0 || string.CompareOrdinal(cursor, maxKey) >= 0)
+                if (addedCount <= 0 || string.CompareOrdinal(_cursor, _maxKey) >= 0)
                 {
                     HasMoreItems = false;
                 }
@@ -198,25 +198,25 @@
                 OnPropertyChanged(nameof(IsLoading));
                 OnPropertyChanged(nameof(HasMoreItems));
 
-                foreach (var change in pendingChanges)
+                foreach (var change in _pendingChanges)
                 {
                     OnStorageChangedCore(change);
                 }
-                pendingChanges.Clear();
+                _pendingChanges.Clear();
             }
         }
 
         private void OnStorageChanged(Delta<T> change)
         {
-            if ((minKey != null && string.CompareOrdinal(change.Key, minKey) < 0) ||
-                (maxKey != null && string.CompareOrdinal(change.Key, maxKey) >= 0))
+            if ((_minKey != null && string.CompareOrdinal(change.Key, _minKey) < 0) ||
+                (_maxKey != null && string.CompareOrdinal(change.Key, _maxKey) >= 0))
             {
                 return;
             }
 
-            if (syncContext != null)
+            if (_syncContext != null)
             {
-                syncContext.Post(c => OnStorageChangedCore((Delta<T>)c), change);
+                _syncContext.Post(c => OnStorageChangedCore((Delta<T>)c), change);
             }
             else
             {
@@ -228,7 +228,7 @@
         {
             if (IsLoading)
             {
-                pendingChanges.Add(change);
+                _pendingChanges.Add(change);
                 return;
             }
 
@@ -239,8 +239,8 @@
             {
                 if (!TryFindIndex(key, out index))
                 {
-                    var value = convert(change.Value, default(TViewModel));
-                    collection.Insert(index, new Entry { Key = key, Data = change.Value, Value = value });
+                    var value = _convert(change.Value, default(TViewModel));
+                    _collection.Insert(index, new Entry { Key = key, Data = change.Value, Value = value });
 
                     OnPropertyChanged(nameof(Count));
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index));
@@ -250,8 +250,8 @@
             {
                 if (TryFindIndex(key, out index))
                 {
-                    var entry = collection[index];
-                    collection.RemoveAt(index);
+                    var entry = _collection[index];
+                    _collection.RemoveAt(index);
 
                     OnPropertyChanged(nameof(Count));
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, entry.Value, index));
@@ -261,9 +261,9 @@
             {
                 if (TryFindIndex(key, out index))
                 {
-                    var entry = collection[index];
-                    var value = convert(change.Value, entry.Value);
-                    collection[index] = new Entry { Key = key, Data = change.Value, Value = value };
+                    var entry = _collection[index];
+                    var value = _convert(change.Value, entry.Value);
+                    _collection[index] = new Entry { Key = key, Data = change.Value, Value = value };
 
                     if (!Equals(value, entry.Value))
                     {
@@ -272,8 +272,8 @@
                 }
                 else
                 {
-                    var value = convert(change.Value, default(TViewModel));
-                    collection.Insert(index, new Entry { Key = key, Data = change.Value, Value = value });
+                    var value = _convert(change.Value, default(TViewModel));
+                    _collection.Insert(index, new Entry { Key = key, Data = change.Value, Value = value });
 
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index));
                 }
@@ -287,12 +287,12 @@
         private bool TryFindIndex(string key, out int index)
         {
             var left = 0;
-            var right = collection.Count - 1;
+            var right = _collection.Count - 1;
 
             while (left <= right)
             {
                 var middle = left + (right - left) / 2;
-                var comparison = string.CompareOrdinal(key, collection[middle].Key);
+                var comparison = string.CompareOrdinal(key, _collection[middle].Key);
                 if (comparison == 0)
                 {
                     index = middle;
@@ -329,7 +329,7 @@
 
         public IEnumerator<TViewModel> GetEnumerator()
         {
-            return collection.Select(x => x.Value).GetEnumerator();
+            return _collection.Select(x => x.Value).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

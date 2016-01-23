@@ -8,18 +8,18 @@
 
     public class ContentAddressableStorage : IContentAddressableStorage
     {
-        private readonly IBlobStorage blob;
+        private readonly IBlobStorage _blob;
 
-        public IBlobStorage Blob => blob;
+        public IBlobStorage Blob => _blob;
 
         public ContentAddressableStorage(IBlobStorage blob)
         {
-            if ((this.blob = blob) == null) throw new ArgumentNullException(nameof(blob));
+            if ((_blob = blob) == null) throw new ArgumentNullException(nameof(blob));
         }
 
-        public Task<bool> Exists(string key) => blob.Exists(VerifySha1(key));
-        public Task<string> GetUri(string key) => blob.GetUri(VerifySha1(key));
-        public Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken)) => blob.Get(VerifySha1(key), progress, cancellationToken);
+        public Task<bool> Exists(string key) => _blob.Exists(VerifySha1(key));
+        public Task<string> GetUri(string key) => _blob.GetUri(VerifySha1(key));
+        public Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken)) => _blob.Get(VerifySha1(key), progress, cancellationToken);
         public Task<string> Put(Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken)) => Put(null, stream, progress, cancellationToken);
 
         public async Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
@@ -38,12 +38,12 @@
                 stream.Seek(0, SeekOrigin.Begin);
             }
 
-            if (await blob.Exists(key).ConfigureAwait(false))
+            if (await _blob.Exists(key).ConfigureAwait(false))
             {
                 return key;
             }
 
-            return await blob.Put(key, stream, progress, cancellationToken).ConfigureAwait(false);
+            return await _blob.Put(key, stream, progress, cancellationToken).ConfigureAwait(false);
         }
 
         private string VerifySha1(string key)

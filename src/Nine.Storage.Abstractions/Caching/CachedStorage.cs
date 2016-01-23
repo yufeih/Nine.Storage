@@ -11,12 +11,12 @@
     /// </summary>
     public static class CachedStorageStatus
     {
-        internal static long missedCount = 0;
-        internal static long totalCount = 0;
+        internal static long _missedCount = 0;
+        internal static long _totalCount = 0;
 
         public static double HitRate
         {
-            get { return totalCount > 0 ? 1.0 * (totalCount - missedCount) / totalCount : 0.0; }
+            get { return _totalCount > 0 ? 1.0 * (_totalCount - _missedCount) / _totalCount : 0.0; }
         }
     }
     
@@ -38,11 +38,11 @@
         /// Since MemoryCache does not support null value, this constant identifies values that does
         /// not exist in the persisted storage.
         /// </summary>
-        private static readonly object emptyObject = new object();
+        private static readonly object EmptyObject = new object();
 
-        private readonly IStorage<T> persistStorage;
-        private readonly ICache<T> cache;
-        private readonly ICache<CachedStorageItems<T>> rangeCache;
+        private readonly IStorage<T> _persistStorage;
+        private readonly ICache<T> _cache;
+        private readonly ICache<CachedStorageItems<T>> _rangeCache;
 
         public event Action<string> Missed;
 
@@ -51,9 +51,9 @@
             if (persistedStorage == null) throw new ArgumentNullException("persistedStorage");
             if (cache == null) throw new ArgumentNullException("cache");
 
-            this.persistStorage = persistedStorage;
-            this.cache = cache;
-            this.rangeCache = rangeCache;
+            _persistStorage = persistedStorage;
+            _cache = cache;
+            _rangeCache = rangeCache;
         }
 
         /// <summary>
@@ -64,12 +64,12 @@
             IncrementTotalCount();
 
             T result;
-            if (cache.TryGet(key, out result)) return result;
+            if (_cache.TryGet(key, out result)) return result;
 
             IncrementMissedCount(key);
 
-            var persisted = await persistStorage.Get(key).ConfigureAwait(false);
-            cache.Put(key, persisted);
+            var persisted = await _persistStorage.Get(key).ConfigureAwait(false);
+            _cache.Put(key, persisted);
             return persisted;
         }
 
@@ -81,35 +81,35 @@
             IncrementTotalCount();
 
             CachedStorageItems<T> items;
-            var canCache = (rangeCache != null && maxCount == null && StorageKey.IsIncrement(minKey, maxKey));
+            var canCache = (_rangeCache != null && maxCount == null && StorageKey.IsIncrement(minKey, maxKey));
             var cacheKey = canCache ? (minKey ?? "") : null;
-            if (cacheKey != null && rangeCache.TryGet(cacheKey, out items) && items != null)
+            if (cacheKey != null && _rangeCache.TryGet(cacheKey, out items) && items != null)
             {
                 return items.Items;
             }
 
             IncrementMissedCount(cacheKey);
 
-            var persisted = (await persistStorage.Range(minKey, maxKey, maxCount).ConfigureAwait(false)).ToArray();
+            var persisted = (await _persistStorage.Range(minKey, maxKey, maxCount).ConfigureAwait(false)).ToArray();
             if (cacheKey != null)
             {
-                rangeCache.Put(cacheKey, new CachedStorageItems<T> { Items = persisted, Key = minKey });
+                _rangeCache.Put(cacheKey, new CachedStorageItems<T> { Items = persisted, Key = minKey });
             }
             return persisted;
         }
 
         private void IncrementTotalCount()
         {
-            if (Interlocked.Increment(ref CachedStorageStatus.totalCount) > 100000)
+            if (Interlocked.Increment(ref CachedStorageStatus._totalCount) > 100000)
             {
-                Interlocked.Exchange(ref CachedStorageStatus.totalCount, 1);
-                Interlocked.Exchange(ref CachedStorageStatus.missedCount, 0);
+                Interlocked.Exchange(ref CachedStorageStatus._totalCount, 1);
+                Interlocked.Exchange(ref CachedStorageStatus._missedCount, 0);
             }
         }
 
         private void IncrementMissedCount(string key)
         {
-            Interlocked.Increment(ref CachedStorageStatus.missedCount);
+            Interlocked.Increment(ref CachedStorageStatus._missedCount);
 
             var missed = Missed;
             if (missed != null) missed(key);
@@ -120,12 +120,12 @@
         /// </summary>
         public async Task<bool> Add(string key, T value)
         {
-            if (await persistStorage.Add(key, value).ConfigureAwait(false))
+            if (await _persistStorage.Add(key, value).ConfigureAwait(false))
             {
                 // SHOULD override existing cache using Put !!!
-                cache.Put(key, value);
+                _cache.Put(key, value);
 
-                if (rangeCache != null) InvalidateRange(key);
+                if (_rangeCache != null) InvalidateRange(key);
                 return true;
             }
             return false;
@@ -137,9 +137,9 @@
         /// </summary>
         public async Task Put(string key, T value)
         {
-            await persistStorage.Put(key, value).ConfigureAwait(false);
-            cache.Put(key, value);
-            if (rangeCache != null) InvalidateRange(key);
+            await _persistStorage.Put(key, value).ConfigureAwait(false);
+            _cache.Put(key, value);
+            if (_rangeCache != null) InvalidateRange(key);
         }
 
         /// <summary>
@@ -147,18 +147,18 @@
         /// </summary>
         public async Task<bool> Delete(string key)
         {
-            cache.Delete(key);
-            if (rangeCache != null) InvalidateRange(key);
-            return await persistStorage.Delete(key).ConfigureAwait(false);
+            _cache.Delete(key);
+            if (_rangeCache != null) InvalidateRange(key);
+            return await _persistStorage.Delete(key).ConfigureAwait(false);
         }
 
         private void InvalidateRange(string key)
         {
-            rangeCache.Delete("");
+            _rangeCache.Delete("");
 
             for (var i = 1; i < key.Length; i++)
             {
-                rangeCache.Delete(key.Substring(0, i));
+                _rangeCache.Delete(key.Substring(0, i));
             }
         }
     }

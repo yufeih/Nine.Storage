@@ -10,23 +10,25 @@
 
     public class BlobStorage : IBlobStorage
     {
-        private readonly CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromMinutes(30) };
-        private readonly MemoryCache contentCache = new MemoryCache(typeof(BlobStorage).Name);
+        private readonly CacheItemPolicy _policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromMinutes(30) };
+        private readonly MemoryCache _contentCache = new MemoryCache(typeof(BlobStorage).Name);
 
         private readonly LazyAsync<CloudBlobContainer> _container;
         private readonly Lazy<Uri> _baseUri;
+
+        private readonly string _containerName;
 
         public CloudBlobContainer Container => _container.GetValueAsync().Result;
 
         public Uri BaseUri => _baseUri.Value;
 
-        public string ContainerName { get; private set; }
+        public string ContainerName => _containerName;
         public bool Cache { get; set; } = true;
 
         public TimeSpan SlidingExpiration
         {
-            get { return policy.SlidingExpiration; }
-            set { policy.SlidingExpiration = value; }
+            get { return _policy.SlidingExpiration; }
+            set { _policy.SlidingExpiration = value; }
         }
 
         private BlobStorage(Func<Task<CloudBlobContainer>> container)
@@ -42,13 +44,13 @@
         public BlobStorage(string connectionString, string containerName = "blobs", bool publicAccess = false)
             : this(CloudStorageAccount.Parse(connectionString), containerName, publicAccess)
         {
-            this.ContainerName = ContainerName;
+            _containerName = containerName;
         }
 
         public BlobStorage(CloudStorageAccount storageAccount, string containerName = "blobs", bool publicAccess = false)
             : this(() => ContainerFromStorageAccount(storageAccount, containerName, publicAccess))
         {
-            this.ContainerName = ContainerName; 
+            _containerName = containerName; 
         }
 
         private async static Task<CloudBlobContainer> ContainerFromStorageAccount(CloudStorageAccount storageAccount, string containerName, bool publicAccess)
@@ -74,7 +76,7 @@
 
         public async Task<bool> Exists(string key)
         {
-            if (contentCache.Contains(key)) return true;
+            if (_contentCache.Contains(key)) return true;
 
             var container = await _container.GetValueAsync().ConfigureAwait(false);
 
@@ -83,7 +85,7 @@
 
         public async Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var cached = contentCache.Get(key) as byte[];
+            var cached = _contentCache.Get(key) as byte[];
             if (cached != null) return new MemoryStream(cached);
 
             var container = await _container.GetValueAsync().ConfigureAwait(false);
@@ -93,7 +95,7 @@
                 var bytes = await stream.ReadBytesAsync(8 * 1024, cancellationToken).ConfigureAwait(false);
                 if (Cache)
                 {
-                    contentCache.Add(key, bytes, policy);
+                    _contentCache.Add(key, bytes, _policy);
                 }
                 return new MemoryStream(bytes);
             }
@@ -105,7 +107,7 @@
             {
                 var ms = new MemoryStream();
                 await stream.CopyToAsync(ms);
-                contentCache.Add(key, ms.ToArray(), policy);
+                _contentCache.Add(key, ms.ToArray(), _policy);
                 ms.Seek(0, SeekOrigin.Begin);
                 stream = ms;
             }

@@ -21,14 +21,14 @@
     /// </remarks>
     public class TableStorage<T> : IStorage<T> where T : class, IKeyed, new()
     {
-        private readonly bool treatKeyAsPartitionKey;
-        private readonly LazyAsync<CloudTable> table;
+        private readonly bool _treatKeyAsPartitionKey;
+        private readonly LazyAsync<CloudTable> _table;
 
         /// <summary>
         /// Resolves an entity into a KeyedTableEntity.
         /// </summary>
-        private readonly EntityResolver<KeyedTableEntity<T>> entityResolver;
-        private readonly KeyedTableEntityFormatter<T> formatter;
+        private readonly EntityResolver<KeyedTableEntity<T>> _entityResolver;
+        private readonly KeyedTableEntityFormatter<T> _formatter;
 
         /// <summary>
         /// Initializes a new instance of TableStorage.
@@ -44,10 +44,10 @@
         {
             if (storageAccount == null) throw new ArgumentNullException("storageAccount");
 
-            this.formatter = new KeyedTableEntityFormatter<T>(textConverter);
-            this.entityResolver = ResolveEntity;
-            this.treatKeyAsPartitionKey = treatKeyAsPartitionKey;
-            this.table = new LazyAsync<CloudTable>(async () =>
+            _formatter = new KeyedTableEntityFormatter<T>(textConverter);
+            _entityResolver = ResolveEntity;
+            _treatKeyAsPartitionKey = treatKeyAsPartitionKey;
+            _table = new LazyAsync<CloudTable>(async () =>
             {
                 // NOTE: 
                 // Azure may blame 409 (Conflict) if you are trying to create the table and immediately after it is deleted
@@ -64,8 +64,8 @@
         /// </summary>
         public async Task<T> Get(string key)
         {
-            var operation = treatKeyAsPartitionKey ? TableOperation.Retrieve(key, "", entityResolver) : TableOperation.Retrieve("", key, entityResolver);
-            var result = await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(operation).ConfigureAwait(false);
+            var operation = _treatKeyAsPartitionKey ? TableOperation.Retrieve(key, "", _entityResolver) : TableOperation.Retrieve("", key, _entityResolver);
+            var result = await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(operation).ConfigureAwait(false);
             if (result == null || result.Result == null) return null;
             return (((KeyedTableEntity<T>)result.Result).Data);
         }
@@ -80,8 +80,8 @@
 
             var result = new List<T>();
             var query = new TableQuery().Take(count);
-            var row = treatKeyAsPartitionKey ? "RowKey" : "PartitionKey";
-            var partition = treatKeyAsPartitionKey ? "PartitionKey" : "RowKey";
+            var row = _treatKeyAsPartitionKey ? "RowKey" : "PartitionKey";
+            var partition = _treatKeyAsPartitionKey ? "PartitionKey" : "RowKey";
 
             if (minKey != null)
             {
@@ -111,7 +111,7 @@
             TableContinuationToken continuation = null;
             while (true)
             {
-                var queryResult = await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteQuerySegmentedAsync(query, entityResolver, continuation).ConfigureAwait(false);
+                var queryResult = await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteQuerySegmentedAsync(query, _entityResolver, continuation).ConfigureAwait(false);
                 continuation = queryResult.ContinuationToken;
                 result.AddRange(from item in queryResult.Results select (T)item.Data);
                 if (count != null || continuation == null) break;
@@ -126,11 +126,11 @@
         {
             try
             {
-                var entity = treatKeyAsPartitionKey ?
-                    new KeyedTableEntity<T>(formatter) { Data = value, PartitionKey = key, RowKey = "" } :
-                    new KeyedTableEntity<T>(formatter) { Data = value, PartitionKey = "", RowKey = key };
+                var entity = _treatKeyAsPartitionKey ?
+                    new KeyedTableEntity<T>(_formatter) { Data = value, PartitionKey = key, RowKey = "" } :
+                    new KeyedTableEntity<T>(_formatter) { Data = value, PartitionKey = "", RowKey = key };
 
-                await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Insert(entity)).ConfigureAwait(false);
+                await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Insert(entity)).ConfigureAwait(false);
                 return true;
             }
             catch (StorageException ex)
@@ -147,11 +147,11 @@
         /// </summary>
         public async Task Put(string key, T value)
         {
-            var entity = treatKeyAsPartitionKey ?
-                new KeyedTableEntity<T>(formatter) { Data = value, PartitionKey = key, RowKey = "" } :
-                new KeyedTableEntity<T>(formatter) { Data = value, PartitionKey = "", RowKey = key };
+            var entity = _treatKeyAsPartitionKey ?
+                new KeyedTableEntity<T>(_formatter) { Data = value, PartitionKey = key, RowKey = "" } :
+                new KeyedTableEntity<T>(_formatter) { Data = value, PartitionKey = "", RowKey = key };
 
-            await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.InsertOrReplace(entity)).ConfigureAwait(false);
+            await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.InsertOrReplace(entity)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -161,11 +161,11 @@
         {
             try
             {
-                var entity = treatKeyAsPartitionKey ?
+                var entity = _treatKeyAsPartitionKey ?
                     new TableEntity { PartitionKey = key, RowKey = "", ETag = "*" } :
                     new TableEntity { PartitionKey = "", RowKey = key, ETag = "*" };
 
-                await (await table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Delete(entity)).ConfigureAwait(false);
+                await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Delete(entity)).ConfigureAwait(false);
                 return true;
             }
             catch (StorageException e)
@@ -180,13 +180,13 @@
 
         private KeyedTableEntity<T> ResolveEntity(string partitionKey, string rowKey, DateTimeOffset timestamp, IDictionary<string, EntityProperty> properties, string etag)
         {
-            var entity = new KeyedTableEntity<T>(formatter);
+            var entity = new KeyedTableEntity<T>(_formatter);
             entity.Data = new T();
             entity.ETag = etag;
             entity.Timestamp = timestamp;
             entity.ReadEntity(properties, null);
 
-            if (treatKeyAsPartitionKey)
+            if (_treatKeyAsPartitionKey)
                 entity.RowKey = "";
             else
                 entity.PartitionKey = "";
