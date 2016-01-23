@@ -48,7 +48,7 @@
         public async Task<T> Get<T>(string key)
         {
             Interlocked.Increment(ref _readCount);
-            var storage = await StorageProvider.GetAsync<T>().ConfigureAwait(false);
+            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Get(key).ConfigureAwait(false);
         }
@@ -56,7 +56,7 @@
         public async Task<IEnumerable<T>> Range<T>(string minKey, string maxKey, int? maxCount = null)
         {
             Interlocked.Increment(ref _readCount);
-            var storage = await StorageProvider.GetAsync<T>().ConfigureAwait(false);
+            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Range(minKey, maxKey, maxCount).ConfigureAwait(false);
         }
@@ -71,7 +71,7 @@
                 Interlocked.Exchange(ref _readCount, 0);
             }
 
-            var storage = await StorageProvider.GetAsync<T>().ConfigureAwait(false);
+            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             if (TimestampEnabled)
             {
@@ -92,7 +92,7 @@
                 Interlocked.Exchange(ref _readCount, 0);
             }
 
-            var storage = await StorageProvider.GetAsync<T>().ConfigureAwait(false);
+            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             if (TimestampEnabled)
             {
@@ -110,7 +110,7 @@
                 Interlocked.Exchange(ref _readCount, 0);
             }
 
-            var storage = await StorageProvider.GetAsync<T>().ConfigureAwait(false);
+            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Delete(key).ConfigureAwait(false);
         }
@@ -149,7 +149,7 @@
 
         private async void EnsureInitialized<T>()
         {
-            EnsureInitialized<T>(await StorageProvider.GetAsync<T>().ConfigureAwait(false));
+            EnsureInitialized<T>(await StorageProvider.GetStorage<T>().ConfigureAwait(false));
         }
 
         private void EnsureInitialized<T>(object state)

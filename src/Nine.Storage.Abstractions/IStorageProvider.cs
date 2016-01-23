@@ -4,6 +4,6 @@
 
     public interface IStorageProvider
     {
-        Task<IStorage<T>> GetAsync<T>();
+        Task<IStorage<T>> GetStorage<T>();
     }
 }

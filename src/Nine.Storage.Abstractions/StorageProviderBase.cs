@@ -10,7 +10,7 @@
     {
         private readonly ConcurrentDictionary<Type, LazyAsync<object>> _values = new ConcurrentDictionary<Type, LazyAsync<object>>();
 
-        public async Task<IStorage<T>> GetAsync<T>()
+        public async Task<IStorage<T>> GetStorage<T>()
         {
             var factory = _values.GetOrAdd(typeof(T), type => new LazyAsync<object>(() => GetStorageCoreAsync<T>()));
             return (IStorage<T>)(await factory.GetValueAsync().ConfigureAwait(false));
