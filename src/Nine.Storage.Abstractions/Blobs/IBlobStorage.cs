@@ -1,4 +1,4 @@
-﻿namespace Nine.Storage
+﻿namespace Nine.Storage.Blobs
 {
     using System;
     using System.ComponentModel;
@@ -51,6 +51,8 @@
         Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken));
 
         Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        Task Delete(string key);
     }
 
     /// <summary>

@@ -1,10 +1,11 @@
-﻿namespace Nine.Storage
+﻿namespace Nine.Storage.Caching
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Xunit;
+    using Nine.Storage.Compatibility;
 
     public class CacheTest : CacheSpec<CacheTest>
     {

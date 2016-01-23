@@ -10,7 +10,7 @@
     using MongoDB.Driver;
     using MongoDB.Driver.Builders;
 
-    public class MongoStorage<T> : IStorage<T> where T : class, IKeyed, new()
+    public class MongoStorage<T> : IStorage<T>
     {
         class StorageObject
         {
@@ -18,9 +18,9 @@
             public T Value { get; set; }
         }
 
-        private readonly MongoClient client;
-        private readonly MongoDatabase database;
-        private readonly MongoCollection<StorageObject> collection;
+        private readonly MongoClient _client;
+        private readonly MongoDatabase _database;
+        private readonly MongoCollection<StorageObject> _collection;
 
         static MongoStorage()
         {
@@ -32,15 +32,15 @@
         public MongoStorage(string connection, string collectionName = null)
         {
             var url = new MongoUrl(connection);
-            this.client = new MongoClient(url);
-            this.database = client.GetServer().GetDatabase(url.DatabaseName);
-            this.collection = this.database.GetCollection<StorageObject>(collectionName ?? typeof(T).Name);
+            _client = new MongoClient(url);
+            _database = _client.GetServer().GetDatabase(url.DatabaseName);
+            _collection = _database.GetCollection<StorageObject>(collectionName ?? typeof(T).Name);
         }
 
         public Task<T> Get(string key)
         {
-            var result = collection.FindOneById(key);
-            return Task.FromResult(result != null ? result.Value : null);
+            var result = _collection.FindOneById(key);
+            return Task.FromResult(result != null ? result.Value : default(T));
         }
 
         public Task<IEnumerable<T>> Range(string minKey = null, string maxKey = null, int? count = null)
@@ -49,7 +49,7 @@
             if (minKey != null) conditions.Add(Query.GTE("_id", minKey));
             if (maxKey != null) conditions.Add(Query.LT("_id", maxKey));
 
-            var query = collection.Find(conditions.Count > 0 ? Query.And(conditions) : null);
+            var query = _collection.Find(conditions.Count > 0 ? Query.And(conditions) : null);
             query.SetSortOrder(SortBy.Ascending("_id"));
             if (count != null)
             {
@@ -59,11 +59,11 @@
             return Task.FromResult(from x in query select x.Value);
         }
 
-        public Task<bool> Add(T value)
+        public Task<bool> Add(string key, T value)
         {
             try
             {
-                return Task.FromResult(collection.Insert(new StorageObject { Id = value.GetKey(), Value = value }).DocumentsAffected == 1);
+                return Task.FromResult(_collection.Insert(new StorageObject { Id = key, Value = value }).DocumentsAffected == 1);
             }
             catch (MongoDuplicateKeyException)
             {
@@ -71,14 +71,14 @@
             }
         }
 
-        public Task Put(T value)
+        public Task Put(string key, T value)
         {
-            return Task.FromResult(collection.Save(new StorageObject { Id = value.GetKey(), Value = value }).DocumentsAffected == 1);
+            return Task.FromResult(_collection.Save(new StorageObject { Id = key, Value = value }).DocumentsAffected == 1);
         }
 
         public Task<bool> Delete(string key)
         {
-            return Task.FromResult(collection.Remove(Query.EQ("_id", key)).DocumentsAffected == 1);
+            return Task.FromResult(_collection.Remove(Query.EQ("_id", key)).DocumentsAffected == 1);
         }
     }
 }

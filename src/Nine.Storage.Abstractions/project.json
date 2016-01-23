@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.4.0-alpha",
+  "version": "2.0.0-*",
   "description": "Contains basic contracts for a key value pair storage system",
   "authors": [ "Yufei Huang" ],
   "tags": [ "PCL", "Portable", "storage", "key", "value", "kv storage" ],
@@ -22,7 +22,8 @@
         "System.Collections.Concurrent": "4.0.0",
         "System.Linq": "4.0.0",
         "System.Runtime": "4.0.20",
-        "System.Threading": "4.0.10"
+        "System.Threading": "4.0.10",
+        "System.Threading.Tasks": "4.0.10"
       }
     },
     "dnx46": {

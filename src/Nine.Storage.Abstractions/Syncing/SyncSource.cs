@@ -1,4 +1,4 @@
-﻿namespace Nine.Storage
+﻿namespace Nine.Storage.Syncing
 {
     using System;
     using System.Collections.Generic;
@@ -9,8 +9,8 @@
 
     public class SyncSource : ISyncSource
     {
-        private readonly SynchronizationContext sync;
-        private readonly Func<Type, IEnumerable<ISyncSource>> selector;
+        private readonly SynchronizationContext _sync;
+        private readonly Func<Type, IEnumerable<ISyncSource>> _selector;
 
         public SyncSource(params ISyncSource[] sources) : this(x => sources) { }
         public SyncSource(Func<Type, ISyncSource> selector) : this(x => new[] { selector(x) }) { }
@@ -18,43 +18,43 @@
         {
             if (selector == null) throw new ArgumentNullException("selector");
 
-            this.selector = selector;
-            this.sync = SynchronizationContext.Current;
+            _selector = selector;
+            _sync = SynchronizationContext.Current;
 
-            if (sync == null)
+            if (_sync == null)
             {
                 Debug.WriteLine("Failed to capture SynchronizationContext");
             }
         }
 
-        public IDisposable On<T>(Action<Delta<T>> action) where T : class, IKeyed, new()
+        public IDisposable On<T>(Action<Delta<T>> action)
         {
             return On<T>(source => source.On(RunOnSynchronizationContext(action)));
         }
 
-        public IDisposable On<T>(string key, Action<Delta<T>> action) where T : class, IKeyed, new()
+        public IDisposable On<T>(string key, Action<Delta<T>> action)
         {
             return On<T>(source => source.On(key, RunOnSynchronizationContext(action)));
         }
 
-        private IDisposable On<T>(Func<ISyncSource, IDisposable> action) where T : class, IKeyed, new()
+        private IDisposable On<T>(Func<ISyncSource, IDisposable> action)
         {
-            var sources = selector(typeof(T));
+            var sources = _selector(typeof(T));
             if (sources == null || !sources.Any()) return null;
             return new Disposable(sources.Select(action));
         }
 
-        private Action<Delta<T>> RunOnSynchronizationContext<T>(Action<Delta<T>> action) where T : class, IKeyed, new()
+        private Action<Delta<T>> RunOnSynchronizationContext<T>(Action<Delta<T>> action)
         {
             return new Action<Delta<T>>(x =>
             {
-                if (sync == null)
+                if (_sync == null)
                 {
                     action(x);
                 }
                 else
                 {
-                    sync.Post(y => action(x), null);
+                    _sync.Post(y => action(x), null);
                 }
             });
         }
@@ -76,47 +76,47 @@
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public class SyncSource<T> : ISyncSource<T> where T : class, IKeyed, new()
+    public class SyncSource<T> : ISyncSource<T>
     {
         class Subscription : IDisposable
         {
             public readonly string Key;
 
-            private readonly Action<Delta<T>> action;
-            private readonly SyncSource<T> owner;
+            private readonly Action<Delta<T>> _action;
+            private readonly SyncSource<T> _owner;
 
             public Subscription(string key, SyncSource<T> owner, Action<Delta<T>> action)
             {
-                this.Key = key;
-                this.owner = owner;
-                this.action = action;
+                Key = key;
+                _owner = owner;
+                _action = action;
             }
 
             public void Notify(Delta<T> change)
             {
-                action(change);
+                _action(change);
             }
 
             public void Dispose()
             {
-                owner.Unsubscribe(this);
+                _owner.Unsubscribe(this);
             }
         }
 
-        private bool notifying;
-        private readonly object sync = new object();
-        private readonly Dictionary<string, List<Subscription>> keyedSubscriptions = new Dictionary<string, List<Subscription>>();
-        private readonly List<Subscription> subscriptions = new List<Subscription>();
-        private readonly List<Subscription> abandonedSubscriptions = new List<Subscription>();
+        private bool _notifying;
+        private readonly object _sync = new object();
+        private readonly Dictionary<string, List<Subscription>> _keyedSubscriptions = new Dictionary<string, List<Subscription>>();
+        private readonly List<Subscription> _subscriptions = new List<Subscription>();
+        private readonly List<Subscription> _abandonedSubscriptions = new List<Subscription>();
 
         public virtual IDisposable On(Action<Delta<T>> action)
         {
             if (action == null) throw new ArgumentNullException("action");
 
-            lock (sync)
+            lock (_sync)
             {
                 var result = new Subscription(null, this, action);
-                subscriptions.Add(result);
+                _subscriptions.Add(result);
                 return result;
             }
         }
@@ -126,13 +126,13 @@
             if (action == null) throw new ArgumentNullException("action");
             if (key == null) throw new ArgumentNullException("key");
 
-            lock (sync)
+            lock (_sync)
             {
                 List<Subscription> subscriptions;
                 var result = new Subscription(key, this, action);
-                if (!keyedSubscriptions.TryGetValue(key, out subscriptions))
+                if (!_keyedSubscriptions.TryGetValue(key, out subscriptions))
                 {
-                    keyedSubscriptions.Add(key, subscriptions = new List<Subscription>());
+                    _keyedSubscriptions.Add(key, subscriptions = new List<Subscription>());
                 }
                 subscriptions.Add(result);
                 return result;
@@ -141,11 +141,11 @@
 
         private void Unsubscribe(Subscription subscription)
         {
-            lock (sync)
+            lock (_sync)
             {
-                if (notifying)
+                if (_notifying)
                 {
-                    abandonedSubscriptions.Add(subscription);
+                    _abandonedSubscriptions.Add(subscription);
                 }
                 else
                 {
@@ -159,46 +159,46 @@
             if (subscription.Key != null)
             {
                 List<Subscription> value;
-                if (keyedSubscriptions.TryGetValue(subscription.Key, out value))
+                if (_keyedSubscriptions.TryGetValue(subscription.Key, out value))
                 {
                     value.Remove(subscription);
                 }
             }
             else
             {
-                subscriptions.Remove(subscription);
+                _subscriptions.Remove(subscription);
             }
         }
 
         protected virtual void Notify(Delta<T> change)
         {
-            lock (sync)
+            lock (_sync)
             {
-                for (var i = 0; i < abandonedSubscriptions.Count; i++)
+                for (var i = 0; i < _abandonedSubscriptions.Count; i++)
                 {
-                    Remove(abandonedSubscriptions[i]);
+                    Remove(_abandonedSubscriptions[i]);
                 }
 
                 try
                 {
-                    notifying = true;
+                    _notifying = true;
 
                     NotifyByKey(change);
                     NotifyAll(change);
                 }
                 finally
                 {
-                    notifying = false;
+                    _notifying = false;
                 }
             }
         }
 
         private void NotifyByKey(Delta<T> change)
         {
-            if (keyedSubscriptions.Count <= 0) return;
+            if (_keyedSubscriptions.Count <= 0) return;
 
             List<Subscription> subscriptions;
-            if (!keyedSubscriptions.TryGetValue(change.Key, out subscriptions)) return;
+            if (!_keyedSubscriptions.TryGetValue(change.Key, out subscriptions)) return;
 
             for (var i = 0; i < subscriptions.Count; i++)
             {
@@ -208,9 +208,9 @@
 
         private void NotifyAll(Delta<T> change)
         {
-            for (var i = 0; i < subscriptions.Count; i++)
+            for (var i = 0; i < _subscriptions.Count; i++)
             {
-                subscriptions[i].Notify(change);
+                _subscriptions[i].Notify(change);
             }
         }
     }

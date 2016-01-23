@@ -5,50 +5,51 @@
     using System.Collections.Concurrent;
     using System.Threading.Tasks;
     using System.Linq;
+    using Nine.Storage.Syncing;
 
     public class ObservableStorage<T> : SyncSource<T>, IStorage<T> where T : class, IKeyed, new()
     {
-        private readonly IStorage<T> storage;
-        private readonly ConcurrentDictionary<string, WeakReference<T>> instances;
+        private readonly IStorage<T> _storage;
+        private readonly ConcurrentDictionary<string, WeakReference<T>> _instances;
 
         /// <summary>
         /// Gets or sets a value indicating whether put should modify an existing instance.
         /// This ensures that objects with the same key always shares the same object reference.
         /// </summary>
-        public bool ReuseExistingInstance => instances != null;
+        public bool ReuseExistingInstance => _instances != null;
 
         public ObservableStorage(IStorage<T> storage, bool reuseExistingInstance = false)
         {
             if (storage == null) throw new ArgumentNullException(nameof(storage));
-            if (reuseExistingInstance) instances = new ConcurrentDictionary<string, WeakReference<T>>();
+            if (reuseExistingInstance) _instances = new ConcurrentDictionary<string, WeakReference<T>>();
 
-            this.storage = storage;
+            _storage = storage;
         }
 
         public async Task<T> Get(string key)
         {
             T target;
             WeakReference<T> wr;
-            if (instances != null && instances.TryGetValue(key, out wr) && wr.TryGetTarget(out target))
+            if (_instances != null && _instances.TryGetValue(key, out wr) && wr.TryGetTarget(out target))
             {
                 return target;
             }
 
-            var result = await storage.Get(key).ConfigureAwait(false);
-            if (instances == null) return result;
+            var result = await _storage.Get(key).ConfigureAwait(false);
+            if (_instances == null) return result;
 
-            if (!instances.TryGetValue(key, out wr) || !wr.TryGetTarget(out target))
+            if (!_instances.TryGetValue(key, out wr) || !wr.TryGetTarget(out target))
             {
                 wr = new WeakReference<T>(result);
-                instances.AddOrUpdate(key, wr, (k, v) => wr).TryGetTarget(out target);
+                _instances.AddOrUpdate(key, wr, (k, v) => wr).TryGetTarget(out target);
             }
             return target;
         }
 
         public async Task<IEnumerable<T>> Range(string minKey, string maxKey, int? count = null)
         {
-            var results = await storage.Range(minKey, maxKey, count).ConfigureAwait(false);
-            if (instances == null) return results;
+            var results = await _storage.Range(minKey, maxKey, count).ConfigureAwait(false);
+            if (_instances == null) return results;
 
             T target;
             WeakReference<T> wr;
@@ -59,25 +60,24 @@
                 if (item == null) continue;
 
                 var key = item.GetKey();
-                if (!instances.TryGetValue(key, out wr) || !wr.TryGetTarget(out target))
+                if (!_instances.TryGetValue(key, out wr) || !wr.TryGetTarget(out target))
                 {
                     wr = new WeakReference<T>(item);
-                    instances.AddOrUpdate(key, wr, (k, v) => wr).TryGetTarget(out target);
+                    _instances.AddOrUpdate(key, wr, (k, v) => wr).TryGetTarget(out target);
                 }
                 list[i] = target;
             }
             return list;
         }
 
-        public async Task<bool> Add(T value)
+        public async Task<bool> Add(string key, T value)
         {
-            var key = value.GetKey();
-            if (!await storage.Add(value).ConfigureAwait(false)) return false;
+            if (!await _storage.Add(key, value).ConfigureAwait(false)) return false;
 
-            if (instances != null)
+            if (_instances != null)
             {
                 T target;
-                var wr = instances.GetOrAdd(key, _ => new WeakReference<T>(value));
+                var wr = _instances.GetOrAdd(key, _ => new WeakReference<T>(value));
                 if (wr.TryGetTarget(out target))
                 {
                     value = ObjectHelper<T>.Merge(target, value);
@@ -88,21 +88,19 @@
             return true;
         }
 
-        public async Task Put(T value)
+        public async Task Put(string key, T value)
         {
-            var key = value.GetKey();
-
-            if (instances != null)
+            if (_instances != null)
             {
                 T target;
-                var wr = instances.GetOrAdd(key, _ => new WeakReference<T>(value));
+                var wr = _instances.GetOrAdd(key, _ => new WeakReference<T>(value));
                 if (wr.TryGetTarget(out target))
                 {
                     value = ObjectHelper<T>.Merge(target, value);
                 }
             }
 
-            await storage.Put(value).ConfigureAwait(false);
+            await _storage.Put(value).ConfigureAwait(false);
             Notify(new Delta<T>(DeltaAction.Put, key, value));
         }
 
@@ -111,8 +109,8 @@
             WeakReference<T> wr;
             var existing = await Get(key).ConfigureAwait(false);
             if (existing == null) return false;
-            if (!await storage.Delete(key).ConfigureAwait(false)) return false;
-            if (instances != null) instances.TryRemove(key, out wr);
+            if (!await _storage.Delete(key).ConfigureAwait(false)) return false;
+            if (_instances != null) _instances.TryRemove(key, out wr);
             Notify(new Delta<T>(DeltaAction.Remove, key, existing));
             return true;
         }

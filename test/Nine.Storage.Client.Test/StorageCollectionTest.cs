@@ -1,4 +1,4 @@
-﻿namespace Nine.Storage
+﻿namespace Nine.Storage.Collections
 {
     using System;
     using System.Collections.Generic;
@@ -62,7 +62,7 @@
         public async Task should_sync_to_storage_change()
         {
             var changes = new List<NotifyCollectionChangedEventArgs>();
-            var storage = new Storage(x => new ObservableStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>()));
+            var storage = new StorageContainer(x => new ObservableStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>()));
             var collection = new StorageCollection<TestStorageObject>(storage, "0", "6");
 
             collection.CollectionChanged += (sender, e) => { lock (changes) { changes.Add(e); } };
@@ -104,7 +104,7 @@
         public async Task should_sync_to_concurrent_storage_changes()
         {
             var count = 100;
-            var storage = new Storage(x => new ObservableStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>()));
+            var storage = new StorageContainer(x => new ObservableStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>()));
 
             await Task.WhenAll(Enumerable.Range(0, count).AsParallel().Select(i => storage.Put(new TestStorageObject(i))));
 
@@ -147,7 +147,7 @@
         public async Task should_be_unsubscribed_after_gc()
         {
             var changes = new List<NotifyCollectionChangedEventArgs>();
-            var storage = new Storage(x => new ObservableStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>()));
+            var storage = new StorageContainer(x => new ObservableStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>()));
             var collection = new StorageCollection<TestStorageObject>(storage, "0", "6").WithAllItems();
             var handler = new NotifyCollectionChangedEventHandler((sender, e) => { changes.Add(e); });
 

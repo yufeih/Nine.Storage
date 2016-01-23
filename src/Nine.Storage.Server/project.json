@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.4.0-*",
+  "version": "2.0.0-*",
   "description": "A portable lightweight constructor injection library for singleton objects",
   "authors": [ "Yufei Huang" ],
   "tags": [ "PCL", "Portable", "IOC", "Constructor Injection", "Dependency Injection" ],

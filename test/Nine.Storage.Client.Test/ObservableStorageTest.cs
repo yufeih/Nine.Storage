@@ -1,9 +1,10 @@
-﻿namespace Nine.Storage
+﻿namespace Nine.Storage.Syncing
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Xunit;
+    using Nine.Storage.Compatibility;
 
     public class ObservableStorageTest : StorageSpec<ObservableStorageTest>
     {

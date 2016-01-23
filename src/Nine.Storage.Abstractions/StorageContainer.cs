@@ -5,11 +5,12 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Nine.Storage.Syncing;
 
-    public class Storage : IStorage, ISyncSource
+    public class StorageContainer : IStorage, ISyncSource
     {
-        private readonly LamportTimestamp timestamp = new LamportTimestamp();
-        private readonly ConcurrentDictionary<Type, ConcurrentQueue<Action<object>>> initializers 
+        private readonly LamportTimestamp _timestamp = new LamportTimestamp();
+        private readonly ConcurrentDictionary<Type, ConcurrentQueue<Action<object>>> _initializers 
                    = new ConcurrentDictionary<Type, ConcurrentQueue<Action<object>>>();
 
         public IStorageProvider StorageProvider { get; private set; }
@@ -20,104 +21,104 @@
         /// </summary>
         public bool TimestampEnabled { get; set; }
 
-        private long readCount = 0;
-        private long writeCount = 0;
+        private long _readCount = 0;
+        private long _writeCount = 0;
 
-        public long ReadCount { get { return readCount; } }
-        public long WriteCount { get { return writeCount; } }
+        public long ReadCount { get { return _readCount; } }
+        public long WriteCount { get { return _writeCount; } }
 
         public double ReadWriteRatio
         {
-            get { return writeCount > 0 ? 1.0 * readCount / writeCount : 1; }
+            get { return _writeCount > 0 ? 1.0 * _readCount / _writeCount : 1; }
         }
 
-        public Storage(Type type) : this(x => Activator.CreateInstance(type.MakeGenericType(x)))
+        public StorageContainer(Type type) : this(x => Activator.CreateInstance(type.MakeGenericType(x)))
         { }
 
-        public Storage(Func<Type, object> factory) : this(new TypedStorageProvider(factory))
+        public StorageContainer(Func<Type, object> factory) : this(new TypedStorageProvider(factory))
         { }
 
-        public Storage(IStorageProvider storageProvider)
+        public StorageContainer(IStorageProvider storageProvider)
         {
             if (storageProvider == null) throw new ArgumentNullException("storageProvider");
 
             this.StorageProvider = storageProvider;
         }
 
-        public async Task<T> Get<T>(string key) where T : class, IKeyed, new()
+        public async Task<T> Get<T>(string key)
         {
-            Interlocked.Increment(ref readCount);
-            var storage = await StorageProvider.GetAsync<T>().ConfigureAwait(false);
+            Interlocked.Increment(ref _readCount);
+            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Get(key).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<T>> Range<T>(string minKey, string maxKey, int? maxCount = null) where T : class, IKeyed, new()
+        public async Task<IEnumerable<T>> Range<T>(string minKey, string maxKey, int? maxCount = null)
         {
-            Interlocked.Increment(ref readCount);
-            var storage = await StorageProvider.GetAsync<T>().ConfigureAwait(false);
+            Interlocked.Increment(ref _readCount);
+            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Range(minKey, maxKey, maxCount).ConfigureAwait(false);
         }
 
-        public async Task<bool> Add<T>(T value) where T : class, IKeyed, new()
+        public async Task<bool> Add<T>(string key, T value)
         {
             if (value == null) throw new ArgumentNullException("value");
 
-            if (Interlocked.Increment(ref writeCount) > 100000)
+            if (Interlocked.Increment(ref _writeCount) > 100000)
             {
-                Interlocked.Exchange(ref writeCount, 1);
-                Interlocked.Exchange(ref readCount, 0);
+                Interlocked.Exchange(ref _writeCount, 1);
+                Interlocked.Exchange(ref _readCount, 0);
             }
 
-            var storage = await StorageProvider.GetAsync<T>().ConfigureAwait(false);
+            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             if (TimestampEnabled)
             {
                 var timestamped = value as ITimestamped;
                 // TODO:
-                if (timestamped != null && timestamped.Time == default(DateTime)) timestamped.Time = timestamp.Next();
+                if (timestamped != null && timestamped.Time == default(DateTime)) timestamped.Time = _timestamp.Next();
             }
-            return await storage.Add(value).ConfigureAwait(false);
+            return await storage.Add(key, value).ConfigureAwait(false);
         }
 
-        public async Task Put<T>(T value) where T : class, IKeyed, new()
+        public async Task Put<T>(string key, T value)
         {
             if (value == null) throw new ArgumentNullException("value");
 
-            if (Interlocked.Increment(ref writeCount) > 100000)
+            if (Interlocked.Increment(ref _writeCount) > 100000)
             {
-                Interlocked.Exchange(ref writeCount, 1);
-                Interlocked.Exchange(ref readCount, 0);
+                Interlocked.Exchange(ref _writeCount, 1);
+                Interlocked.Exchange(ref _readCount, 0);
             }
 
-            var storage = await StorageProvider.GetAsync<T>().ConfigureAwait(false);
+            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             if (TimestampEnabled)
             {
                 var timestamped = value as ITimestamped;
-                if (timestamped != null && timestamped.Time == default(DateTime)) timestamped.Time = timestamp.Next();
+                if (timestamped != null && timestamped.Time == default(DateTime)) timestamped.Time = _timestamp.Next();
             }
-            await storage.Put(value).ConfigureAwait(false);
+            await storage.Put(key, value).ConfigureAwait(false);
         }
 
-        public async Task<bool> Delete<T>(string key) where T : class, IKeyed, new()
+        public async Task<bool> Delete<T>(string key)
         {
-            if (Interlocked.Increment(ref writeCount) > 100000)
+            if (Interlocked.Increment(ref _writeCount) > 100000)
             {
-                Interlocked.Exchange(ref writeCount, 1);
-                Interlocked.Exchange(ref readCount, 0);
+                Interlocked.Exchange(ref _writeCount, 1);
+                Interlocked.Exchange(ref _readCount, 0);
             }
 
-            var storage = await StorageProvider.GetAsync<T>().ConfigureAwait(false);
+            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Delete(key).ConfigureAwait(false);
         }
 
-        public IDisposable On<T>(Action<Delta<T>> action) where T : class, IKeyed, new()
+        public IDisposable On<T>(Action<Delta<T>> action)
         {
             var result = new OnDisposable();
-            initializers.GetOrAdd(typeof(T), type => new ConcurrentQueue<Action<object>>()).Enqueue(state =>
+            _initializers.GetOrAdd(typeof(T), type => new ConcurrentQueue<Action<object>>()).Enqueue(state =>
             {
                 // Ensure we are always invoked before any other operations occured on the storage.
                 var sync = state as ISyncSource<T>;
@@ -130,10 +131,10 @@
             return result;
         }
 
-        public IDisposable On<T>(string key, Action<Delta<T>> action) where T : class, IKeyed, new()
+        public IDisposable On<T>(string key, Action<Delta<T>> action)
         {
             var result = new OnDisposable();
-            initializers.GetOrAdd(typeof(T), type => new ConcurrentQueue<Action<object>>()).Enqueue(state =>
+            _initializers.GetOrAdd(typeof(T), type => new ConcurrentQueue<Action<object>>()).Enqueue(state =>
             {
                 // Ensure we are always invoked before any other operations occured on the storage.
                 var sync = state as ISyncSource<T>;
@@ -146,16 +147,16 @@
             return result;
         }
 
-        private async void EnsureInitialized<T>() where T : class, IKeyed, new()
+        private async void EnsureInitialized<T>()
         {
-            EnsureInitialized<T>(await StorageProvider.GetAsync<T>().ConfigureAwait(false));
+            EnsureInitialized<T>(await StorageProvider.GetStorage<T>().ConfigureAwait(false));
         }
 
         private void EnsureInitialized<T>(object state)
         {
             Action<object> action;
             ConcurrentQueue<Action<object>> queue;
-            if (initializers.TryGetValue(typeof(T), out queue))
+            if (_initializers.TryGetValue(typeof(T), out queue))
             {
                 while (queue.TryDequeue(out action)) action(state);
             }
@@ -175,18 +176,18 @@
 
         class TypedStorageProvider : StorageProviderBase
         {
-            private readonly Func<Type, object> factory;
+            private readonly Func<Type, object> _factory;
 
             public TypedStorageProvider(Func<Type, object> factory)
             {
                 if (factory == null) throw new ArgumentNullException("factory");
 
-                this.factory = factory;
+                _factory = factory;
             }
 
             protected override Task<IStorage<T>> CreateAsync<T>()
             {
-                return Task.FromResult((IStorage<T>)factory(typeof(T)));
+                return Task.FromResult((IStorage<T>)_factory(typeof(T)));
             }
         }
     }

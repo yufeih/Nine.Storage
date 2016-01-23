@@ -1,9 +1,10 @@
-﻿namespace Nine.Storage
+﻿namespace Nine.Storage.Batching
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Nine.Storage.Compatibility;
 
     public interface IPartitionedDataSource<T>
     {
@@ -12,17 +13,17 @@
         IAsyncEnumerator<T> GetValues(string partition);
     }
 
-    public class StorageDataSource<T> : IPartitionedDataSource<T> where T : class, IKeyed, new()
+    public class StorageDataSource<T> : IPartitionedDataSource<T> where T : IKeyed
     {
-        private static readonly string[] validIdChars;
+        private static readonly string[] ValidIdChars;
 
-        private readonly IStorage<T> storage;
-        private readonly int batchSize;
-        private readonly string[] validKeyCharactors;
+        private readonly IStorage<T> _storage;
+        private readonly int _batchSize;
+        private readonly string[] _validKeyCharactors;
 
         static StorageDataSource()
         {
-            validIdChars =
+            ValidIdChars =
                 Enumerable.Range('a', 'z' - 'a').Concat(
                 Enumerable.Range('A', 'Z' - 'A').Concat(
                 Enumerable.Range('0', '9' - '0'))).Select(i => ((char)i).ToString()).ToArray();
@@ -32,31 +33,31 @@
         {
             if (storage == null) throw new ArgumentNullException("storage");
 
-            this.storage = storage;
-            this.batchSize = batchSize;
-            this.validKeyCharactors = validKeyCharactors;
+            _storage = storage;
+            _batchSize = batchSize;
+            _validKeyCharactors = validKeyCharactors;
         }
 
         public static IPartitionedDataSource<T> CreateIdStorage(IStorage<T> storage, int batchSize = 1000)
         {
-            return new StorageDataSource<T>(storage, validIdChars, batchSize);
+            return new StorageDataSource<T>(storage, ValidIdChars, batchSize);
         }
 
         public Task<IEnumerable<string>> GetPartitions()
         {
             return Task.FromResult<IEnumerable<string>>(
-                validKeyCharactors != null ? validKeyCharactors : new[] { "" });
+                _validKeyCharactors != null ? _validKeyCharactors : new[] { "" });
         }
 
         public IAsyncEnumerator<T> GetValues(string partition)
         {
-            if (partition == "") return storage.All<T>(batchSize);
+            if (partition == "") return _storage.All<T>(_batchSize);
 
             var continuation = partition;
             var max = StorageKey.Increment(partition);
             return AsyncEnumerator.Create(new Func<Task<AsyncEnumerationResult<T>>>(async () =>
             {
-                var batch = await storage.Range(continuation, max, batchSize);
+                var batch = await _storage.Range(continuation, max, _batchSize);
                 var hasMore = batch.Any();
                 if (hasMore)
                 {

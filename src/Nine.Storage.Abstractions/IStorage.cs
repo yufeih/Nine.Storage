@@ -11,7 +11,7 @@
         /// <summary>
         /// Gets an unique key value pair based on the specified key. Returns null if the key is not found.
         /// </summary>
-        Task<T> Get<T>(string key) where T : class, IKeyed, new();
+        Task<T> Get<T>(string key);
 
         /// <summary>
         /// Gets a list of key value pairs whose keys are inside the specified range.
@@ -26,31 +26,31 @@
         /// When a max count is specified, the results are the top N values sorted by key.
         /// The resulting collection can contain zero elements but should never be null.
         /// </remarks>
-        Task<IEnumerable<T>> Range<T>(string minKey, string maxKey, int? count = null) where T : class, IKeyed, new();
+        Task<IEnumerable<T>> Range<T>(string minKey, string maxKey, int? count = null);
 
         /// <summary>
         /// Adds a new key value to the storage if the key does not already exist.
         /// </summary>
         /// <returns>Indicates whether the add is successful.</returns>
-        Task<bool> Add<T>(T value) where T : class, IKeyed, new();
+        Task<bool> Add<T>(string key, T value);
 
         /// <summary>
         /// Adds a key value pair to the storage if the key does not already exist,
         /// or updates a key value pair in the storage if the key already exists.
         /// </summary>
-        Task Put<T>(T value) where T : class, IKeyed, new();
+        Task Put<T>(string key, T value);
 
         /// <summary>
         /// Permanently removes the value with the specified key.
         /// </summary>
         /// <returns>Indicates whether the entity exists and removed.</returns>
-        Task<bool> Delete<T>(string key) where T : class, IKeyed, new();
+        Task<bool> Delete<T>(string key);
     }
 
     /// <summary>
     /// Abstracts a key value pair object storage.
     /// </summary>
-    public interface IStorage<T> where T : class, IKeyed, new()
+    public interface IStorage<T>
     {
         /// <summary>
         /// Gets an unique key value pair based on the specified key. Returns null if the key is not found.
@@ -76,13 +76,13 @@
         /// Adds a new key value to the storage if the key does not already exist.
         /// </summary>
         /// <returns>Indicates whether the add is successful.</returns>
-        Task<bool> Add(T value);
+        Task<bool> Add(string key, T value);
 
         /// <summary>
         /// Adds a key value pair to the storage if the key does not already exist,
         /// or updates a key value pair in the storage if the key already exists.
         /// </summary>
-        Task Put(T value);
+        Task Put(string key, T value);
 
         /// <summary>
         /// Permanently removes the value with the specified key.

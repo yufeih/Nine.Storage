@@ -10,11 +10,11 @@
     using Enyim.Caching.Memcached;
     using Nine.Formatting;
 
-    public class MemcachedStorage<T> : IDisposable, IStorage<T> where T : class, IKeyed, new()
+    public class MemcachedStorage<T> : IDisposable, IStorage<T>
     {
-        private static readonly IFormatter formatter = new JsonFormatter();
-        private readonly MemcachedClient cache;
-        private readonly string prefix;
+        private static readonly IFormatter Formatter = new JsonFormatter();
+        private readonly MemcachedClient _cache;
+        private readonly string _prefix;
 
         public MemcachedStorage(string connection, string prefix = null)
         {
@@ -38,15 +38,15 @@
                 configuration.Authentication.Parameters.Add("password", password);
             }
 
-            this.cache = new MemcachedClient(configuration);
-            this.prefix = (prefix ?? typeof(T).ToString()) + "/";
+            _cache = new MemcachedClient(configuration);
+            _prefix = (prefix ?? typeof(T).ToString()) + "/";
         }
 
         public Task<T> Get(string key)
         {
-            var result = cache.Get(key) as byte[];
-            if (result == null) return Task.FromResult<T>(null);
-            return Task.FromResult(formatter.FromBytes<T>(result));
+            var result = _cache.Get(key) as byte[];
+            if (result == null) return Task.FromResult<T>(default(T));
+            return Task.FromResult(Formatter.FromBytes<T>(result));
         }
 
         public Task<IEnumerable<T>> Range(string minKey = null, string maxKey = null, int? count = null)
@@ -54,20 +54,20 @@
             throw new NotSupportedException();
         }
 
-        public Task<bool> Add( T value)
+        public Task<bool> Add(string key, T value)
         {
-            return Task.FromResult(cache.Store(StoreMode.Add, value.GetKey(), formatter.ToBytes(value)));
+            return Task.FromResult(_cache.Store(StoreMode.Add, key, Formatter.ToBytes(value)));
         }
 
-        public Task Put(T value)
+        public Task Put(string key, T value)
         {
-            cache.Store(StoreMode.Set, value.GetKey(), formatter.ToBytes(value));
-            return Task.FromResult(0);
+            _cache.Store(StoreMode.Set, key, Formatter.ToBytes(value));
+            return Task.CompletedTask;
         }
 
         public Task<bool> Delete(string key)
         {
-            return Task.FromResult(cache.Remove(key));
+            return Task.FromResult(_cache.Remove(key));
         }
 
         // http://stackoverflow.com/questions/2727609/best-way-to-create-ipendpoint-from-string
@@ -164,7 +164,7 @@
         {
             if (disposing)
             {
-                if (cache != null) cache.Dispose();
+                if (_cache != null) _cache.Dispose();
             }
         }
     }
