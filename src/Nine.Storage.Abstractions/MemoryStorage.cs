@@ -124,7 +124,7 @@
         }
     }
 
-    public class MemoryStorage : Storage
+    public class MemoryStorage : StorageContainer
     {
         public MemoryStorage() : base(typeof(MemoryStorage<>)) { }
     }

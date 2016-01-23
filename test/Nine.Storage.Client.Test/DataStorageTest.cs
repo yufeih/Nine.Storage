@@ -24,7 +24,7 @@
         public async Task storage_provider_should_only_be_initialized_once()
         {
             var provider = new TestStorageProvider();
-            var storage = new Storage(provider);
+            var storage = new StorageContainer(provider);
 
             await Task.WhenAll(Enumerable.Range(0, 100).AsParallel().Select(i => storage.Put(new TestStorageObject("a"))));
 

@@ -7,7 +7,7 @@
     using System.Threading.Tasks;
     using Nine.Storage.Syncing;
 
-    public class Storage : IStorage, ISyncSource
+    public class StorageContainer : IStorage, ISyncSource
     {
         private readonly LamportTimestamp _timestamp = new LamportTimestamp();
         private readonly ConcurrentDictionary<Type, ConcurrentQueue<Action<object>>> _initializers 
@@ -32,13 +32,13 @@
             get { return _writeCount > 0 ? 1.0 * _readCount / _writeCount : 1; }
         }
 
-        public Storage(Type type) : this(x => Activator.CreateInstance(type.MakeGenericType(x)))
+        public StorageContainer(Type type) : this(x => Activator.CreateInstance(type.MakeGenericType(x)))
         { }
 
-        public Storage(Func<Type, object> factory) : this(new TypedStorageProvider(factory))
+        public StorageContainer(Func<Type, object> factory) : this(new TypedStorageProvider(factory))
         { }
 
-        public Storage(IStorageProvider storageProvider)
+        public StorageContainer(IStorageProvider storageProvider)
         {
             if (storageProvider == null) throw new ArgumentNullException("storageProvider");
 
