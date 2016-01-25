@@ -8,7 +8,7 @@
     /// <summary>
     /// A custom implementation of ITableEntity that support serializing Enum and TimeSpan properties of an arbitrary object.
     /// </summary>
-    class KeyedTableEntity<T> : ITableEntity where T : IKeyed
+    class KeyedTableEntity<T> : ITableEntity
     {
         private readonly KeyedTableEntityFormatter<T> _formatter;
 

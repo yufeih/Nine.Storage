@@ -19,7 +19,7 @@
     /// This table storage can get as much as around 500 records per second on a small 
     /// azure instance. This performance figure is measured on Jan 26, 2014.
     /// </remarks>
-    public class TableStorage<T> : IStorage<T> where T : class, IKeyed, new()
+    public class TableStorage<T> : IStorage<T> where T : class, new()
     {
         private readonly bool _treatKeyAsPartitionKey;
         private readonly LazyAsync<CloudTable> _table;
