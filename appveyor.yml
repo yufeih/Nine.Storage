@@ -1,5 +1,6 @@
 install:
   - dnvm upgrade
+  - git submodule update --init
   - dnu restore
   - dnu pack src/*/project.json --configuration Release --out artifacts
   - dnx -p test\Nine.Storage.Client.Test test
