@@ -57,6 +57,24 @@
         /// <summary>
         /// Concatenate each component by "-", and ensures lexicographical ordering of basic types.
         /// </summary>
+        public static string Get<T1, T2, T3, T4>(T1 obj1, T2 obj2, T3 obj3, T4 obj4)
+        {
+            var sb = StringBuilderCache.Acquire();
+
+            Append(sb, obj1, false);
+            sb.Append(Separator);
+            Append(sb, obj2, false);
+            sb.Append(Separator);
+            Append(sb, obj3, false);
+            sb.Append(Separator);
+            Append(sb, obj4, true);
+
+            return StringBuilderCache.GetStringAndRelease(sb);
+        }
+
+        /// <summary>
+        /// Concatenate each component by "-", and ensures lexicographical ordering of basic types.
+        /// </summary>
         public static string Get(params object[] values)
         {
             if (values == null || values.Length < 1) return null;
@@ -86,23 +104,32 @@
 
                 if (type == typeof(string))
                 {
-                    var component = value.ToString();
+                    var component = (string)value;
 
                     // Skip the last key component
-                    if (!isLast)
-                    {
-                        foreach (var c in component)
-                        {
-                            var valid = (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
-                            if (!valid) throw new ArgumentException("string can only contain numbers and characters.");
-                        }
-                    }
+                    if (!isLast) ValidateString(component);
 
                     sb.Append(component);
                 }
                 else if (type == typeof(DateTime))
                 {
                     AppendDateTime(sb, (DateTime)value);
+                }
+                else if (type == typeof(bool))
+                {
+                    sb.Append((bool)value ? "1" : "0");
+                }
+                else if (type.GetTypeInfo().IsEnum)
+                {
+                    sb.Append(value.ToString());
+                }
+                else if (type == typeof(int))
+                {
+                    sb.Append(((uint)((int)value + int.MaxValue + 1)).ToString("D10"));
+                }
+                else if (type == typeof(TimeSpan))
+                {
+                    sb.Append(((ulong)(((TimeSpan)value).Ticks + long.MaxValue + 1)).ToString("D20"));
                 }
                 else if (type == typeof(ulong))
                 {
@@ -115,10 +142,6 @@
                 else if (type == typeof(uint))
                 {
                     sb.Append(((uint)value).ToString("D10"));
-                }
-                else if (type == typeof(int))
-                {
-                    sb.Append(((uint)((int)value + int.MaxValue + 1)).ToString("D10"));
                 }
                 else if (type == typeof(ushort))
                 {
@@ -136,23 +159,21 @@
                 {
                     sb.Append(((byte)((sbyte)value + sbyte.MaxValue + 1)).ToString("D3"));
                 }
-                else if (type == typeof(TimeSpan))
-                {
-                    sb.Append(((ulong)(((TimeSpan)value).Ticks + long.MaxValue + 1)).ToString("D20"));
-                }
-                else if (type == typeof(bool))
-                {
-                    sb.Append((bool)value ? "1" : "0");
-                }
-                else if (type.GetTypeInfo().IsEnum)
-                {
-                    sb.Append(value.ToString());
-                }
                 else
                 {
                     // There is no way for us to determine if a type is enum in PCL !!!
                     throw new NotSupportedException(string.Format("{0} is not supported as a key value", type));
                 }
+            }
+        }
+
+        [Conditional("DEBUG")]
+        private static void ValidateString(string component)
+        {
+            foreach (var c in component)
+            {
+                var valid = (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+                if (!valid) throw new ArgumentException("string can only contain numbers and characters.");
             }
         }
 

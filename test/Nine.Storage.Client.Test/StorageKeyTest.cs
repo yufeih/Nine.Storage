@@ -6,6 +6,7 @@
     
     public class StorageKeyTest
     {
+#if DEBUG
         [Fact]
         public static void should_only_accept_numbers_and_letters()
         {
@@ -14,6 +15,7 @@
                 Assert.Throws<ArgumentException>(() => StorageKey.Get(c, "1"));
             }
         }
+#endif
 
         [Fact]
         public static void should_accept_everything_for_the_last_component()
