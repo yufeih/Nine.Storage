@@ -3,11 +3,9 @@
 BuildTestPublishPreRelease(
     projects: new []
     {
-        "src/Nine.Storage.Abstractions",
-        "src/Nine.Storage.Client",
-        "src/Nine.Storage.Server",
+        "src/*/",
         "test/Nine.Storage.Test",
-    }, 
+    },
     testProjects: new []
     {
         "test/Nine.Storage.Client.Test",

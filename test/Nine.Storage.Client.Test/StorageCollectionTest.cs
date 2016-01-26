@@ -111,7 +111,7 @@
             var collection = new StorageCollection<TestStorageObject>(storage, null, null).WithAllItems();
 
             await Task.WhenAll(Enumerable.Range(count, count).AsParallel().Select(i => storage.Put(new TestStorageObject(i))));
-            await collection.ChangedTo(m => m.Select(x => x.Id).Distinct().Count() == count * 2);
+            await collection.ChangedTo(m => m.Select(x => x.Id).Distinct().Count() == count * 2, 10000);
         }
 
         [Fact]
