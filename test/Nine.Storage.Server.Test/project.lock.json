@@ -342,10 +342,11 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.1-alpha-3": {
+      "Nine.Formatting/1.2.2-alpha1": {
         "type": "package",
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
+          "Nine.Formatting.Abstractions": "1.2.2-alpha1",
           "protobuf-net": "2.1.0-alpha-1"
         },
         "frameworkAssemblies": [
@@ -355,10 +356,27 @@
           "System.Core"
         ],
         "compile": {
+          "lib/dnx451/Nine.Formatting.Abstractions.dll": {},
           "lib/dnx451/Nine.Formatting.dll": {}
         },
         "runtime": {
+          "lib/dnx451/Nine.Formatting.Abstractions.dll": {},
           "lib/dnx451/Nine.Formatting.dll": {}
+        }
+      },
+      "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Nine.Formatting.Abstractions.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Nine.Formatting.Abstractions.dll": {}
         }
       },
       "Nine.Storage.Abstractions/2.0.0": {
@@ -376,7 +394,7 @@
           "mongocsharpdriver": "2.2.0",
           "NEST": "1.7.1",
           "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting": "1.2.1-alpha",
+          "Nine.Formatting": "1.2.2",
           "Nine.Storage.Abstractions": null,
           "StackExchange.Redis": "1.1.0-alpha2",
           "WindowsAzure.Storage": "6.2.0"
@@ -947,10 +965,11 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.1-alpha-3": {
+      "Nine.Formatting/1.2.2-alpha1": {
         "type": "package",
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
+          "Nine.Formatting.Abstractions": "1.2.2-alpha1",
           "protobuf-net": "2.1.0-alpha-1"
         },
         "frameworkAssemblies": [
@@ -960,10 +979,27 @@
           "System.Core"
         ],
         "compile": {
+          "lib/dnx451/Nine.Formatting.Abstractions.dll": {},
           "lib/dnx451/Nine.Formatting.dll": {}
         },
         "runtime": {
+          "lib/dnx451/Nine.Formatting.Abstractions.dll": {},
           "lib/dnx451/Nine.Formatting.dll": {}
+        }
+      },
+      "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Nine.Formatting.Abstractions.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Nine.Formatting.Abstractions.dll": {}
         }
       },
       "Nine.Storage.Abstractions/2.0.0": {
@@ -981,7 +1017,7 @@
           "mongocsharpdriver": "2.2.0",
           "NEST": "1.7.1",
           "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting": "1.2.1-alpha",
+          "Nine.Formatting": "1.2.2",
           "Nine.Storage.Abstractions": null,
           "StackExchange.Redis": "1.1.0-alpha2",
           "WindowsAzure.Storage": "6.2.0"
@@ -1552,10 +1588,11 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.1-alpha-3": {
+      "Nine.Formatting/1.2.2-alpha1": {
         "type": "package",
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
+          "Nine.Formatting.Abstractions": "1.2.2-alpha1",
           "protobuf-net": "2.1.0-alpha-1"
         },
         "frameworkAssemblies": [
@@ -1565,10 +1602,27 @@
           "System.Core"
         ],
         "compile": {
+          "lib/dnx451/Nine.Formatting.Abstractions.dll": {},
           "lib/dnx451/Nine.Formatting.dll": {}
         },
         "runtime": {
+          "lib/dnx451/Nine.Formatting.Abstractions.dll": {},
           "lib/dnx451/Nine.Formatting.dll": {}
+        }
+      },
+      "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Nine.Formatting.Abstractions.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Nine.Formatting.Abstractions.dll": {}
         }
       },
       "Nine.Storage.Abstractions/2.0.0": {
@@ -1586,7 +1640,7 @@
           "mongocsharpdriver": "2.2.0",
           "NEST": "1.7.1",
           "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting": "1.2.1-alpha",
+          "Nine.Formatting": "1.2.2",
           "Nine.Storage.Abstractions": null,
           "StackExchange.Redis": "1.1.0-alpha2",
           "WindowsAzure.Storage": "6.2.0"
@@ -2214,17 +2268,32 @@
         "tools/install.ps1"
       ]
     },
-    "Nine.Formatting/1.2.1-alpha-3": {
+    "Nine.Formatting/1.2.2-alpha1": {
       "type": "package",
-      "sha512": "WZVWD2EgmE5UafNCWhxA0H7n3rKlDWpDs9fyrm2pi5eSbHA+dCGguyxbp9CF+vThevaJjLoENUB5zFE4lLzmxA==",
+      "sha512": "ysygaVQz+nLurFQi5FjNoOG5zQF+5strJffwTMcEqJOCoKDfPkh4DTERelMZ4q9NUYhAPUSsGo5OUktYGWJNSA==",
       "files": [
+        "lib/dnx451/Nine.Formatting.Abstractions.dll",
+        "lib/dnx451/Nine.Formatting.Abstractions.xml",
         "lib/dnx451/Nine.Formatting.dll",
         "lib/dnx451/Nine.Formatting.xml",
         "lib/dotnet5.4/Nine.Formatting.dll",
         "lib/dotnet5.4/Nine.Formatting.xml",
-        "Nine.Formatting.1.2.1-alpha-3.nupkg",
-        "Nine.Formatting.1.2.1-alpha-3.nupkg.sha512",
+        "Nine.Formatting.1.2.2-alpha1.nupkg",
+        "Nine.Formatting.1.2.2-alpha1.nupkg.sha512",
         "Nine.Formatting.nuspec"
+      ]
+    },
+    "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+      "type": "package",
+      "sha512": "1gX5hpmVRIp124Bn8w22aDXmrSJfCP1YrueV1CQ3kQjyUeh6hyeSQo8ocEVFK8XcqyZ5KP1i3sXM4GZAWCeNTg==",
+      "files": [
+        "lib/dnx451/Nine.Formatting.Abstractions.dll",
+        "lib/dnx451/Nine.Formatting.Abstractions.xml",
+        "lib/dotnet/Nine.Formatting.Abstractions.dll",
+        "lib/dotnet/Nine.Formatting.Abstractions.xml",
+        "Nine.Formatting.Abstractions.1.2.2-alpha1.nupkg",
+        "Nine.Formatting.Abstractions.1.2.2-alpha1.nupkg.sha512",
+        "Nine.Formatting.Abstractions.nuspec"
       ]
     },
     "protobuf-net/2.1.0-alpha-1": {

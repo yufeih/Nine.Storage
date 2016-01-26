@@ -9,7 +9,6 @@
 
     public class StorageContainer : IStorage, ISyncSource
     {
-        private readonly LamportTimestamp _timestamp = new LamportTimestamp();
         private readonly ConcurrentDictionary<Type, ConcurrentQueue<Action<object>>> _initializers 
                    = new ConcurrentDictionary<Type, ConcurrentQueue<Action<object>>>();
 
@@ -18,13 +17,10 @@
         private long _readCount = 0;
         private long _writeCount = 0;
 
-        public long ReadCount { get { return _readCount; } }
-        public long WriteCount { get { return _writeCount; } }
+        public long ReadCount => _readCount;
+        public long WriteCount => _writeCount;
 
-        public double ReadWriteRatio
-        {
-            get { return _writeCount > 0 ? 1.0 * _readCount / _writeCount : 1; }
-        }
+        public double ReadWriteRatio => _writeCount > 0 ? 1.0 * _readCount / _writeCount : 1;
 
         public StorageContainer(Type type) : this(x => Activator.CreateInstance(type.MakeGenericType(x)))
         { }

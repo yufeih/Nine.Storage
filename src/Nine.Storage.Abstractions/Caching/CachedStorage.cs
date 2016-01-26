@@ -14,10 +14,7 @@
         internal static long _missedCount = 0;
         internal static long _totalCount = 0;
 
-        public static double HitRate
-        {
-            get { return _totalCount > 0 ? 1.0 * (_totalCount - _missedCount) / _totalCount : 0.0; }
-        }
+        public static double HitRate => _totalCount > 0 ? 1.0 * (_totalCount - _missedCount) / _totalCount : 0.0;
     }
     
     public class CachedStorageItems<T> : IKeyed
@@ -26,7 +23,7 @@
         public string Key { get; set; }
         public DateTime Time { get; set; }
 
-        public string GetKey() { return Key; }
+        public string GetKey() => Key;
     }
 
     /// <summary>

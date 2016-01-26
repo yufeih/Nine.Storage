@@ -1,13 +1,13 @@
 ﻿namespace Nine.Storage
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Nine.Formatting;
     using SQLite.Net;
-    using SQLite.Net.Interop;
     using SQLite.Net.Attributes;
-    using System;
+    using SQLite.Net.Interop;
 
     public class SqliteStorage<T> : IStorage<T>
     {

@@ -17,7 +17,7 @@
     "mongocsharpdriver": "2.2.0",
     "NEST": "1.7.1",
     "Newtonsoft.Json": "8.0.1",
-    "Nine.Formatting": "1.2.1-alpha-*",
+    "Nine.Formatting": "1.2.2-*",
     "Nine.Storage.Abstractions": "",
     "StackExchange.Redis": "1.1.0-alpha2",
     "WindowsAzure.Storage": "6.2.0"

@@ -10,7 +10,6 @@
 
   "compile": [
     "../../Common/src/Sha1.cs",
-    "../../Common/src/LamportTimestamp.cs",
     "../../Common/src/ObjectHelper.cs",
     "../../Common/src/StringBuilderCache.cs",
     "../../Common/src/LazyAsync.cs"
