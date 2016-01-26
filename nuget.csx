@@ -3,7 +3,7 @@
 BuildTestPublishPreRelease(
     projects: new []
     {
-        "src/*/",
+        "src/*",
         "test/Nine.Storage.Test",
     },
     testProjects: new []
