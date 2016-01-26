@@ -19,7 +19,7 @@
     "Newtonsoft.Json": "8.0.1",
     "Nine.Formatting": "1.2.2-*",
     "Nine.Storage.Abstractions": "",
-    "StackExchange.Redis": "1.1.0-alpha2",
+    "StackExchange.Redis": "1.1.0-*",
     "WindowsAzure.Storage": "6.2.0"
   },
 
@@ -27,6 +27,14 @@
     "dnx46": {
       "frameworkAssemblies": {
         "System.Runtime.Caching": "4.0.0.0"
+      }
+    },
+    "net46": {
+      "frameworkAssemblies": {
+        "System.IO": "4.0.0.0",
+        "System.Runtime": "4.0.20.0",
+        "System.Runtime.Caching": "4.0.0.0",
+        "System.Threading.Tasks": "4.0.10.0"
       }
     }
   }

@@ -396,7 +396,7 @@
           "Newtonsoft.Json": "8.0.1",
           "Nine.Formatting": "1.2.2",
           "Nine.Storage.Abstractions": null,
-          "StackExchange.Redis": "1.1.0-alpha2",
+          "StackExchange.Redis": "1.1.0",
           "WindowsAzure.Storage": "6.2.0"
         },
         "frameworkAssemblies": [
@@ -1019,7 +1019,7 @@
           "Newtonsoft.Json": "8.0.1",
           "Nine.Formatting": "1.2.2",
           "Nine.Storage.Abstractions": null,
-          "StackExchange.Redis": "1.1.0-alpha2",
+          "StackExchange.Redis": "1.1.0",
           "WindowsAzure.Storage": "6.2.0"
         },
         "frameworkAssemblies": [
@@ -1642,7 +1642,7 @@
           "Newtonsoft.Json": "8.0.1",
           "Nine.Formatting": "1.2.2",
           "Nine.Storage.Abstractions": null,
-          "StackExchange.Redis": "1.1.0-alpha2",
+          "StackExchange.Redis": "1.1.0",
           "WindowsAzure.Storage": "6.2.0"
         },
         "frameworkAssemblies": [
