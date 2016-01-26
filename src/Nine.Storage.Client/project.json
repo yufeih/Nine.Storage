@@ -31,6 +31,12 @@
       "frameworkAssemblies": {
         "System.Collections": "4.0.10.0"
       }
+    },
+    "net46": {
+      "frameworkAssemblies": {
+        "System.Runtime": "4.0.0.0",
+        "System.Collections": "4.0.0.0"
+      }
     }
   }
 }
