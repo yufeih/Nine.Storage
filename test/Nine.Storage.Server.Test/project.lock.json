@@ -361,14 +361,14 @@
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Storage.Abstractions/1.4.0-alpha": {
+      "Nine.Storage.Abstractions/2.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "frameworkAssemblies": [
           "System.Runtime"
         ]
       },
-      "Nine.Storage.Server/1.4.0": {
+      "Nine.Storage.Server/2.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
@@ -385,7 +385,7 @@
           "System.Runtime.Caching"
         ]
       },
-      "Nine.Storage.Test/1.4.0-alpha": {
+      "Nine.Storage.Test/2.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
@@ -966,14 +966,14 @@
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Storage.Abstractions/1.4.0-alpha": {
+      "Nine.Storage.Abstractions/2.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "frameworkAssemblies": [
           "System.Runtime"
         ]
       },
-      "Nine.Storage.Server/1.4.0": {
+      "Nine.Storage.Server/2.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
@@ -990,7 +990,7 @@
           "System.Runtime.Caching"
         ]
       },
-      "Nine.Storage.Test/1.4.0-alpha": {
+      "Nine.Storage.Test/2.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
@@ -1571,14 +1571,14 @@
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Storage.Abstractions/1.4.0-alpha": {
+      "Nine.Storage.Abstractions/2.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "frameworkAssemblies": [
           "System.Runtime"
         ]
       },
-      "Nine.Storage.Server/1.4.0": {
+      "Nine.Storage.Server/2.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
@@ -1595,7 +1595,7 @@
           "System.Runtime.Caching"
         ]
       },
-      "Nine.Storage.Test/1.4.0-alpha": {
+      "Nine.Storage.Test/2.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.6",
         "dependencies": {
@@ -1819,15 +1819,15 @@
     }
   },
   "libraries": {
-    "Nine.Storage.Abstractions/1.4.0-alpha": {
+    "Nine.Storage.Abstractions/2.0.0": {
       "type": "project",
       "path": "../../src/Nine.Storage.Abstractions/project.json"
     },
-    "Nine.Storage.Server/1.4.0": {
+    "Nine.Storage.Server/2.0.0": {
       "type": "project",
       "path": "../../src/Nine.Storage.Server/project.json"
     },
-    "Nine.Storage.Test/1.4.0-alpha": {
+    "Nine.Storage.Test/2.0.0": {
       "type": "project",
       "path": "../Nine.Storage.Test/project.json"
     },
@@ -2268,7 +2268,7 @@
     "System.Reflection.Emit/4.0.1-beta-23516": {
       "type": "package",
       "serviceable": true,
-      "sha512": "4w2Piqjq8CKVQwvHHz4Fpsl5rcX4T49A+g1JXGqAOLXZYlkSpC6Dep9OZZZ6Z/LbruUQtuZN9MxLZHZJ1io2CQ==",
+      "sha512": "3j5EhKPGh7cbUu5QLP1RAabvjNIpJOr5hA1Ip5UQ4ozccUb6Fd3SZiP4VKpqm/RyVAZDnOc9vdNuazZebtJeHw==",
       "files": [
         "lib/DNXCore50/System.Reflection.Emit.dll",
         "lib/MonoAndroid10/_._",
