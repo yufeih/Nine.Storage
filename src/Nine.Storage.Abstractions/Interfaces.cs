@@ -23,12 +23,4 @@
         /// </summary>
         DateTime Time { get; set; }
     }
-
-    /// <summary>
-    /// Indicates that this object is owned by a particular user
-    /// </summary>
-    public interface IOwned
-    {
-        string UserId { get; set; }
-    }
 }
