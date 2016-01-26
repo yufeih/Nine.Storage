@@ -19,7 +19,7 @@
     }
 
     [ProtoContract]
-    public class TestStorageObjectBase : IKeyed, ITimestamped
+    public class TestStorageObjectBase : IKeyed
     {
         [ProtoMember(1)]
         public string Id { get; set; }

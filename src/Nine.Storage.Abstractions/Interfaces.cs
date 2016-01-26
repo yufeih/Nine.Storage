@@ -12,15 +12,4 @@
         /// </summary>
         string GetKey();
     }
-
-    /// <summary>
-    /// Represents a storage object that can be saved
-    /// </summary>
-    public interface ITimestamped
-    {
-        /// <summary>
-        /// Gets or sets the last updated time of this storage object.
-        /// </summary>
-        DateTime Time { get; set; }
-    }
 }

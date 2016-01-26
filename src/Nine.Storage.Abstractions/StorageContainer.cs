@@ -15,12 +15,6 @@
 
         public IStorageProvider StorageProvider { get; private set; }
 
-        /// <summary>
-        /// When enabled, write operations will update IStorageObject.Time 
-        /// to the latest lamport timestamp of this instance.
-        /// </summary>
-        public bool TimestampEnabled { get; set; }
-
         private long _readCount = 0;
         private long _writeCount = 0;
 
@@ -73,12 +67,6 @@
 
             var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
-            if (TimestampEnabled)
-            {
-                var timestamped = value as ITimestamped;
-                // TODO:
-                if (timestamped != null && timestamped.Time == default(DateTime)) timestamped.Time = _timestamp.Next();
-            }
             return await storage.Add(key, value).ConfigureAwait(false);
         }
 
@@ -94,11 +82,6 @@
 
             var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
-            if (TimestampEnabled)
-            {
-                var timestamped = value as ITimestamped;
-                if (timestamped != null && timestamped.Time == default(DateTime)) timestamped.Time = _timestamp.Next();
-            }
             await storage.Put(key, value).ConfigureAwait(false);
         }
 
