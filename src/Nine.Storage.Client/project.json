@@ -10,7 +10,8 @@
 
   "compile": [
     "../../Common/src/LazyAsync.cs",
-    "../../Common/src/ObjectHelper.cs"
+    "../../Common/src/ObjectHelper.cs",
+    "../../Common/src/CommonTasks.cs"
   ],
 
   "dependencies": {

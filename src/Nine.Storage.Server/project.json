@@ -9,7 +9,8 @@
 
   "compile": [
     "../../Common/src/IOExtensions.cs",
-    "../../Common/src/LazyAsync.cs"
+    "../../Common/src/LazyAsync.cs",
+    "../../Common/src/CommonTasks.cs"
   ],
 
   "dependencies": {

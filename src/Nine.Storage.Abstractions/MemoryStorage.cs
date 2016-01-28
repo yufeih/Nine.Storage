@@ -1,9 +1,7 @@
 ﻿namespace Nine.Storage
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
     using Nine.Storage.Caching;
@@ -11,60 +9,75 @@
     public class MemoryStorage<T> : IStorage<T>, ICache<T>
     {
         private readonly bool _weak;
-        private readonly ConcurrentDictionary<string, Entry> _items = new ConcurrentDictionary<string, Entry>();
+        private readonly SortedDictionary<string, Entry> _items = new SortedDictionary<string, Entry>(StringComparer.OrdinalIgnoreCase);
 
         public MemoryStorage() { }
         public MemoryStorage(bool useWeakReference)
         {
-            this._weak = useWeakReference && !typeof(T).GetTypeInfo().IsValueType;
+            _weak = useWeakReference && !typeof(T).GetTypeInfo().IsValueType;
         }
 
         public bool TryGet(string key, out T value)
         {
-            Entry entry;
-            value = default(T);
-            return _items.TryGetValue(key, out entry) && entry.TryGetValue(out value);
+            lock (_items)
+            {
+                Entry entry;
+                value = default(T);
+                return _items.TryGetValue(key, out entry) && entry.TryGetValue(out value);
+            }
         }
 
         public void Put(string key, T value)
         {
-            _items.AddOrUpdate(key, new Entry(value, _weak), (k, v) => new Entry(value, _weak));
+            lock (_items)
+            {
+                _items[key] = new Entry(value, _weak);
+            }
         }
 
         public bool Delete(string key)
         {
-            Entry value;
-            return _items.TryRemove(key, out value);
+            lock (_items)
+            {
+                return _items.Remove(key);
+            }
         }
 
         public Task<T> Get(string key)
         {
-            T result;
-            return Task.FromResult(TryGet(key, out result) ? result : default(T));
+            lock (_items)
+            {
+                T result;
+                return Task.FromResult(TryGet(key, out result) ? result : default(T));
+            }
         }
 
         public Task<IEnumerable<T>> Range(string minKey = null, string maxKey = null, int? count = null)
         {
-            var result =
-                from x in _items
-                where (minKey == null || string.CompareOrdinal(x.Key, minKey) >= 0) &&
-                      (maxKey == null || string.CompareOrdinal(x.Key, maxKey) < 0)
-                let value = x.Value.Value
-                where value != null
-                orderby x.Key
-                select value;
+            T value;
+            var result = new List<T>();
 
-            if (count != null)
+            lock (_items)
             {
-                result = result.Take(count.Value);
+                foreach (var pair in _items)
+                {
+                    if (minKey != null && string.CompareOrdinal(pair.Key, minKey) < 0) continue;
+                    if (maxKey != null && string.CompareOrdinal(pair.Key, maxKey) >= 0) break;
+                    if (pair.Value.TryGetValue(out value)) result.Add(value);
+                    if (count.HasValue && result.Count >= count) break;
+                }
             }
-
-            return Task.FromResult<IEnumerable<T>>(result.ToArray());
+            return Task.FromResult<IEnumerable<T>>(result);
         }
 
         public Task<bool> Add(string key, T value)
         {
-            return Task.FromResult(_items.TryAdd(key, new Entry(value, _weak)));
+            lock (_items)
+            {
+                if (_items.ContainsKey(key)) return CommonTasks.False;
+                _items.Add(key, new Entry(value, _weak));
+                return CommonTasks.True;
+            }
         }
 
         Task IStorage<T>.Put(string key, T value)
@@ -75,7 +88,7 @@
 
         Task<bool> IStorage<T>.Delete(string key)
         {
-            return Task.FromResult(Delete(key));
+            return Delete(key) ? CommonTasks.True : CommonTasks.False;
         }
 
         struct Entry

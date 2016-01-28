@@ -37,11 +37,11 @@
             {
                 try
                 {
-                    return Task.FromResult(_db.Insert(new Table { Key = key, Value = _formatter.ToBytes(value) }) == 1);
+                    return _db.Insert(new Table { Key = key, Value = _formatter.ToBytes(value) }) == 1 ? CommonTasks.True : CommonTasks.False;
                 }
                 catch (SQLiteException)
                 {
-                    return Task.FromResult(false);
+                    return CommonTasks.False;
                 }
             }
         }
@@ -50,7 +50,7 @@
         {
             lock (_lock)
             {
-                return Task.FromResult(_db.Delete<Table>(key) == 1);
+                return _db.Delete<Table>(key) == 1 ? CommonTasks.True : CommonTasks.False;
             }
         }
 
@@ -68,7 +68,8 @@
         {
             lock (_lock)
             {
-                return Task.FromResult(_db.InsertOrReplace(new Table { Key = key, Value = _formatter.ToBytes(value) }) == 1);
+                _db.InsertOrReplace(new Table { Key = key, Value = _formatter.ToBytes(value) });
+                return Task.CompletedTask;
             }
         }
 

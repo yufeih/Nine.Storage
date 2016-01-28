@@ -18,32 +18,32 @@
 
         public Task<bool> Exists(string key)
         {
-            if (string.IsNullOrEmpty(key)) return Task.FromResult(false);
+            if (string.IsNullOrEmpty(key)) return CommonTasks.False;
 
-            return Task.FromResult(File.Exists(GetFilePath(key)));
+            return File.Exists(GetFilePath(key)) ? CommonTasks.True : CommonTasks.False;
         }
 
         public Task<string> GetUri(string key)
         {
-            if (string.IsNullOrEmpty(key)) return Task.FromResult<string>(null);
+            if (string.IsNullOrEmpty(key)) return CommonTasks.NullString;
 
             return Task.FromResult(Path.GetFullPath(GetFilePath(key)));
         }
 
         public Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (string.IsNullOrEmpty(key)) return Task.FromResult<Stream>(null);
+            if (string.IsNullOrEmpty(key)) return CommonTasks.NullStream;
 
             var path = GetFilePath(key);
 
-            if (!File.Exists(path)) return Task.FromResult<Stream>(null);
+            if (!File.Exists(path)) return CommonTasks.NullStream;
 
             return Task.FromResult<Stream>(File.OpenRead(path));
         }
 
         public Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (stream == null || key == null) return Task.FromResult<string>(null);
+            if (stream == null || key == null) return CommonTasks.NullString;
 
             var tempId = "." + Guid.NewGuid().ToString("N").Substring(0, 5) + ".tmp";
 

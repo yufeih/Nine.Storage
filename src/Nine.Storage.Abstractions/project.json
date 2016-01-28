@@ -12,7 +12,8 @@
     "../../Common/src/Sha1.cs",
     "../../Common/src/ObjectHelper.cs",
     "../../Common/src/StringBuilderCache.cs",
-    "../../Common/src/LazyAsync.cs"
+    "../../Common/src/LazyAsync.cs",
+    "../../Common/src/CommonTasks.cs"
   ],
 
   "frameworks": {

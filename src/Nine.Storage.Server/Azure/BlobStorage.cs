@@ -69,7 +69,7 @@
 
         public Task<string> GetUri(string key)
         {
-            if (string.IsNullOrEmpty(key)) return Task.FromResult<string>(null);
+            if (string.IsNullOrEmpty(key)) return CommonTasks.NullString;
 
             return Task.FromResult(BaseUri + key);
         }
