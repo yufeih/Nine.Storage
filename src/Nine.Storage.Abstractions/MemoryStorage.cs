@@ -2,14 +2,18 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
     using Nine.Storage.Caching;
 
     public class MemoryStorage<T> : IStorage<T>, ICache<T>
     {
+        private static readonly StringComparer s_comparer = StringComparer.OrdinalIgnoreCase;
+
         private readonly bool _weak;
-        private readonly SortedDictionary<string, Entry> _items = new SortedDictionary<string, Entry>(StringComparer.OrdinalIgnoreCase);
+        private readonly List<string> _keys = new List<string>();
+        private readonly List<Entry> _values = new List<Entry>();
 
         public MemoryStorage() { }
         public MemoryStorage(bool useWeakReference)
@@ -19,33 +23,71 @@
 
         public bool TryGet(string key, out T value)
         {
-            lock (_items)
+            lock (_values)
             {
-                Entry entry;
-                value = default(T);
-                return _items.TryGetValue(key, out entry) && entry.TryGetValue(out value);
+                var i = _keys.BinarySearch(key, s_comparer);
+                if (i >= 0)
+                {
+                    return _values[i].TryGetValue(out value);
+                }
+                else
+                {
+                    value = default(T);
+                    return false;
+                }
             }
         }
 
         public void Put(string key, T value)
         {
-            lock (_items)
+            lock (_values)
             {
-                _items[key] = new Entry(value, _weak);
+                var i = _keys.BinarySearch(key, s_comparer);
+                if (i >= 0)
+                {
+                    _keys[i] = key;
+                    _values[i] = new Entry(value, _weak);
+                }
+                else
+                {
+                    var index = ~i;
+                    _keys.Insert(index, key);
+                    _values.Insert(index, new Entry(value, _weak));
+                }
+            }
+        }
+
+        public Task<bool> Add(string key, T value)
+        {
+            lock (_values)
+            {
+                var i = _keys.BinarySearch(key, s_comparer);
+                if (i >= 0) return CommonTasks.False;
+                var index = ~i;
+                _keys.Insert(index, key);
+                _values.Insert(index, new Entry(value, _weak));
+                return CommonTasks.True;
             }
         }
 
         public bool Delete(string key)
         {
-            lock (_items)
+            lock (_values)
             {
-                return _items.Remove(key);
+                var i = _keys.BinarySearch(key, s_comparer);
+                if (i >= 0)
+                {
+                    _keys.RemoveAt(i);
+                    _values.RemoveAt(i);
+                    return true;
+                }
+                return false;
             }
         }
 
         public Task<T> Get(string key)
         {
-            lock (_items)
+            lock (_values)
             {
                 T result;
                 return Task.FromResult(TryGet(key, out result) ? result : default(T));
@@ -55,28 +97,33 @@
         public Task<IEnumerable<T>> Range(string minKey = null, string maxKey = null, int? count = null)
         {
             T value;
-            var result = new List<T>();
 
-            lock (_items)
+            lock (_values)
             {
-                foreach (var pair in _items)
+                var start = 0;
+                var end = _keys.Count;
+                if (minKey != null)
                 {
-                    if (minKey != null && string.CompareOrdinal(pair.Key, minKey) < 0) continue;
-                    if (maxKey != null && string.CompareOrdinal(pair.Key, maxKey) >= 0) break;
-                    if (pair.Value.TryGetValue(out value)) result.Add(value);
+                    start = _keys.BinarySearch(minKey, s_comparer);
+                    if (start < 0) start = ~start;
+                }
+                if (maxKey != null)
+                {
+                    end = _keys.BinarySearch(maxKey, s_comparer);
+                    if (end < 0) end = ~end;
+                }
+
+                if (end < start) return Task.FromResult(Enumerable.Empty<T>());
+
+                var result = new List<T>();
+
+                for (var i = start; i < end; i++)
+                {
+                    if (_values[i].TryGetValue(out value)) result.Add(value);
                     if (count.HasValue && result.Count >= count) break;
                 }
-            }
-            return Task.FromResult<IEnumerable<T>>(result);
-        }
 
-        public Task<bool> Add(string key, T value)
-        {
-            lock (_items)
-            {
-                if (_items.ContainsKey(key)) return CommonTasks.False;
-                _items.Add(key, new Entry(value, _weak));
-                return CommonTasks.True;
+                return Task.FromResult<IEnumerable<T>>(result);
             }
         }
 
