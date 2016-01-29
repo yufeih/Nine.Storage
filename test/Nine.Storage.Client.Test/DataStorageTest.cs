@@ -8,7 +8,7 @@
     
     public class DataStorageTest
     {
-        class TestStorageProvider : StorageProviderBase
+        class TestStorageProvider : StorageProvider
         {
             public int InitializeCount = 0;
 

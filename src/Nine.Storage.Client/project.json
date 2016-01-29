@@ -15,7 +15,7 @@
   ],
 
   "dependencies": {
-    "Nine.Formatting": "1.2.2-*",
+    "Nine.Formatting": "1.4.0-*",
     "Nine.Storage.Abstractions": "",
     "SQLite.Net-PCL": "3.1.1"
   },
@@ -35,8 +35,9 @@
     },
     "net46": {
       "frameworkAssemblies": {
-        "System.Runtime": "4.0.0.0",
-        "System.Collections": "4.0.0.0"
+        "System.Collections": "4.0.0.0",
+        "System.IO": "4.0.0.0",
+        "System.Runtime": "4.0.0.0"
       }
     }
   }

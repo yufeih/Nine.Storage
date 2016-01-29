@@ -63,7 +63,8 @@
             T result;
             if (_cache.TryGet(key, out result)) return result;
 
-            IncrementMissedCount(key);
+            Interlocked.Increment(ref CachedStorageStatus._missedCount);
+            Missed?.Invoke(key);
 
             var persisted = await _persistStorage.Get(key).ConfigureAwait(false);
             _cache.Put(key, persisted);
@@ -85,7 +86,8 @@
                 return items.Items;
             }
 
-            IncrementMissedCount(cacheKey);
+            Interlocked.Increment(ref CachedStorageStatus._missedCount);
+            Missed?.Invoke(cacheKey);
 
             var persisted = (await _persistStorage.Range(minKey, maxKey, maxCount).ConfigureAwait(false)).ToArray();
             if (cacheKey != null)
@@ -102,14 +104,6 @@
                 Interlocked.Exchange(ref CachedStorageStatus._totalCount, 1);
                 Interlocked.Exchange(ref CachedStorageStatus._missedCount, 0);
             }
-        }
-
-        private void IncrementMissedCount(string key)
-        {
-            Interlocked.Increment(ref CachedStorageStatus._missedCount);
-
-            var missed = Missed;
-            if (missed != null) missed(key);
         }
 
         /// <summary>
@@ -142,11 +136,11 @@
         /// <summary>
         /// Permanently removes the value with the specified key.
         /// </summary>
-        public async Task<bool> Delete(string key)
+        public Task<bool> Delete(string key)
         {
             _cache.Delete(key);
             if (_rangeCache != null) InvalidateRange(key);
-            return await _persistStorage.Delete(key).ConfigureAwait(false);
+            return _persistStorage.Delete(key);
         }
 
         private void InvalidateRange(string key)

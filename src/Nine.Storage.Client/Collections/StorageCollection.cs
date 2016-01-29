@@ -1,13 +1,13 @@
-﻿namespace Nine.Storage.Collections
+﻿namespace System.Collections.Specialized
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Collections.Specialized;
     using System.ComponentModel;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Nine.Storage;
     using Nine.Storage.Syncing;
 
     /// <summary>

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using Nine.Formatting;
@@ -37,7 +38,9 @@
             {
                 try
                 {
-                    return _db.Insert(new Table { Key = key, Value = _formatter.ToBytes(value) }) == 1 ? CommonTasks.True : CommonTasks.False;
+                    var ms = new MemoryStream();
+                    _formatter.WriteTo(value, ms);
+                    return _db.Insert(new Table { Key = key, Value = ms.ToArray() }) == 1 ? CommonTasks.True : CommonTasks.False;
                 }
                 catch (SQLiteException)
                 {
@@ -60,7 +63,7 @@
             {
                 var query = "select * from \"Table\" where \"Key\" = ?";
                 var bytes = _db.Query<Table>(query, key).SingleOrDefault()?.Value;
-                return Task.FromResult(bytes != null ? _formatter.FromBytes<T>(bytes) : default(T));
+                return Task.FromResult(bytes != null ? _formatter.ReadFrom<T>(new MemoryStream(bytes, writable: false)) : default(T));
             }
         }
 
@@ -68,7 +71,9 @@
         {
             lock (_lock)
             {
-                _db.InsertOrReplace(new Table { Key = key, Value = _formatter.ToBytes(value) });
+                var ms = new MemoryStream();
+                _formatter.WriteTo(value, ms);
+                _db.InsertOrReplace(new Table { Key = key, Value = ms.ToArray() });
                 return Task.CompletedTask;
             }
         }
@@ -104,7 +109,7 @@
                     }
                 }
 
-                return Task.FromResult(result.Select(row => _formatter.FromBytes<T>(row.Value)));
+                return Task.FromResult(result.Select(row => _formatter.ReadFrom<T>(new MemoryStream(row.Value, writable: false))));
             }
         }
     }
