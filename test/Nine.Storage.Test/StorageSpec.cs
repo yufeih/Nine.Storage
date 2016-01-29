@@ -33,7 +33,6 @@
                 Id = Guid.NewGuid().ToString(),
                 Enum = StringComparison.OrdinalIgnoreCase,
                 NullableTime2 = DateTime.UtcNow,
-                TimeSpan = TimeSpan.FromTicks(1),
             };
 
             await storage.Put(expected).ConfigureAwait(false);
@@ -44,7 +43,6 @@
             Assert.Equal(expected.NullableTime, actual.NullableTime);
             Assert.Equal(expected.NullableTime2, actual.NullableTime2);
             Assert.Equal(expected.Enum, actual.Enum);
-            Assert.Equal(expected.TimeSpan, actual.TimeSpan);
         }
 
         [Theory, MemberData("Data")]

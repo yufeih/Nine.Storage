@@ -35,8 +35,8 @@
         public DateTime? NullableTime2 { get; set; }
         [ProtoMember(7)]
         public StringComparison Enum { get; set; }
-        [ProtoMember(8)]
-        public TimeSpan TimeSpan { get; set; }
+        //[ProtoMember(8)]
+        //public TimeSpan TimeSpan { get; set; }
         [ProtoMember(9)]
         public DateTime Time3 { get; set; }
 

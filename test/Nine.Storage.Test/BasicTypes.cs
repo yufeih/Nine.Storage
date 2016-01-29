@@ -31,8 +31,8 @@
         public DateTime MinDateTime = DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc);
         [ProtoMember(11)]
         public DateTime MaxDateTime = DateTime.SpecifyKind(DateTime.MaxValue.AddDays(-1), DateTimeKind.Utc);
-        [ProtoMember(12)]
-        public TimeSpan TimeSpan = TimeSpan.MaxValue;
+        //[ProtoMember(12)]
+        //public TimeSpan TimeSpan = TimeSpan.MaxValue;
         [ProtoMember(13)]
         public int? Nullable;
         [ProtoMember(14)]
