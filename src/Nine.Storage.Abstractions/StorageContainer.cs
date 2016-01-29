@@ -12,7 +12,7 @@
         private readonly ConcurrentDictionary<Type, ConcurrentQueue<Action<object>>> _initializers 
                    = new ConcurrentDictionary<Type, ConcurrentQueue<Action<object>>>();
 
-        public IStorageProvider StorageProvider { get; private set; }
+        private readonly StorageProvider _provider;
 
         private long _readCount = 0;
         private long _writeCount = 0;
@@ -22,23 +22,25 @@
 
         public double ReadWriteRatio => _writeCount > 0 ? 1.0 * _readCount / _writeCount : 1;
 
+        public StorageProvider StorageProvider => _provider;
+
         public StorageContainer(Type type) : this(x => Activator.CreateInstance(type.MakeGenericType(x)))
         { }
 
         public StorageContainer(Func<Type, object> factory) : this(new TypedStorageProvider(factory))
         { }
 
-        public StorageContainer(IStorageProvider storageProvider)
+        public StorageContainer(StorageProvider storageProvider)
         {
-            if (storageProvider == null) throw new ArgumentNullException("storageProvider");
+            if (storageProvider == null) throw new ArgumentNullException(nameof(storageProvider));
 
-            this.StorageProvider = storageProvider;
+            _provider = storageProvider;
         }
 
         public async Task<T> Get<T>(string key)
         {
             Interlocked.Increment(ref _readCount);
-            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
+            var storage = await _provider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Get(key).ConfigureAwait(false);
         }
@@ -46,7 +48,7 @@
         public async Task<IEnumerable<T>> Range<T>(string minKey, string maxKey, int? maxCount = null)
         {
             Interlocked.Increment(ref _readCount);
-            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
+            var storage = await _provider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Range(minKey, maxKey, maxCount).ConfigureAwait(false);
         }
@@ -61,7 +63,7 @@
                 Interlocked.Exchange(ref _readCount, 0);
             }
 
-            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
+            var storage = await _provider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Add(key, value).ConfigureAwait(false);
         }
@@ -76,7 +78,7 @@
                 Interlocked.Exchange(ref _readCount, 0);
             }
 
-            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
+            var storage = await _provider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             await storage.Put(key, value).ConfigureAwait(false);
         }
@@ -89,7 +91,7 @@
                 Interlocked.Exchange(ref _readCount, 0);
             }
 
-            var storage = await StorageProvider.GetStorage<T>().ConfigureAwait(false);
+            var storage = await _provider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Delete(key).ConfigureAwait(false);
         }
@@ -128,7 +130,7 @@
 
         private async void EnsureInitialized<T>()
         {
-            EnsureInitialized<T>(await StorageProvider.GetStorage<T>().ConfigureAwait(false));
+            EnsureInitialized<T>(await _provider.GetStorage<T>().ConfigureAwait(false));
         }
 
         private void EnsureInitialized<T>(object state)
@@ -153,7 +155,7 @@
             }
         }
 
-        class TypedStorageProvider : StorageProviderBase
+        class TypedStorageProvider : StorageProvider
         {
             private readonly Func<Type, object> _factory;
 

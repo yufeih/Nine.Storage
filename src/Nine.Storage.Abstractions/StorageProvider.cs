@@ -2,21 +2,19 @@
 {
     using System;
     using System.Collections.Concurrent;
-    using System.ComponentModel;
     using System.Threading.Tasks;
 
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public abstract class StorageProviderBase : IStorageProvider
+    public abstract class StorageProvider
     {
         private readonly ConcurrentDictionary<Type, LazyAsync<object>> _values = new ConcurrentDictionary<Type, LazyAsync<object>>();
 
         public async Task<IStorage<T>> GetStorage<T>()
         {
-            var factory = _values.GetOrAdd(typeof(T), type => new LazyAsync<object>(() => GetStorageCoreAsync<T>()));
+            var factory = _values.GetOrAdd(typeof(T), type => new LazyAsync<object>(() => GetStorageCore<T>()));
             return (IStorage<T>)(await factory.GetValueAsync().ConfigureAwait(false));
         }
 
-        private async Task<object> GetStorageCoreAsync<T>()
+        private async Task<object> GetStorageCore<T>()
         {
             var storage = await CreateAsync<T>().ConfigureAwait(false);
             if (storage == null) throw new InvalidOperationException("Storage provider missing for " + typeof(T).Name);
