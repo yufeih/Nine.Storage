@@ -10,58 +10,59 @@
 
     public class RedisStorage<T> : IStorage<T>
     {
-        private static readonly IFormatter Formatter = new JsonFormatter();
         private static readonly ConcurrentDictionary<string, Lazy<ConnectionMultiplexer>> Connections = new ConcurrentDictionary<string, Lazy<ConnectionMultiplexer>>();
 
+        private readonly ITextFormatter _formatter;
         private readonly ConnectionMultiplexer _redis;
         private readonly IDatabase _db;
         private readonly string _name;
 
-        public RedisStorage(string connection, string name = null)
+        public RedisStorage(string connection, string name = null, ITextFormatter formatter = null)
         {
             _redis = Connections.GetOrAdd(connection, x => new Lazy<ConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(connection))).Value;
             _db = _redis.GetDatabase();
             _name = (name ?? typeof(T).Name);
+            _formatter = formatter ?? new JilFormatter();
         }
 
         public async Task<T> Get(string key)
         {
-            key = _name + "/" + key;
+            key = string.Concat(_name, "/", key);
             var value = await _db.StringGetAsync(key);
             if (!value.HasValue) return default(T);
-            return Formatter.FromBytes<T>(value);
+            return _formatter.FromText<T>(value);
         }
 
         public async Task<IEnumerable<T>> Range(string minKey = null, string maxKey = null, int? count = null)
         {
-            if (minKey != null) minKey = _name + "/" + minKey;
-            if (maxKey != null) maxKey = _name + "/" + maxKey;
+            if (minKey != null) minKey = string.Concat(_name, "/", minKey);
+            if (maxKey != null) maxKey = string.Concat(_name, "/", maxKey);
 
             var keys = await _db.SortedSetRangeByValueAsync(_name, minKey, maxKey, Exclude.Stop, 0, count.HasValue ? count.Value : -1);
             if (keys == null || keys.Length <= 0) return Enumerable.Empty<T>();
 
             return from value in await _db.StringGetAsync((from x in keys select (RedisKey)x.ToString()).ToArray())
-                   select Formatter.FromBytes<T>(value);
+                   select _formatter.FromText<T>(value);
         }
 
         public async Task<bool> Add(string key, T value)
         {
-            key = _name + "/" + key;
+            key = string.Concat(_name, "/", key);
             if (!await _db.SortedSetAddAsync(_name, key, 0)) return false;
-            await _db.StringSetAsync(key, Formatter.ToBytes(value));
+            await _db.StringSetAsync(key, _formatter.ToText(value));
             return true;
         }
 
         public async Task Put(string key, T value)
         {
-            key = _name + "/" + key;
-            await _db.StringSetAsync(key, Formatter.ToBytes(value));
+            key = string.Concat(_name, "/", key);
+            await _db.StringSetAsync(key, _formatter.ToText(value));
             await _db.SortedSetAddAsync(_name, key, 0);
         }
 
         public Task<bool> Delete(string key)
         {
-            key = _name + "/" + key;
+            key = string.Concat(_name, "/", key);
             return _db.SortedSetRemoveAsync(_name, key);
         }
     }

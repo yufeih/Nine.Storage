@@ -21,6 +21,25 @@
           "lib/net35/Enyim.Caching.dll": {}
         }
       },
+      "Jil/2.13.0-beta1": {
+        "type": "package",
+        "dependencies": {
+          "Sigil": "4.5.1"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime.Serialization"
+        ],
+        "compile": {
+          "lib/net45/Jil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Jil.dll": {}
+        }
+      },
       "Microsoft.Azure.KeyVault.Core/1.0.0": {
         "type": "package",
         "compile": {
@@ -342,11 +361,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.2-alpha1": {
+      "Nine.Formatting/1.4.0-alpha4": {
         "type": "package",
         "dependencies": {
-          "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting.Abstractions": "1.2.2-alpha1",
+          "Jil": "2.13.0-beta1",
+          "Newtonsoft.Json": "8.0.2",
+          "Nine.Formatting.Abstractions": "1.4.0-alpha4",
           "protobuf-net": "2.1.0-alpha-1"
         },
         "frameworkAssemblies": [
@@ -364,7 +384,7 @@
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+      "Nine.Formatting.Abstractions/1.4.0-alpha4": {
         "type": "package",
         "frameworkAssemblies": [
           "Microsoft.CSharp",
@@ -394,7 +414,7 @@
           "mongocsharpdriver": "2.2.0",
           "NEST": "1.7.1",
           "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting": "1.2.2",
+          "Nine.Formatting": "1.4.0",
           "Nine.Storage.Abstractions": null,
           "StackExchange.Redis": "1.1.0",
           "WindowsAzure.Storage": "6.2.0"
@@ -430,6 +450,21 @@
         },
         "runtime": {
           "lib/dnx451/protobuf-net.dll": {}
+        }
+      },
+      "Sigil/4.5.1": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net45/Sigil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Sigil.dll": {}
         }
       },
       "StackExchange.Redis/1.1.0-alpha2": {
@@ -644,6 +679,25 @@
           "lib/net35/Enyim.Caching.dll": {}
         }
       },
+      "Jil/2.13.0-beta1": {
+        "type": "package",
+        "dependencies": {
+          "Sigil": "4.5.1"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime.Serialization"
+        ],
+        "compile": {
+          "lib/net45/Jil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Jil.dll": {}
+        }
+      },
       "Microsoft.Azure.KeyVault.Core/1.0.0": {
         "type": "package",
         "compile": {
@@ -965,11 +1019,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.2-alpha1": {
+      "Nine.Formatting/1.4.0-alpha4": {
         "type": "package",
         "dependencies": {
-          "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting.Abstractions": "1.2.2-alpha1",
+          "Jil": "2.13.0-beta1",
+          "Newtonsoft.Json": "8.0.2",
+          "Nine.Formatting.Abstractions": "1.4.0-alpha4",
           "protobuf-net": "2.1.0-alpha-1"
         },
         "frameworkAssemblies": [
@@ -987,7 +1042,7 @@
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+      "Nine.Formatting.Abstractions/1.4.0-alpha4": {
         "type": "package",
         "frameworkAssemblies": [
           "Microsoft.CSharp",
@@ -1017,7 +1072,7 @@
           "mongocsharpdriver": "2.2.0",
           "NEST": "1.7.1",
           "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting": "1.2.2",
+          "Nine.Formatting": "1.4.0",
           "Nine.Storage.Abstractions": null,
           "StackExchange.Redis": "1.1.0",
           "WindowsAzure.Storage": "6.2.0"
@@ -1053,6 +1108,21 @@
         },
         "runtime": {
           "lib/dnx451/protobuf-net.dll": {}
+        }
+      },
+      "Sigil/4.5.1": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net45/Sigil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Sigil.dll": {}
         }
       },
       "StackExchange.Redis/1.1.0-alpha2": {
@@ -1267,6 +1337,25 @@
           "lib/net35/Enyim.Caching.dll": {}
         }
       },
+      "Jil/2.13.0-beta1": {
+        "type": "package",
+        "dependencies": {
+          "Sigil": "4.5.1"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime.Serialization"
+        ],
+        "compile": {
+          "lib/net45/Jil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Jil.dll": {}
+        }
+      },
       "Microsoft.Azure.KeyVault.Core/1.0.0": {
         "type": "package",
         "compile": {
@@ -1588,11 +1677,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.2-alpha1": {
+      "Nine.Formatting/1.4.0-alpha4": {
         "type": "package",
         "dependencies": {
-          "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting.Abstractions": "1.2.2-alpha1",
+          "Jil": "2.13.0-beta1",
+          "Newtonsoft.Json": "8.0.2",
+          "Nine.Formatting.Abstractions": "1.4.0-alpha4",
           "protobuf-net": "2.1.0-alpha-1"
         },
         "frameworkAssemblies": [
@@ -1610,7 +1700,7 @@
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+      "Nine.Formatting.Abstractions/1.4.0-alpha4": {
         "type": "package",
         "frameworkAssemblies": [
           "Microsoft.CSharp",
@@ -1640,7 +1730,7 @@
           "mongocsharpdriver": "2.2.0",
           "NEST": "1.7.1",
           "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting": "1.2.2",
+          "Nine.Formatting": "1.4.0",
           "Nine.Storage.Abstractions": null,
           "StackExchange.Redis": "1.1.0",
           "WindowsAzure.Storage": "6.2.0"
@@ -1676,6 +1766,21 @@
         },
         "runtime": {
           "lib/dnx451/protobuf-net.dll": {}
+        }
+      },
+      "Sigil/4.5.1": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net45/Sigil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Sigil.dll": {}
         }
       },
       "StackExchange.Redis/1.1.0-alpha2": {
@@ -1913,6 +2018,21 @@
         "lib/net35/Enyim.Caching.dll",
         "lib/net35/Enyim.Caching.pdb",
         "lib/net35/Enyim.Caching.xml"
+      ]
+    },
+    "Jil/2.13.0-beta1": {
+      "type": "package",
+      "sha512": "LYnusA8e4iho/ZUPHNIpTIv9YaKNdkTDRoBI2u0mU81a6SGC4H+qwNCviWeYmZ2S7JU5HV/orV9s4ZApQCRD8A==",
+      "files": [
+        "Jil.2.13.0-beta1.nupkg",
+        "Jil.2.13.0-beta1.nupkg.sha512",
+        "Jil.nuspec",
+        "lib/dotnet5.2/Jil.dll",
+        "lib/dotnet5.2/Jil.xml",
+        "lib/dotnet5.4/Jil.dll",
+        "lib/dotnet5.4/Jil.xml",
+        "lib/net45/Jil.dll",
+        "lib/net45/Jil.xml"
       ]
     },
     "Microsoft.Azure.KeyVault.Core/1.0.0": {
@@ -2268,9 +2388,9 @@
         "tools/install.ps1"
       ]
     },
-    "Nine.Formatting/1.2.2-alpha1": {
+    "Nine.Formatting/1.4.0-alpha4": {
       "type": "package",
-      "sha512": "ysygaVQz+nLurFQi5FjNoOG5zQF+5strJffwTMcEqJOCoKDfPkh4DTERelMZ4q9NUYhAPUSsGo5OUktYGWJNSA==",
+      "sha512": "JE18zRp7thXVNP1PvJXbVPHaQH54XqJJ/IG9KAF30ACbLeSGEN03CLI7zATtZUTZnm3zhXLLsIkMBUvLvdLYpQ==",
       "files": [
         "lib/dnx451/Nine.Formatting.Abstractions.dll",
         "lib/dnx451/Nine.Formatting.Abstractions.xml",
@@ -2278,21 +2398,21 @@
         "lib/dnx451/Nine.Formatting.xml",
         "lib/dotnet5.4/Nine.Formatting.dll",
         "lib/dotnet5.4/Nine.Formatting.xml",
-        "Nine.Formatting.1.2.2-alpha1.nupkg",
-        "Nine.Formatting.1.2.2-alpha1.nupkg.sha512",
+        "Nine.Formatting.1.4.0-alpha4.nupkg",
+        "Nine.Formatting.1.4.0-alpha4.nupkg.sha512",
         "Nine.Formatting.nuspec"
       ]
     },
-    "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+    "Nine.Formatting.Abstractions/1.4.0-alpha4": {
       "type": "package",
-      "sha512": "1gX5hpmVRIp124Bn8w22aDXmrSJfCP1YrueV1CQ3kQjyUeh6hyeSQo8ocEVFK8XcqyZ5KP1i3sXM4GZAWCeNTg==",
+      "sha512": "iXxkOpmR8IOIpBTSp0Z6idqAGFLxin/M9hNCTphJiilXgQTZNfSh9frDa600rL9FF3EK1FAfMRsUBtNgYfjO5g==",
       "files": [
         "lib/dnx451/Nine.Formatting.Abstractions.dll",
         "lib/dnx451/Nine.Formatting.Abstractions.xml",
         "lib/dotnet/Nine.Formatting.Abstractions.dll",
         "lib/dotnet/Nine.Formatting.Abstractions.xml",
-        "Nine.Formatting.Abstractions.1.2.2-alpha1.nupkg",
-        "Nine.Formatting.Abstractions.1.2.2-alpha1.nupkg.sha512",
+        "Nine.Formatting.Abstractions.1.4.0-alpha4.nupkg",
+        "Nine.Formatting.Abstractions.1.4.0-alpha4.nupkg.sha512",
         "Nine.Formatting.Abstractions.nuspec"
       ]
     },
@@ -2313,6 +2433,29 @@
         "protobuf-net.2.1.0-alpha-1.nupkg",
         "protobuf-net.2.1.0-alpha-1.nupkg.sha512",
         "protobuf-net.nuspec"
+      ]
+    },
+    "Sigil/4.5.1": {
+      "type": "package",
+      "sha512": "fY1FgRaxf1thoiLM3PG33ize99QwEd1bGxbMHbWnkw4vvPpj2VZQLUZrwIowkEBmj6XQc+1SrJH1tA55atBj+w==",
+      "files": [
+        "lib/dotnet5.2/Sigil.dll",
+        "lib/dotnet5.2/Sigil.xml",
+        "lib/dotnet5.4/Sigil.dll",
+        "lib/dotnet5.4/Sigil.xml",
+        "lib/net20/Sigil.dll",
+        "lib/net20/Sigil.xml",
+        "lib/net30/Sigil.dll",
+        "lib/net30/Sigil.xml",
+        "lib/net35/Sigil.dll",
+        "lib/net35/Sigil.xml",
+        "lib/net40/Sigil.dll",
+        "lib/net40/Sigil.xml",
+        "lib/net45/Sigil.dll",
+        "lib/net45/Sigil.xml",
+        "Sigil.4.5.1.nupkg",
+        "Sigil.4.5.1.nupkg.sha512",
+        "Sigil.nuspec"
       ]
     },
     "StackExchange.Redis/1.1.0-alpha2": {

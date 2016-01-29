@@ -12,11 +12,11 @@
 
     public class MemcachedStorage<T> : IDisposable, IStorage<T>
     {
-        private static readonly IFormatter Formatter = new JsonFormatter();
+        private readonly ITextFormatter _formatter;
         private readonly MemcachedClient _cache;
         private readonly string _prefix;
 
-        public MemcachedStorage(string connection, string prefix = null)
+        public MemcachedStorage(string connection, string prefix = null, ITextFormatter formatter = null)
         {
             var parts = connection.Split(',');
             var servers = from x in parts where !x.Contains("=") select x;
@@ -40,13 +40,14 @@
 
             _cache = new MemcachedClient(configuration);
             _prefix = (prefix ?? typeof(T).ToString()) + "/";
+            _formatter = formatter ?? new JilFormatter();
         }
 
         public Task<T> Get(string key)
         {
-            var result = _cache.Get(key) as byte[];
+            var result = _cache.Get(key) as string;
             if (result == null) return Task.FromResult<T>(default(T));
-            return Task.FromResult(Formatter.FromBytes<T>(result));
+            return Task.FromResult(_formatter.FromText<T>(result));
         }
 
         public Task<IEnumerable<T>> Range(string minKey = null, string maxKey = null, int? count = null)
@@ -56,12 +57,12 @@
 
         public Task<bool> Add(string key, T value)
         {
-            return _cache.Store(StoreMode.Add, key, Formatter.ToBytes(value)) ? CommonTasks.True : CommonTasks.False;
+            return _cache.Store(StoreMode.Add, key, _formatter.ToText(value)) ? CommonTasks.True : CommonTasks.False;
         }
 
         public Task Put(string key, T value)
         {
-            _cache.Store(StoreMode.Set, key, Formatter.ToBytes(value));
+            _cache.Store(StoreMode.Set, key, _formatter.ToText(value));
             return Task.CompletedTask;
         }
 

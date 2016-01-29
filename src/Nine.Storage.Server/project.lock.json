@@ -21,6 +21,25 @@
           "lib/net35/Enyim.Caching.dll": {}
         }
       },
+      "Jil/2.13.0-beta1": {
+        "type": "package",
+        "dependencies": {
+          "Sigil": "4.5.1"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime.Serialization"
+        ],
+        "compile": {
+          "lib/net45/Jil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Jil.dll": {}
+        }
+      },
       "Microsoft.Azure.KeyVault.Core/1.0.0": {
         "type": "package",
         "compile": {
@@ -221,11 +240,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.2-alpha1": {
+      "Nine.Formatting/1.4.0-alpha4": {
         "type": "package",
         "dependencies": {
-          "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting.Abstractions": "1.2.2-alpha1",
+          "Jil": "2.13.0-beta1",
+          "Newtonsoft.Json": "8.0.2",
+          "Nine.Formatting.Abstractions": "1.4.0-alpha4",
           "protobuf-net": "2.1.0-alpha-1"
         },
         "frameworkAssemblies": [
@@ -243,7 +263,7 @@
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+      "Nine.Formatting.Abstractions/1.4.0-alpha4": {
         "type": "package",
         "frameworkAssemblies": [
           "Microsoft.CSharp",
@@ -282,6 +302,21 @@
         },
         "runtime": {
           "lib/dnx451/protobuf-net.dll": {}
+        }
+      },
+      "Sigil/4.5.1": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net45/Sigil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Sigil.dll": {}
         }
       },
       "StackExchange.Redis/1.1.0-alpha2": {
@@ -387,6 +422,25 @@
           "lib/net35/Enyim.Caching.dll": {}
         }
       },
+      "Jil/2.13.0-beta1": {
+        "type": "package",
+        "dependencies": {
+          "Sigil": "4.5.1"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime.Serialization"
+        ],
+        "compile": {
+          "lib/net45/Jil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Jil.dll": {}
+        }
+      },
       "Microsoft.Azure.KeyVault.Core/1.0.0": {
         "type": "package",
         "compile": {
@@ -587,11 +641,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.2-alpha1": {
+      "Nine.Formatting/1.4.0-alpha4": {
         "type": "package",
         "dependencies": {
-          "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting.Abstractions": "1.2.2-alpha1",
+          "Jil": "2.13.0-beta1",
+          "Newtonsoft.Json": "8.0.2",
+          "Nine.Formatting.Abstractions": "1.4.0-alpha4",
           "protobuf-net": "2.1.0-alpha-1",
           "System.Collections.Concurrent": "4.0.0"
         },
@@ -602,12 +657,14 @@
           "lib/dotnet5.4/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+      "Nine.Formatting.Abstractions/1.4.0-alpha4": {
         "type": "package",
         "dependencies": {
           "System.Collections": "4.0.0",
+          "System.Linq": "4.0.0",
           "System.Reflection": "4.0.0",
-          "System.Text.Encoding": "4.0.10"
+          "System.Text.Encoding": "4.0.10",
+          "System.Text.Encoding.Extensions": "4.0.0"
         },
         "compile": {
           "lib/dotnet/Nine.Formatting.Abstractions.dll": {}
@@ -639,6 +696,21 @@
           "lib/net45/protobuf-net.dll": {}
         }
       },
+      "Sigil/4.5.1": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net45/Sigil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Sigil.dll": {}
+        }
+      },
       "StackExchange.Redis/1.1.0-alpha2": {
         "type": "package",
         "frameworkAssemblies": [
@@ -665,6 +737,15 @@
         }
       },
       "System.Collections.Concurrent/4.0.0": {
+        "type": "package",
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
+      "System.Linq/4.0.0": {
         "type": "package",
         "compile": {
           "ref/net45/_._": {}
@@ -738,6 +819,15 @@
           "lib/net46/_._": {}
         }
       },
+      "System.Text.Encoding.Extensions/4.0.0": {
+        "type": "package",
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
       "WindowsAzure.Storage/6.2.0": {
         "type": "package",
         "dependencies": {
@@ -776,6 +866,25 @@
         },
         "runtime": {
           "lib/net35/Enyim.Caching.dll": {}
+        }
+      },
+      "Jil/2.13.0-beta1": {
+        "type": "package",
+        "dependencies": {
+          "Sigil": "4.5.1"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime.Serialization"
+        ],
+        "compile": {
+          "lib/net45/Jil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Jil.dll": {}
         }
       },
       "Microsoft.Azure.KeyVault.Core/1.0.0": {
@@ -978,11 +1087,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.2-alpha1": {
+      "Nine.Formatting/1.4.0-alpha4": {
         "type": "package",
         "dependencies": {
-          "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting.Abstractions": "1.2.2-alpha1",
+          "Jil": "2.13.0-beta1",
+          "Newtonsoft.Json": "8.0.2",
+          "Nine.Formatting.Abstractions": "1.4.0-alpha4",
           "protobuf-net": "2.1.0-alpha-1"
         },
         "frameworkAssemblies": [
@@ -1000,7 +1110,7 @@
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+      "Nine.Formatting.Abstractions/1.4.0-alpha4": {
         "type": "package",
         "frameworkAssemblies": [
           "Microsoft.CSharp",
@@ -1039,6 +1149,21 @@
         },
         "runtime": {
           "lib/dnx451/protobuf-net.dll": {}
+        }
+      },
+      "Sigil/4.5.1": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net45/Sigil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Sigil.dll": {}
         }
       },
       "StackExchange.Redis/1.1.0-alpha2": {
@@ -1144,6 +1269,25 @@
           "lib/net35/Enyim.Caching.dll": {}
         }
       },
+      "Jil/2.13.0-beta1": {
+        "type": "package",
+        "dependencies": {
+          "Sigil": "4.5.1"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime.Serialization"
+        ],
+        "compile": {
+          "lib/net45/Jil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Jil.dll": {}
+        }
+      },
       "Microsoft.Azure.KeyVault.Core/1.0.0": {
         "type": "package",
         "compile": {
@@ -1344,11 +1488,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.2-alpha1": {
+      "Nine.Formatting/1.4.0-alpha4": {
         "type": "package",
         "dependencies": {
-          "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting.Abstractions": "1.2.2-alpha1",
+          "Jil": "2.13.0-beta1",
+          "Newtonsoft.Json": "8.0.2",
+          "Nine.Formatting.Abstractions": "1.4.0-alpha4",
           "protobuf-net": "2.1.0-alpha-1"
         },
         "frameworkAssemblies": [
@@ -1366,7 +1511,7 @@
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+      "Nine.Formatting.Abstractions/1.4.0-alpha4": {
         "type": "package",
         "frameworkAssemblies": [
           "Microsoft.CSharp",
@@ -1405,6 +1550,21 @@
         },
         "runtime": {
           "lib/dnx451/protobuf-net.dll": {}
+        }
+      },
+      "Sigil/4.5.1": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net45/Sigil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Sigil.dll": {}
         }
       },
       "StackExchange.Redis/1.1.0-alpha2": {
@@ -1510,6 +1670,25 @@
           "lib/net35/Enyim.Caching.dll": {}
         }
       },
+      "Jil/2.13.0-beta1": {
+        "type": "package",
+        "dependencies": {
+          "Sigil": "4.5.1"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime.Serialization"
+        ],
+        "compile": {
+          "lib/net45/Jil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Jil.dll": {}
+        }
+      },
       "Microsoft.Azure.KeyVault.Core/1.0.0": {
         "type": "package",
         "compile": {
@@ -1710,11 +1889,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.2-alpha1": {
+      "Nine.Formatting/1.4.0-alpha4": {
         "type": "package",
         "dependencies": {
-          "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting.Abstractions": "1.2.2-alpha1",
+          "Jil": "2.13.0-beta1",
+          "Newtonsoft.Json": "8.0.2",
+          "Nine.Formatting.Abstractions": "1.4.0-alpha4",
           "protobuf-net": "2.1.0-alpha-1",
           "System.Collections.Concurrent": "4.0.0"
         },
@@ -1725,12 +1905,14 @@
           "lib/dotnet5.4/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+      "Nine.Formatting.Abstractions/1.4.0-alpha4": {
         "type": "package",
         "dependencies": {
           "System.Collections": "4.0.0",
+          "System.Linq": "4.0.0",
           "System.Reflection": "4.0.0",
-          "System.Text.Encoding": "4.0.10"
+          "System.Text.Encoding": "4.0.10",
+          "System.Text.Encoding.Extensions": "4.0.0"
         },
         "compile": {
           "lib/dotnet/Nine.Formatting.Abstractions.dll": {}
@@ -1762,6 +1944,21 @@
           "lib/net45/protobuf-net.dll": {}
         }
       },
+      "Sigil/4.5.1": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net45/Sigil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Sigil.dll": {}
+        }
+      },
       "StackExchange.Redis/1.1.0-alpha2": {
         "type": "package",
         "frameworkAssemblies": [
@@ -1788,6 +1985,15 @@
         }
       },
       "System.Collections.Concurrent/4.0.0": {
+        "type": "package",
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
+      "System.Linq/4.0.0": {
         "type": "package",
         "compile": {
           "ref/net45/_._": {}
@@ -1859,6 +2065,15 @@
         },
         "runtime": {
           "lib/net46/_._": {}
+        }
+      },
+      "System.Text.Encoding.Extensions/4.0.0": {
+        "type": "package",
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
         }
       },
       "WindowsAzure.Storage/6.2.0": {
@@ -1901,6 +2116,25 @@
           "lib/net35/Enyim.Caching.dll": {}
         }
       },
+      "Jil/2.13.0-beta1": {
+        "type": "package",
+        "dependencies": {
+          "Sigil": "4.5.1"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime.Serialization"
+        ],
+        "compile": {
+          "lib/net45/Jil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Jil.dll": {}
+        }
+      },
       "Microsoft.Azure.KeyVault.Core/1.0.0": {
         "type": "package",
         "compile": {
@@ -2101,11 +2335,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.2.2-alpha1": {
+      "Nine.Formatting/1.4.0-alpha4": {
         "type": "package",
         "dependencies": {
-          "Newtonsoft.Json": "8.0.1",
-          "Nine.Formatting.Abstractions": "1.2.2-alpha1",
+          "Jil": "2.13.0-beta1",
+          "Newtonsoft.Json": "8.0.2",
+          "Nine.Formatting.Abstractions": "1.4.0-alpha4",
           "protobuf-net": "2.1.0-alpha-1",
           "System.Collections.Concurrent": "4.0.0"
         },
@@ -2116,12 +2351,14 @@
           "lib/dotnet5.4/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+      "Nine.Formatting.Abstractions/1.4.0-alpha4": {
         "type": "package",
         "dependencies": {
           "System.Collections": "4.0.0",
+          "System.Linq": "4.0.0",
           "System.Reflection": "4.0.0",
-          "System.Text.Encoding": "4.0.10"
+          "System.Text.Encoding": "4.0.10",
+          "System.Text.Encoding.Extensions": "4.0.0"
         },
         "compile": {
           "lib/dotnet/Nine.Formatting.Abstractions.dll": {}
@@ -2153,6 +2390,21 @@
           "lib/net45/protobuf-net.dll": {}
         }
       },
+      "Sigil/4.5.1": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net45/Sigil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Sigil.dll": {}
+        }
+      },
       "StackExchange.Redis/1.1.0-alpha2": {
         "type": "package",
         "frameworkAssemblies": [
@@ -2179,6 +2431,15 @@
         }
       },
       "System.Collections.Concurrent/4.0.0": {
+        "type": "package",
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
+      "System.Linq/4.0.0": {
         "type": "package",
         "compile": {
           "ref/net45/_._": {}
@@ -2250,6 +2511,15 @@
         },
         "runtime": {
           "lib/net46/_._": {}
+        }
+      },
+      "System.Text.Encoding.Extensions/4.0.0": {
+        "type": "package",
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
         }
       },
       "WindowsAzure.Storage/6.2.0": {
@@ -2307,6 +2577,21 @@
         "lib/net35/Enyim.Caching.dll",
         "lib/net35/Enyim.Caching.pdb",
         "lib/net35/Enyim.Caching.xml"
+      ]
+    },
+    "Jil/2.13.0-beta1": {
+      "type": "package",
+      "sha512": "LYnusA8e4iho/ZUPHNIpTIv9YaKNdkTDRoBI2u0mU81a6SGC4H+qwNCviWeYmZ2S7JU5HV/orV9s4ZApQCRD8A==",
+      "files": [
+        "Jil.2.13.0-beta1.nupkg",
+        "Jil.2.13.0-beta1.nupkg.sha512",
+        "Jil.nuspec",
+        "lib/dotnet5.2/Jil.dll",
+        "lib/dotnet5.2/Jil.xml",
+        "lib/dotnet5.4/Jil.dll",
+        "lib/dotnet5.4/Jil.xml",
+        "lib/net45/Jil.dll",
+        "lib/net45/Jil.xml"
       ]
     },
     "Microsoft.Azure.KeyVault.Core/1.0.0": {
@@ -2557,9 +2842,9 @@
         "tools/install.ps1"
       ]
     },
-    "Nine.Formatting/1.2.2-alpha1": {
+    "Nine.Formatting/1.4.0-alpha4": {
       "type": "package",
-      "sha512": "ysygaVQz+nLurFQi5FjNoOG5zQF+5strJffwTMcEqJOCoKDfPkh4DTERelMZ4q9NUYhAPUSsGo5OUktYGWJNSA==",
+      "sha512": "JE18zRp7thXVNP1PvJXbVPHaQH54XqJJ/IG9KAF30ACbLeSGEN03CLI7zATtZUTZnm3zhXLLsIkMBUvLvdLYpQ==",
       "files": [
         "lib/dnx451/Nine.Formatting.Abstractions.dll",
         "lib/dnx451/Nine.Formatting.Abstractions.xml",
@@ -2567,21 +2852,21 @@
         "lib/dnx451/Nine.Formatting.xml",
         "lib/dotnet5.4/Nine.Formatting.dll",
         "lib/dotnet5.4/Nine.Formatting.xml",
-        "Nine.Formatting.1.2.2-alpha1.nupkg",
-        "Nine.Formatting.1.2.2-alpha1.nupkg.sha512",
+        "Nine.Formatting.1.4.0-alpha4.nupkg",
+        "Nine.Formatting.1.4.0-alpha4.nupkg.sha512",
         "Nine.Formatting.nuspec"
       ]
     },
-    "Nine.Formatting.Abstractions/1.2.2-alpha1": {
+    "Nine.Formatting.Abstractions/1.4.0-alpha4": {
       "type": "package",
-      "sha512": "1gX5hpmVRIp124Bn8w22aDXmrSJfCP1YrueV1CQ3kQjyUeh6hyeSQo8ocEVFK8XcqyZ5KP1i3sXM4GZAWCeNTg==",
+      "sha512": "iXxkOpmR8IOIpBTSp0Z6idqAGFLxin/M9hNCTphJiilXgQTZNfSh9frDa600rL9FF3EK1FAfMRsUBtNgYfjO5g==",
       "files": [
         "lib/dnx451/Nine.Formatting.Abstractions.dll",
         "lib/dnx451/Nine.Formatting.Abstractions.xml",
         "lib/dotnet/Nine.Formatting.Abstractions.dll",
         "lib/dotnet/Nine.Formatting.Abstractions.xml",
-        "Nine.Formatting.Abstractions.1.2.2-alpha1.nupkg",
-        "Nine.Formatting.Abstractions.1.2.2-alpha1.nupkg.sha512",
+        "Nine.Formatting.Abstractions.1.4.0-alpha4.nupkg",
+        "Nine.Formatting.Abstractions.1.4.0-alpha4.nupkg.sha512",
         "Nine.Formatting.Abstractions.nuspec"
       ]
     },
@@ -2602,6 +2887,29 @@
         "protobuf-net.2.1.0-alpha-1.nupkg",
         "protobuf-net.2.1.0-alpha-1.nupkg.sha512",
         "protobuf-net.nuspec"
+      ]
+    },
+    "Sigil/4.5.1": {
+      "type": "package",
+      "sha512": "fY1FgRaxf1thoiLM3PG33ize99QwEd1bGxbMHbWnkw4vvPpj2VZQLUZrwIowkEBmj6XQc+1SrJH1tA55atBj+w==",
+      "files": [
+        "lib/dotnet5.2/Sigil.dll",
+        "lib/dotnet5.2/Sigil.xml",
+        "lib/dotnet5.4/Sigil.dll",
+        "lib/dotnet5.4/Sigil.xml",
+        "lib/net20/Sigil.dll",
+        "lib/net20/Sigil.xml",
+        "lib/net30/Sigil.dll",
+        "lib/net30/Sigil.xml",
+        "lib/net35/Sigil.dll",
+        "lib/net35/Sigil.xml",
+        "lib/net40/Sigil.dll",
+        "lib/net40/Sigil.xml",
+        "lib/net45/Sigil.dll",
+        "lib/net45/Sigil.xml",
+        "Sigil.4.5.1.nupkg",
+        "Sigil.4.5.1.nupkg.sha512",
+        "Sigil.nuspec"
       ]
     },
     "StackExchange.Redis/1.1.0-alpha2": {
@@ -2715,6 +3023,39 @@
         "System.Collections.Concurrent.4.0.0.nupkg",
         "System.Collections.Concurrent.4.0.0.nupkg.sha512",
         "System.Collections.Concurrent.nuspec"
+      ]
+    },
+    "System.Linq/4.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "r6Hlc+ytE6m/9UBr+nNRRdoJEWjoeQiT3L3lXYFDHoXk3VYsRBCDNXrawcexw7KPLaH0zamQLiAb6avhZ50cGg==",
+      "files": [
+        "lib/dotnet/System.Linq.dll",
+        "lib/net45/_._",
+        "lib/netcore50/System.Linq.dll",
+        "lib/win8/_._",
+        "lib/wp80/_._",
+        "lib/wpa81/_._",
+        "ref/dotnet/de/System.Linq.xml",
+        "ref/dotnet/es/System.Linq.xml",
+        "ref/dotnet/fr/System.Linq.xml",
+        "ref/dotnet/it/System.Linq.xml",
+        "ref/dotnet/ja/System.Linq.xml",
+        "ref/dotnet/ko/System.Linq.xml",
+        "ref/dotnet/ru/System.Linq.xml",
+        "ref/dotnet/System.Linq.dll",
+        "ref/dotnet/System.Linq.xml",
+        "ref/dotnet/zh-hans/System.Linq.xml",
+        "ref/dotnet/zh-hant/System.Linq.xml",
+        "ref/net45/_._",
+        "ref/netcore50/System.Linq.dll",
+        "ref/netcore50/System.Linq.xml",
+        "ref/win8/_._",
+        "ref/wp80/_._",
+        "ref/wpa81/_._",
+        "System.Linq.4.0.0.nupkg",
+        "System.Linq.4.0.0.nupkg.sha512",
+        "System.Linq.nuspec"
       ]
     },
     "System.Reflection/4.0.0": {
@@ -2881,6 +3222,54 @@
         "System.Text.Encoding.nuspec"
       ]
     },
+    "System.Text.Encoding.Extensions/4.0.0": {
+      "type": "package",
+      "sha512": "FktA77+2DC0S5oRhgM569pbzFrcA45iQpYiI7+YKl68B6TfI2N5TQbXqSWlh2YXKoFXHi2RFwPMha2lxiFJZ6A==",
+      "files": [
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net45/_._",
+        "lib/win8/_._",
+        "lib/wp80/_._",
+        "lib/wpa81/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "License.rtf",
+        "ref/dotnet/de/System.Text.Encoding.Extensions.xml",
+        "ref/dotnet/es/System.Text.Encoding.Extensions.xml",
+        "ref/dotnet/fr/System.Text.Encoding.Extensions.xml",
+        "ref/dotnet/it/System.Text.Encoding.Extensions.xml",
+        "ref/dotnet/ja/System.Text.Encoding.Extensions.xml",
+        "ref/dotnet/ko/System.Text.Encoding.Extensions.xml",
+        "ref/dotnet/ru/System.Text.Encoding.Extensions.xml",
+        "ref/dotnet/System.Text.Encoding.Extensions.dll",
+        "ref/dotnet/System.Text.Encoding.Extensions.xml",
+        "ref/dotnet/zh-hans/System.Text.Encoding.Extensions.xml",
+        "ref/dotnet/zh-hant/System.Text.Encoding.Extensions.xml",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net45/_._",
+        "ref/netcore50/de/System.Text.Encoding.Extensions.xml",
+        "ref/netcore50/es/System.Text.Encoding.Extensions.xml",
+        "ref/netcore50/fr/System.Text.Encoding.Extensions.xml",
+        "ref/netcore50/it/System.Text.Encoding.Extensions.xml",
+        "ref/netcore50/ja/System.Text.Encoding.Extensions.xml",
+        "ref/netcore50/ko/System.Text.Encoding.Extensions.xml",
+        "ref/netcore50/ru/System.Text.Encoding.Extensions.xml",
+        "ref/netcore50/System.Text.Encoding.Extensions.dll",
+        "ref/netcore50/System.Text.Encoding.Extensions.xml",
+        "ref/netcore50/zh-hans/System.Text.Encoding.Extensions.xml",
+        "ref/netcore50/zh-hant/System.Text.Encoding.Extensions.xml",
+        "ref/win8/_._",
+        "ref/wp80/_._",
+        "ref/wpa81/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "System.Text.Encoding.Extensions.4.0.0.nupkg",
+        "System.Text.Encoding.Extensions.4.0.0.nupkg.sha512",
+        "System.Text.Encoding.Extensions.nuspec"
+      ]
+    },
     "WindowsAzure.Storage/6.2.0": {
       "type": "package",
       "sha512": "goOiCbpHmw/H3CJYhWorrQ9kbLYMyqPaUi4IXE8ke0rZXeA9VuzXZe8bjQAPuoJT84sPWuXMqu5rSUBQTXN0dQ==",
@@ -2906,7 +3295,7 @@
       "mongocsharpdriver >= 2.2.0",
       "NEST >= 1.7.1",
       "Newtonsoft.Json >= 8.0.1",
-      "Nine.Formatting >= 1.2.2-*",
+      "Nine.Formatting >= 1.4.0-*",
       "Nine.Storage.Abstractions ",
       "StackExchange.Redis >= 1.1.0-*",
       "WindowsAzure.Storage >= 6.2.0"
