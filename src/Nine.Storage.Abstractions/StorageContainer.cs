@@ -37,23 +37,37 @@
             _provider = storageProvider;
         }
 
-        public async Task<T> Get<T>(string key)
+        public Task<T> Get<T>(string key)
         {
             Interlocked.Increment(ref _readCount);
+            var storage = _provider.TryGetStorage<T>();
+            if (storage != null) return storage.Get(key);
+            return GetAsync<T>(key);
+        }
+
+        private async Task<T> GetAsync<T>(string key)
+        {
             var storage = await _provider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Get(key).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<T>> Range<T>(string minKey, string maxKey, int? maxCount = null)
+        public Task<IEnumerable<T>> Range<T>(string minKey, string maxKey, int? maxCount = null)
         {
             Interlocked.Increment(ref _readCount);
+            var storage = _provider.TryGetStorage<T>();
+            if (storage != null) return storage.Range(minKey, maxKey, maxCount);
+            return RangeAsync<T>(minKey, maxKey, maxCount);
+        }
+
+        private async Task<IEnumerable<T>> RangeAsync<T>(string minKey, string maxKey, int? maxCount = null)
+        {
             var storage = await _provider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Range(minKey, maxKey, maxCount).ConfigureAwait(false);
         }
 
-        public async Task<bool> Add<T>(string key, T value)
+        public Task<bool> Add<T>(string key, T value)
         {
             if (value == null) throw new ArgumentNullException("value");
 
@@ -63,12 +77,34 @@
                 Interlocked.Exchange(ref _readCount, 0);
             }
 
+            var storage = _provider.TryGetStorage<T>();
+            if (storage != null) return storage.Add(key, value);
+            return AddAsync(key, value);
+        }
+
+        private async Task<bool> AddAsync<T>(string key, T value)
+        {
             var storage = await _provider.GetStorage<T>().ConfigureAwait(false);
             EnsureInitialized<T>(storage);
             return await storage.Add(key, value).ConfigureAwait(false);
         }
 
-        public async Task Put<T>(string key, T value)
+        public Task Put<T>(string key, T value)
+        {
+            if (value == null) throw new ArgumentNullException("value");
+
+            if (Interlocked.Increment(ref _writeCount) > 100000)
+            {
+                Interlocked.Exchange(ref _writeCount, 1);
+                Interlocked.Exchange(ref _readCount, 0);
+            }
+
+            var storage = _provider.TryGetStorage<T>();
+            if (storage != null) return storage.Put(key, value);
+            return PutAsync(key, value);
+        }
+
+        private async Task PutAsync<T>(string key, T value)
         {
             if (value == null) throw new ArgumentNullException("value");
 
@@ -83,7 +119,20 @@
             await storage.Put(key, value).ConfigureAwait(false);
         }
 
-        public async Task<bool> Delete<T>(string key)
+        public Task<bool> Delete<T>(string key)
+        {
+            if (Interlocked.Increment(ref _writeCount) > 100000)
+            {
+                Interlocked.Exchange(ref _writeCount, 1);
+                Interlocked.Exchange(ref _readCount, 0);
+            }
+
+            var storage = _provider.TryGetStorage<T>();
+            if (storage != null) return storage.Delete(key);
+            return DeleteAsync<T>(key);
+        }
+
+        private async Task<bool> DeleteAsync<T>(string key)
         {
             if (Interlocked.Increment(ref _writeCount) > 100000)
             {

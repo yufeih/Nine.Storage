@@ -60,6 +60,8 @@
         {
             IncrementTotalCount();
 
+            // Cache will miss if the key is being retrieved.
+
             T result;
             if (_cache.TryGet(key, out result)) return result;
 
