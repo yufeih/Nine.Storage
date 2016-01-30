@@ -43,7 +43,7 @@
 
             return source.On<T>(key, x =>
             {
-                var copy = ObjectHelper<T>.Clone(x);
+                var copy = ObjectHelper.MemberwiseClone(x);
                 action(x, oldValue);
                 oldValue = copy;
             });
@@ -59,7 +59,7 @@
 
             return source.On<T>(key, x =>
             {
-                var copy = ObjectHelper<T>.Clone(x);
+                var copy = ObjectHelper.MemberwiseClone(x);
                 if (watch == null) return;
                 if (x != null && oldValue != null && Equals(watch(x), watch(oldValue))) return;
                 action(x);

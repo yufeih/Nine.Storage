@@ -2480,7 +2480,7 @@
     "System.Reflection.Emit/4.0.1-beta-23516": {
       "type": "package",
       "serviceable": true,
-      "sha512": "3j5EhKPGh7cbUu5QLP1RAabvjNIpJOr5hA1Ip5UQ4ozccUb6Fd3SZiP4VKpqm/RyVAZDnOc9vdNuazZebtJeHw==",
+      "sha512": "4w2Piqjq8CKVQwvHHz4Fpsl5rcX4T49A+g1JXGqAOLXZYlkSpC6Dep9OZZZ6Z/LbruUQtuZN9MxLZHZJ1io2CQ==",
       "files": [
         "lib/DNXCore50/System.Reflection.Emit.dll",
         "lib/MonoAndroid10/_._",

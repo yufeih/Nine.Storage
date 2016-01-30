@@ -17,7 +17,7 @@
 
         public static double HitRate => _totalCount > 0 ? 1.0 * (_totalCount - _missedCount) / _totalCount : 0.0;
     }
-    
+
     public class CachedStorageItems<T> : IKeyed
     {
         public T[] Items { get; set; }
@@ -71,13 +71,21 @@
             Interlocked.Increment(ref CachedStorageStatus._missedCount);
             Missed?.Invoke(key);
 
-            return _ongoingGets.GetOrAdd(key, async capturedKey =>
+            return _ongoingGets.GetOrAdd(key, _ =>
             {
-                Task<T> value;
-                var persisted = await _persistStorage.Get(capturedKey).ConfigureAwait(false);
-                _cache.Put(capturedKey, persisted);
-                _ongoingGets.TryRemove(capturedKey, out value);
-                return persisted;
+                var tcs = new TaskCompletionSource<T>();
+                _persistStorage.Get(key).ContinueWith(task =>
+                {
+                    if (task.IsCanceled) { tcs.TrySetCanceled(); return; }
+                    if (task.IsFaulted) { tcs.TrySetException(task.Exception); return; }
+
+                    Task<T> value;
+                    var persisted = task.Result;
+                    _cache.Put(key, persisted);
+                    _ongoingGets.TryRemove(key, out value);
+                    tcs.TrySetResult(persisted);
+                });
+                return tcs.Task;
             });
         }
 
@@ -101,13 +109,21 @@
 
             if (cacheKey == null) return _persistStorage.Range(minKey, maxKey, maxCount);
 
-            return _ongoingRanges.Value.GetOrAdd(cacheKey, async capturedKey =>
+            return _ongoingRanges.Value.GetOrAdd(cacheKey, _ =>
             {
-                Task<IEnumerable<T>> value;
-                var persisted = (await _persistStorage.Range(minKey, maxKey, null).ConfigureAwait(false)).ToArray();
-                _rangeCache.Put(capturedKey, new CachedStorageItems<T> { Items = persisted, Key = minKey });
-                _ongoingRanges.Value.TryRemove(capturedKey, out value);
-                return persisted;
+                var tcs = new TaskCompletionSource<IEnumerable<T>>();
+                _persistStorage.Range(minKey, maxKey, null).ContinueWith(task =>
+                {
+                    if (task.IsCanceled) { tcs.TrySetCanceled(); return; }
+                    if (task.IsFaulted) { tcs.TrySetException(task.Exception); return; }
+
+                    Task<IEnumerable<T>> value;
+                    var persisted = task.Result.ToArray();
+                    _rangeCache.Put(cacheKey, new CachedStorageItems<T> { Items = persisted, Key = minKey });
+                    _ongoingRanges.Value.TryRemove(cacheKey, out value);
+                    tcs.TrySetResult(persisted);
+                });
+                return tcs.Task;
             });
         }
 

@@ -34,7 +34,7 @@
             if (existing == null) return false;
             if (predicate != null && !predicate(existing)) return false;
 
-            var cloned = ObjectHelper<T>.Clone(existing);
+            var cloned = ObjectHelper.MemberwiseClone(existing);
             action(cloned);
             await storage.Put(key, cloned).ConfigureAwait(false);
             return true;
