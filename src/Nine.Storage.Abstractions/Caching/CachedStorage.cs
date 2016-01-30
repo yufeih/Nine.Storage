@@ -1,6 +1,7 @@
 ﻿namespace Nine.Storage.Caching
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
@@ -41,6 +42,10 @@
         private readonly ICache<T> _cache;
         private readonly ICache<CachedStorageItems<T>> _rangeCache;
 
+        private readonly ConcurrentDictionary<string, Task<T>> _ongoingGets = new ConcurrentDictionary<string, Task<T>>();
+        private readonly Lazy<ConcurrentDictionary<string, Task<IEnumerable<T>>>> _ongoingRanges =
+                     new Lazy<ConcurrentDictionary<string, Task<IEnumerable<T>>>>(() => new ConcurrentDictionary<string, Task<IEnumerable<T>>>());
+
         public event Action<string> Missed;
 
         public CachedStorage(IStorage<T> persistedStorage, ICache<T> cache, ICache<CachedStorageItems<T>> rangeCache = null)
@@ -56,27 +61,30 @@
         /// <summary>
         /// Gets an unique key value pair based on the specified key. Returns null if the key is not found.
         /// </summary>
-        public async Task<T> Get(string key)
+        public Task<T> Get(string key)
         {
             IncrementTotalCount();
 
-            // Cache will miss if the key is being retrieved.
-
             T result;
-            if (_cache.TryGet(key, out result)) return result;
+            if (_cache.TryGet(key, out result)) return Task.FromResult(result);
 
             Interlocked.Increment(ref CachedStorageStatus._missedCount);
             Missed?.Invoke(key);
 
-            var persisted = await _persistStorage.Get(key).ConfigureAwait(false);
-            _cache.Put(key, persisted);
-            return persisted;
+            return _ongoingGets.GetOrAdd(key, async capturedKey =>
+            {
+                Task<T> value;
+                var persisted = await _persistStorage.Get(capturedKey).ConfigureAwait(false);
+                _cache.Put(capturedKey, persisted);
+                _ongoingGets.TryRemove(capturedKey, out value);
+                return persisted;
+            });
         }
 
         /// <summary>
         /// Gets a list of key value pairs whose keys are inside the specified range.
         /// </summary>
-        public async Task<IEnumerable<T>> Range(string minKey, string maxKey, int? maxCount)
+        public Task<IEnumerable<T>> Range(string minKey, string maxKey, int? maxCount)
         {
             IncrementTotalCount();
 
@@ -85,18 +93,22 @@
             var cacheKey = canCache ? (minKey ?? "") : null;
             if (cacheKey != null && _rangeCache.TryGet(cacheKey, out items) && items != null)
             {
-                return items.Items;
+                return Task.FromResult<IEnumerable<T>>(items.Items);
             }
 
             Interlocked.Increment(ref CachedStorageStatus._missedCount);
             Missed?.Invoke(cacheKey);
 
-            var persisted = (await _persistStorage.Range(minKey, maxKey, maxCount).ConfigureAwait(false)).ToArray();
-            if (cacheKey != null)
+            if (cacheKey == null) return _persistStorage.Range(minKey, maxKey, maxCount);
+
+            return _ongoingRanges.Value.GetOrAdd(cacheKey, async capturedKey =>
             {
-                _rangeCache.Put(cacheKey, new CachedStorageItems<T> { Items = persisted, Key = minKey });
-            }
-            return persisted;
+                Task<IEnumerable<T>> value;
+                var persisted = (await _persistStorage.Range(minKey, maxKey, null).ConfigureAwait(false)).ToArray();
+                _rangeCache.Put(capturedKey, new CachedStorageItems<T> { Items = persisted, Key = minKey });
+                _ongoingRanges.Value.TryRemove(capturedKey, out value);
+                return persisted;
+            });
         }
 
         private void IncrementTotalCount()
