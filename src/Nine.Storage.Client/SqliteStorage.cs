@@ -74,7 +74,7 @@
                 var ms = new MemoryStream();
                 _formatter.WriteTo(value, ms);
                 _db.InsertOrReplace(new Table { Key = key, Value = ms.ToArray() });
-                return Task.CompletedTask;
+                return CommonTasks.Completed;
             }
         }
 

@@ -89,14 +89,14 @@
 
             if (File.Exists(path)) File.Delete(path);
 
-            return Task.CompletedTask;
+            return CommonTasks.Completed;
         }
 
         public Task DeleteAll()
         {
             Directory.Delete(_baseDirectory, true);
 
-            return Task.CompletedTask;
+            return CommonTasks.Completed;
         }
 
         private string GetFilePath(string key)

@@ -16,10 +16,7 @@
             return Task.FromResult(_store.ContainsKey(key));
         }
 
-        public virtual Task<string> GetUri(string key)
-        {
-            return Task.FromResult<string>(null);
-        }
+        public virtual Task<string> GetUri(string key) => CommonTasks.NullString;
 
         public virtual Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellation = default(CancellationToken))
         {
@@ -40,7 +37,7 @@
         {
             byte[] removed;
             _store.TryRemove(key, out removed);
-            return Task.CompletedTask;
+            return CommonTasks.Completed;
         }
     }
 }

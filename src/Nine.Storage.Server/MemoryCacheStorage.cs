@@ -68,7 +68,7 @@
         Task IStorage<T>.Put(string key, T value)
         {
             Put(key, value);
-            return Task.CompletedTask;
+            return CommonTasks.Completed;
         }
 
         Task<bool> IStorage<T>.Delete(string key)

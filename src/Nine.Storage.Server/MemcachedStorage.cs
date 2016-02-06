@@ -63,7 +63,7 @@
         public Task Put(string key, T value)
         {
             _cache.Store(StoreMode.Set, key, _formatter.ToText(value));
-            return Task.CompletedTask;
+            return CommonTasks.Completed;
         }
 
         public Task<bool> Delete(string key)
