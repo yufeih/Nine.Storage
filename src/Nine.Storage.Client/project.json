@@ -28,17 +28,11 @@
         "System.Threading.Tasks": "4.0.10"
       }
     },
-    "dnx46": {
-      "frameworkAssemblies": {
-        "System.Collections": "4.0.10.0"
-      }
-    },
-    "net46": {
-      "frameworkAssemblies": {
-        "System.Collections": "4.0.0.0",
-        "System.IO": "4.0.0.0",
-        "System.Runtime": "4.0.0.0"
-      }
-    }
+    "dnx451": {
+        "frameworkAssemblies": {
+            "System.Runtime": "",
+            "System.Collections": ""
+        }
+     }
   }
 }

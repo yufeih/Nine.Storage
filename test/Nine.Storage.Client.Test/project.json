@@ -7,10 +7,10 @@
   },
 
   "frameworks": {
-    "dnx46": {
+    "dnx451": {
       "frameworkAssemblies": {
         "System.IO": "4.0.0",
-        "System.ObjectModel": "4.0.10.0"
+        "System.ObjectModel": "4.0.0.0"
       }
     }
   },

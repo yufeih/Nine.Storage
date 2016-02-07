@@ -2,17 +2,13 @@
   "locked": false,
   "version": 2,
   "targets": {
-    "DNX,Version=v4.6": {
-      "Jil/2.13.0-beta1": {
+    "DNX,Version=v4.5.1": {
+      "Jil/2.13.0": {
         "type": "package",
         "dependencies": {
-          "Sigil": "4.5.1"
+          "Sigil": "4.5.0"
         },
         "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core",
           "System.Runtime.Serialization"
         ],
         "compile": {
@@ -152,12 +148,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.4.0-alpha4": {
+      "Nine.Formatting/1.4.0-alpha5": {
         "type": "package",
         "dependencies": {
-          "Jil": "2.13.0-beta1",
+          "Jil": "2.13.0",
           "Newtonsoft.Json": "8.0.2",
-          "Nine.Formatting.Abstractions": "1.4.0-alpha4",
+          "Nine.Formatting.Abstractions": "1.4.0-alpha5",
           "protobuf-net": "2.1.0-alpha-1"
         },
         "frameworkAssemblies": [
@@ -167,15 +163,13 @@
           "System.Core"
         ],
         "compile": {
-          "lib/dnx451/Nine.Formatting.Abstractions.dll": {},
           "lib/dnx451/Nine.Formatting.dll": {}
         },
         "runtime": {
-          "lib/dnx451/Nine.Formatting.Abstractions.dll": {},
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Formatting.Abstractions/1.4.0-alpha4": {
+      "Nine.Formatting.Abstractions/1.4.0-alpha5": {
         "type": "package",
         "frameworkAssemblies": [
           "Microsoft.CSharp",
@@ -192,32 +186,33 @@
       },
       "Nine.Storage.Abstractions/2.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.6",
-        "frameworkAssemblies": [
-          "System.Runtime"
-        ]
+        "framework": "DNX,Version=v4.5.1"
       },
       "Nine.Storage.Client/2.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.6",
+        "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "Nine.Formatting": "1.4.0",
           "Nine.Storage.Abstractions": null,
           "SQLite.Net-PCL": "3.1.1"
         },
         "frameworkAssemblies": [
-          "System.Collections"
+          "System.Collections",
+          "System.Runtime"
         ]
       },
       "Nine.Storage.Test/2.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.6",
+        "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
           "Nine.Storage.Abstractions": null,
           "protobuf-net": "2.1.0-alpha-1",
           "xunit": "2.1.0"
-        }
+        },
+        "frameworkAssemblies": [
+          "System.Runtime"
+        ]
       },
       "protobuf-net/2.1.0-alpha-1": {
         "type": "package",
@@ -238,14 +233,8 @@
           "lib/dnx451/protobuf-net.dll": {}
         }
       },
-      "Sigil/4.5.1": {
+      "Sigil/4.5.0": {
         "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
         "compile": {
           "lib/net45/Sigil.dll": {}
         },
@@ -395,17 +384,13 @@
         }
       }
     },
-    "DNX,Version=v4.6/win7-x86": {
-      "Jil/2.13.0-beta1": {
+    "DNX,Version=v4.5.1/win7-x86": {
+      "Jil/2.13.0": {
         "type": "package",
         "dependencies": {
-          "Sigil": "4.5.1"
+          "Sigil": "4.5.0"
         },
         "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core",
           "System.Runtime.Serialization"
         ],
         "compile": {
@@ -545,12 +530,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.4.0-alpha4": {
+      "Nine.Formatting/1.4.0-alpha5": {
         "type": "package",
         "dependencies": {
-          "Jil": "2.13.0-beta1",
+          "Jil": "2.13.0",
           "Newtonsoft.Json": "8.0.2",
-          "Nine.Formatting.Abstractions": "1.4.0-alpha4",
+          "Nine.Formatting.Abstractions": "1.4.0-alpha5",
           "protobuf-net": "2.1.0-alpha-1"
         },
         "frameworkAssemblies": [
@@ -560,15 +545,13 @@
           "System.Core"
         ],
         "compile": {
-          "lib/dnx451/Nine.Formatting.Abstractions.dll": {},
           "lib/dnx451/Nine.Formatting.dll": {}
         },
         "runtime": {
-          "lib/dnx451/Nine.Formatting.Abstractions.dll": {},
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Formatting.Abstractions/1.4.0-alpha4": {
+      "Nine.Formatting.Abstractions/1.4.0-alpha5": {
         "type": "package",
         "frameworkAssemblies": [
           "Microsoft.CSharp",
@@ -585,32 +568,33 @@
       },
       "Nine.Storage.Abstractions/2.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.6",
-        "frameworkAssemblies": [
-          "System.Runtime"
-        ]
+        "framework": "DNX,Version=v4.5.1"
       },
       "Nine.Storage.Client/2.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.6",
+        "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "Nine.Formatting": "1.4.0",
           "Nine.Storage.Abstractions": null,
           "SQLite.Net-PCL": "3.1.1"
         },
         "frameworkAssemblies": [
-          "System.Collections"
+          "System.Collections",
+          "System.Runtime"
         ]
       },
       "Nine.Storage.Test/2.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.6",
+        "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
           "Nine.Storage.Abstractions": null,
           "protobuf-net": "2.1.0-alpha-1",
           "xunit": "2.1.0"
-        }
+        },
+        "frameworkAssemblies": [
+          "System.Runtime"
+        ]
       },
       "protobuf-net/2.1.0-alpha-1": {
         "type": "package",
@@ -631,14 +615,8 @@
           "lib/dnx451/protobuf-net.dll": {}
         }
       },
-      "Sigil/4.5.1": {
+      "Sigil/4.5.0": {
         "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
         "compile": {
           "lib/net45/Sigil.dll": {}
         },
@@ -788,17 +766,13 @@
         }
       }
     },
-    "DNX,Version=v4.6/win7-x64": {
-      "Jil/2.13.0-beta1": {
+    "DNX,Version=v4.5.1/win7-x64": {
+      "Jil/2.13.0": {
         "type": "package",
         "dependencies": {
-          "Sigil": "4.5.1"
+          "Sigil": "4.5.0"
         },
         "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core",
           "System.Runtime.Serialization"
         ],
         "compile": {
@@ -938,12 +912,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Nine.Formatting/1.4.0-alpha4": {
+      "Nine.Formatting/1.4.0-alpha5": {
         "type": "package",
         "dependencies": {
-          "Jil": "2.13.0-beta1",
+          "Jil": "2.13.0",
           "Newtonsoft.Json": "8.0.2",
-          "Nine.Formatting.Abstractions": "1.4.0-alpha4",
+          "Nine.Formatting.Abstractions": "1.4.0-alpha5",
           "protobuf-net": "2.1.0-alpha-1"
         },
         "frameworkAssemblies": [
@@ -953,15 +927,13 @@
           "System.Core"
         ],
         "compile": {
-          "lib/dnx451/Nine.Formatting.Abstractions.dll": {},
           "lib/dnx451/Nine.Formatting.dll": {}
         },
         "runtime": {
-          "lib/dnx451/Nine.Formatting.Abstractions.dll": {},
           "lib/dnx451/Nine.Formatting.dll": {}
         }
       },
-      "Nine.Formatting.Abstractions/1.4.0-alpha4": {
+      "Nine.Formatting.Abstractions/1.4.0-alpha5": {
         "type": "package",
         "frameworkAssemblies": [
           "Microsoft.CSharp",
@@ -978,32 +950,33 @@
       },
       "Nine.Storage.Abstractions/2.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.6",
-        "frameworkAssemblies": [
-          "System.Runtime"
-        ]
+        "framework": "DNX,Version=v4.5.1"
       },
       "Nine.Storage.Client/2.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.6",
+        "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "Nine.Formatting": "1.4.0",
           "Nine.Storage.Abstractions": null,
           "SQLite.Net-PCL": "3.1.1"
         },
         "frameworkAssemblies": [
-          "System.Collections"
+          "System.Collections",
+          "System.Runtime"
         ]
       },
       "Nine.Storage.Test/2.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.6",
+        "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
           "Nine.Storage.Abstractions": null,
           "protobuf-net": "2.1.0-alpha-1",
           "xunit": "2.1.0"
-        }
+        },
+        "frameworkAssemblies": [
+          "System.Runtime"
+        ]
       },
       "protobuf-net/2.1.0-alpha-1": {
         "type": "package",
@@ -1024,14 +997,8 @@
           "lib/dnx451/protobuf-net.dll": {}
         }
       },
-      "Sigil/4.5.1": {
+      "Sigil/4.5.0": {
         "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
         "compile": {
           "lib/net45/Sigil.dll": {}
         },
@@ -1195,19 +1162,16 @@
       "type": "project",
       "path": "../Nine.Storage.Test/project.json"
     },
-    "Jil/2.13.0-beta1": {
+    "Jil/2.13.0": {
       "type": "package",
-      "sha512": "LYnusA8e4iho/ZUPHNIpTIv9YaKNdkTDRoBI2u0mU81a6SGC4H+qwNCviWeYmZ2S7JU5HV/orV9s4ZApQCRD8A==",
+      "sha512": "I2gZNmo1m7bZxg52BFE5H/uhXAMqx/DNNokLsE/yZDJ0isEZr96ynBPTMibX+O0NqB18+hHJu7okW9JFjbWFlw==",
       "files": [
-        "Jil.2.13.0-beta1.nupkg",
-        "Jil.2.13.0-beta1.nupkg.sha512",
+        "Jil.2.13.0.nupkg",
+        "Jil.2.13.0.nupkg.sha512",
         "Jil.nuspec",
-        "lib/dotnet5.2/Jil.dll",
-        "lib/dotnet5.2/Jil.xml",
-        "lib/dotnet5.4/Jil.dll",
-        "lib/dotnet5.4/Jil.xml",
         "lib/net45/Jil.dll",
-        "lib/net45/Jil.xml"
+        "lib/net45/Jil.pdb",
+        "lib/net45/Jil.XML"
       ]
     },
     "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
@@ -1337,31 +1301,33 @@
         "tools/install.ps1"
       ]
     },
-    "Nine.Formatting/1.4.0-alpha4": {
+    "Nine.Formatting/1.4.0-alpha5": {
       "type": "package",
-      "sha512": "JE18zRp7thXVNP1PvJXbVPHaQH54XqJJ/IG9KAF30ACbLeSGEN03CLI7zATtZUTZnm3zhXLLsIkMBUvLvdLYpQ==",
+      "sha512": "7n3RmuaKal5KCVtWX0EZ7JYvtx42zNgNPvvLhQtUta/WmMx0wT5/kf7FDU8985c/kl9i62SzE3tjMbDqc0h3/w==",
       "files": [
-        "lib/dnx451/Nine.Formatting.Abstractions.dll",
-        "lib/dnx451/Nine.Formatting.Abstractions.xml",
         "lib/dnx451/Nine.Formatting.dll",
         "lib/dnx451/Nine.Formatting.xml",
         "lib/dotnet5.4/Nine.Formatting.dll",
         "lib/dotnet5.4/Nine.Formatting.xml",
-        "Nine.Formatting.1.4.0-alpha4.nupkg",
-        "Nine.Formatting.1.4.0-alpha4.nupkg.sha512",
+        "lib/net451/Nine.Formatting.dll",
+        "lib/net451/Nine.Formatting.xml",
+        "Nine.Formatting.1.4.0-alpha5.nupkg",
+        "Nine.Formatting.1.4.0-alpha5.nupkg.sha512",
         "Nine.Formatting.nuspec"
       ]
     },
-    "Nine.Formatting.Abstractions/1.4.0-alpha4": {
+    "Nine.Formatting.Abstractions/1.4.0-alpha5": {
       "type": "package",
-      "sha512": "iXxkOpmR8IOIpBTSp0Z6idqAGFLxin/M9hNCTphJiilXgQTZNfSh9frDa600rL9FF3EK1FAfMRsUBtNgYfjO5g==",
+      "sha512": "EWE7Gyn8K1ZxC2TK3m3yfWbbc2i8x4vDgqT3u2KJ+4NTM+K7ctcdUKJDZr+STmQcqrxipL/rVJFE4kd/GEph7Q==",
       "files": [
         "lib/dnx451/Nine.Formatting.Abstractions.dll",
         "lib/dnx451/Nine.Formatting.Abstractions.xml",
         "lib/dotnet/Nine.Formatting.Abstractions.dll",
         "lib/dotnet/Nine.Formatting.Abstractions.xml",
-        "Nine.Formatting.Abstractions.1.4.0-alpha4.nupkg",
-        "Nine.Formatting.Abstractions.1.4.0-alpha4.nupkg.sha512",
+        "lib/net451/Nine.Formatting.Abstractions.dll",
+        "lib/net451/Nine.Formatting.Abstractions.xml",
+        "Nine.Formatting.Abstractions.1.4.0-alpha5.nupkg",
+        "Nine.Formatting.Abstractions.1.4.0-alpha5.nupkg.sha512",
         "Nine.Formatting.Abstractions.nuspec"
       ]
     },
@@ -1384,26 +1350,27 @@
         "protobuf-net.nuspec"
       ]
     },
-    "Sigil/4.5.1": {
+    "Sigil/4.5.0": {
       "type": "package",
-      "sha512": "fY1FgRaxf1thoiLM3PG33ize99QwEd1bGxbMHbWnkw4vvPpj2VZQLUZrwIowkEBmj6XQc+1SrJH1tA55atBj+w==",
+      "sha512": "vhH+FF47TPtQRcGdj/vKpv0nHHcdXh85KES/Pyv9W81J0qQHrky30/17qULePv7JENu6kOAYBpTFP4NOzTDXfw==",
       "files": [
-        "lib/dotnet5.2/Sigil.dll",
-        "lib/dotnet5.2/Sigil.xml",
-        "lib/dotnet5.4/Sigil.dll",
-        "lib/dotnet5.4/Sigil.xml",
         "lib/net20/Sigil.dll",
+        "lib/net20/Sigil.pdb",
         "lib/net20/Sigil.xml",
         "lib/net30/Sigil.dll",
+        "lib/net30/Sigil.pdb",
         "lib/net30/Sigil.xml",
         "lib/net35/Sigil.dll",
+        "lib/net35/Sigil.pdb",
         "lib/net35/Sigil.xml",
         "lib/net40/Sigil.dll",
+        "lib/net40/Sigil.pdb",
         "lib/net40/Sigil.xml",
         "lib/net45/Sigil.dll",
-        "lib/net45/Sigil.xml",
-        "Sigil.4.5.1.nupkg",
-        "Sigil.4.5.1.nupkg.sha512",
+        "lib/net45/Sigil.pdb",
+        "lib/net45/Sigil.XML",
+        "Sigil.4.5.0.nupkg",
+        "Sigil.4.5.0.nupkg.sha512",
         "Sigil.nuspec"
       ]
     },
@@ -1637,9 +1604,9 @@
       "xunit >= 2.1.0",
       "xunit.runner.dnx >= 2.1.0-*"
     ],
-    "DNX,Version=v4.6": [
+    "DNX,Version=v4.5.1": [
       "fx/System.IO >= 4.0.0",
-      "fx/System.ObjectModel >= 4.0.10"
+      "fx/System.ObjectModel >= 4.0.0"
     ]
   }
 }

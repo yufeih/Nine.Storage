@@ -25,15 +25,14 @@
   },
 
   "frameworks": {
-    "dnx46": {
+    "dnx451": {
       "frameworkAssemblies": {
         "System.Runtime.Caching": "4.0.0.0"
       }
     },
-    "net46": {
+    "net451": {
       "frameworkAssemblies": {
-        "System.Runtime": "4.0.20.0",
-        "System.Runtime.Caching": "4.0.0.0"
+        "System.Runtime.Caching": ""
       }
     }
   }
