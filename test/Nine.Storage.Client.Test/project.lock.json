@@ -207,7 +207,7 @@
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
           "Nine.Storage.Abstractions": null,
-          "protobuf-net": "2.1.0-alpha-1",
+          "protobuf-net": "2.1.0",
           "xunit": "2.1.0"
         },
         "frameworkAssemblies": [
@@ -589,7 +589,7 @@
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
           "Nine.Storage.Abstractions": null,
-          "protobuf-net": "2.1.0-alpha-1",
+          "protobuf-net": "2.1.0",
           "xunit": "2.1.0"
         },
         "frameworkAssemblies": [
@@ -971,7 +971,7 @@
         "dependencies": {
           "Newtonsoft.Json": "8.0.1",
           "Nine.Storage.Abstractions": null,
-          "protobuf-net": "2.1.0-alpha-1",
+          "protobuf-net": "2.1.0",
           "xunit": "2.1.0"
         },
         "frameworkAssemblies": [
@@ -1606,7 +1606,8 @@
     ],
     "DNX,Version=v4.5.1": [
       "fx/System.IO >= 4.0.0",
-      "fx/System.ObjectModel >= 4.0.0"
+      "fx/System.ObjectModel >= 4.0.0",
+      "fx/System.Runtime >= 4.0.10"
     ]
   }
 }

@@ -25,14 +25,15 @@
       "dependencies": {
         "System.IO.FileSystem": "4.0.0",
         "System.ObjectModel": "4.0.10",
+        "System.Runtime": "4.0.20",
         "System.Threading.Tasks": "4.0.10"
       }
     },
     "dnx451": {
-        "frameworkAssemblies": {
-            "System.Runtime": "",
-            "System.Collections": ""
-        }
-     }
+      "frameworkAssemblies": {
+        "System.Collections": "4.0.0",
+        "System.Runtime": "4.0.10.0"
+      }
+    }
   }
 }
