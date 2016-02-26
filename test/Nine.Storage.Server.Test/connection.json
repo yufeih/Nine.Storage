@@ -1,7 +1,0 @@
-﻿{
-  "azureStorage" : "",
-  "mongo" : "",
-  "elasticSearch" : "",
-  "memcached" : "",
-  "redis" : ""
-}
