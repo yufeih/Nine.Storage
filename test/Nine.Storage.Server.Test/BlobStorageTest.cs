@@ -10,8 +10,8 @@
         {
             return new[]
             {
-                new TestFactory<IBlobStorage>(nameof(BlobStorage), () => new BlobStorage("") { Cache = true }),
-                new TestFactory<IBlobStorage>(nameof(BlobStorage), () => new BlobStorage("") { Cache = false }),
+                new TestFactory<IBlobStorage>(nameof(AzureBlobStorage), () => new AzureBlobStorage("") { Cache = true }),
+                new TestFactory<IBlobStorage>(nameof(AzureBlobStorage), () => new AzureBlobStorage("") { Cache = false }),
             };
         }
     }

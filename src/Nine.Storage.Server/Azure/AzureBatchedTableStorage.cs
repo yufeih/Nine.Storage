@@ -17,7 +17,7 @@
     /// Represents a deferred storage where write operations are buffered and inserted into azure table in batches.
     /// Write operations are flushed every minute or when the 100 batch limit is reach for that partition.
     /// </summary>
-    public class BatchedTableStorage<T> : IDisposable, IStorage<T>, IPartitionedDataSource<T> where T : class, IKeyed, new()
+    public class AzureTableBatchStorage<T> : IDisposable, IStorage<T>, IPartitionedDataSource<T> where T : class, IKeyed, new()
     {
         private const int MaxRecords = 100;
 
@@ -40,14 +40,14 @@
         /// <summary>
         /// Initializes a new instance of BatchedTableStorage.
         /// </summary>
-        public BatchedTableStorage(string connectionString, string tableName = null, int partitionCount = 0, int partitionKeyLength = 0, TextConverter textConverter = null)
+        public AzureTableBatchStorage(string connectionString, string tableName = null, int partitionCount = 0, int partitionKeyLength = 0, TextConverter textConverter = null)
             : this(CloudStorageAccount.Parse(connectionString), tableName, partitionCount, partitionKeyLength, textConverter)
         { }
 
         /// <summary>
         /// Initializes a new instance of BatchedTableStorage.
         /// </summary>
-        public BatchedTableStorage(CloudStorageAccount storageAccount, string tableName = null, int partitionCount = 0, int partitionKeyLength = 0, TextConverter textConverter = null)
+        public AzureTableBatchStorage(CloudStorageAccount storageAccount, string tableName = null, int partitionCount = 0, int partitionKeyLength = 0, TextConverter textConverter = null)
         {
             // Default to 1 partition
             if (partitionCount <= 0) partitionCount = 1;
@@ -303,7 +303,7 @@
         {
             private int HasValue;
             public string PartitionKey;
-            public BatchedTableStorage<T> Owner;
+            public AzureTableBatchStorage<T> Owner;
             public ConcurrentDictionary<string, T> Items = new ConcurrentDictionary<string, T>();
 
             /// <summary>

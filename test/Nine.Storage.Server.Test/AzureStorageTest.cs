@@ -13,14 +13,14 @@
             {
                 // TODO: BatchedTableStorage is not flushed during the test.
                 yield return new TestFactory<IStorage<TestStorageObject>>(
-                    typeof(BatchedTableStorage<>),
-                    () => new BatchedTableStorage<TestStorageObject>(
+                    typeof(AzureTableBatchStorage<>),
+                    () => new AzureTableBatchStorage<TestStorageObject>(
                         Connection.Current.AzureStorage,
                         "BatchedTableStorage" + Guid.NewGuid().ToString("N")));
 
                 yield return new TestFactory<IStorage<TestStorageObject>>(
-                    typeof(TableStorage<>),
-                    () => new TableStorage<TestStorageObject>(
+                    typeof(AzureTableStorage<>),
+                    () => new AzureTableStorage<TestStorageObject>(
                         Connection.Current.AzureStorage,
                         "TableStorage" + Guid.NewGuid().ToString("N")));
             }
@@ -35,7 +35,7 @@
         [InlineData("abcdefg", 32, 4, 26)]
         public void batch_storage_key_to_partition_key(string key, int partitionCount, int partitionKeyLength, int expectedPartition)
         {
-            var partition = BatchedTableStorage<TestStorageObject>.GetPartitionKey(key, partitionCount, partitionKeyLength);
+            var partition = AzureTableBatchStorage<TestStorageObject>.GetPartitionKey(key, partitionCount, partitionKeyLength);
             Trace.WriteLine($"{ key } => { partition }");
             Assert.Equal(expectedPartition, partition);
         }

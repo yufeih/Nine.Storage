@@ -8,10 +8,10 @@
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
 
-    public class BlobStorage : IBlobStorage
+    public class AzureBlobStorage : IBlobStorage
     {
         private readonly CacheItemPolicy _policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromMinutes(30) };
-        private readonly MemoryCache _contentCache = new MemoryCache(typeof(BlobStorage).Name);
+        private readonly MemoryCache _contentCache = new MemoryCache(typeof(AzureBlobStorage).Name);
 
         private readonly LazyAsync<CloudBlobContainer> _container;
         private readonly Lazy<Uri> _baseUri;
@@ -31,7 +31,7 @@
             set { _policy.SlidingExpiration = value; }
         }
 
-        private BlobStorage(Func<Task<CloudBlobContainer>> container)
+        private AzureBlobStorage(Func<Task<CloudBlobContainer>> container)
         {
             if (container == null) throw new ArgumentNullException("container");
 
@@ -41,13 +41,13 @@
             _baseUri = new Lazy<Uri>(() => new Uri(Container.Uri + "/"));
         }
 
-        public BlobStorage(string connectionString, string containerName = "blobs", bool publicAccess = false)
+        public AzureBlobStorage(string connectionString, string containerName = "blobs", bool publicAccess = false)
             : this(CloudStorageAccount.Parse(connectionString), containerName, publicAccess)
         {
             _containerName = containerName;
         }
 
-        public BlobStorage(CloudStorageAccount storageAccount, string containerName = "blobs", bool publicAccess = false)
+        public AzureBlobStorage(CloudStorageAccount storageAccount, string containerName = "blobs", bool publicAccess = false)
             : this(() => ContainerFromStorageAccount(storageAccount, containerName, publicAccess))
         {
             _containerName = containerName; 

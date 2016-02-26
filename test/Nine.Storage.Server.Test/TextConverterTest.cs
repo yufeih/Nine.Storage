@@ -46,8 +46,8 @@
         {
             if (!string.IsNullOrEmpty(Connection.Current.AzureStorage))
             {
-                Storage.Add(() => new TableStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage, null, false, converter));
-                Storage.Add(() => new BatchedTableStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage, null, 2, 1, converter));
+                Storage.Add(() => new AzureTableStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage, null, false, converter));
+                Storage.Add(() => new AzureTableBatchStorage<ClassWithCustomMembers>(Connection.Current.AzureStorage, null, 2, 1, converter));
             }
             Storage.Add(() => new MemoryStorage<ClassWithCustomMembers>());
         }

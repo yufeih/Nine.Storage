@@ -19,7 +19,7 @@
     /// This table storage can get as much as around 500 records per second on a small 
     /// azure instance. This performance figure is measured on Jan 26, 2014.
     /// </remarks>
-    public class TableStorage<T> : IStorage<T> where T : class, new()
+    public class AzureTableStorage<T> : IStorage<T> where T : class, new()
     {
         private readonly bool _treatKeyAsPartitionKey;
         private readonly LazyAsync<CloudTable> _table;
@@ -33,14 +33,14 @@
         /// <summary>
         /// Initializes a new instance of TableStorage.
         /// </summary>
-        public TableStorage(string connectionString, string tableName = null, bool treatKeyAsPartitionKey = false, TextConverter textConverter = null)
+        public AzureTableStorage(string connectionString, string tableName = null, bool treatKeyAsPartitionKey = false, TextConverter textConverter = null)
             : this(CloudStorageAccount.Parse(connectionString), tableName, treatKeyAsPartitionKey, textConverter)
         { }
 
         /// <summary>
         /// Initializes a new instance of TableStorage.
         /// </summary>
-        public TableStorage(CloudStorageAccount storageAccount, string tableName = null, bool treatKeyAsPartitionKey = false, TextConverter textConverter = null)
+        public AzureTableStorage(CloudStorageAccount storageAccount, string tableName = null, bool treatKeyAsPartitionKey = false, TextConverter textConverter = null)
         {
             if (storageAccount == null) throw new ArgumentNullException("storageAccount");
 
