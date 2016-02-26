@@ -11,6 +11,8 @@
     {
         public static IEnumerable<object[]> Data = new TestFactoryDimension<TData, IBlobStorage>();
 
+        public virtual bool CanDelete => true;
+
         public abstract IEnumerable<ITestFactory<IBlobStorage>> GetData();
 
         [Theory, MemberData("Data")]
@@ -34,10 +36,8 @@
             var stream = new MemoryStream(bytes);
 
             stream.Seek(0, SeekOrigin.Begin);
-            var name = Guid.NewGuid().ToString();
-            var key = await storage.Put(name, stream);
+            var key = await PutStorage(storage, stream);
 
-            Assert.Equal(name, key);
             Assert.True(await storage.Exists(key));
 
             using (var read = await storage.Get(key))
@@ -46,9 +46,12 @@
                 Assert.Equal(bytes, stored);
             }
 
-            await storage.Delete(key);
-            Assert.False(await storage.Exists(key));
-            Assert.Null(await storage.Get(key));
+            if (CanDelete)
+            {
+                await storage.Delete(key);
+                Assert.False(await storage.Exists(key));
+                Assert.Null(await storage.Get(key));
+            }
         }
 
         [Theory, MemberData("Data")]
@@ -63,8 +66,8 @@
             for (int i = 0; i < 2; i++)
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                var key = await storage.Put(Guid.NewGuid().ToString(), stream).ConfigureAwait(false);
-                var read = await storage.Get(key).ConfigureAwait(false);
+                var key = await PutStorage(storage, stream);
+                var read = await storage.Get(key);
                 var stored = await read.ReadBytesAsync();
 
                 Assert.Equal(bytes, stored);
@@ -81,15 +84,25 @@
             var stream = new MemoryStream(bytes);
 
             stream.Seek(0, SeekOrigin.Begin);
-            var sha = await storage.Put(stream).ConfigureAwait(false);
+            var sha = await storage.Put(stream);
 
             Assert.Equal("5b00669c480d5cffbdfa8bdba99561160f2d1b77", sha);
             Assert.True(await storage.Exists(sha));
 
-            var read = await storage.Get(sha).ConfigureAwait(false);
+            var read = await storage.Get(sha);
             var stored = await read.ReadBytesAsync();
 
             Assert.True(bytes.SequenceEqual(stored));
+        }
+
+        private async Task<string> PutStorage(IBlobStorage storage, MemoryStream stream)
+        {
+            var cas = storage as IContentAddressableStorage;
+            if (cas != null) return await cas.Put(stream);
+            var name = Guid.NewGuid().ToString();
+            var key = await storage.Put(name, stream);
+            Assert.Equal(name, key);
+            return key;
         }
     }
 }
