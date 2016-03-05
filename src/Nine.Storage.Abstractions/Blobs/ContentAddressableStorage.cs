@@ -49,7 +49,7 @@
 
         private string VerifySha1(string key)
         {
-            if (key == null) return null;
+            if (string.IsNullOrEmpty(key)) return null;
             if (key.Length != 40) throw new ArgumentException("key");
 
             foreach (var c in key)

@@ -1,18 +1,20 @@
 ﻿namespace Nine.Storage.Blobs
 {
-    using System;
     using System.Collections.Generic;
     using Xunit;
 
-    class BlobStorageTest : BlobStorageSpec<BlobStorageTest>
+    public class BlobStorageTest : BlobStorageSpec<BlobStorageTest>
     {
         public override IEnumerable<ITestFactory<IBlobStorage>> GetData()
         {
-            return new[]
+            yield return new TestFactory<IBlobStorage>(nameof(MemoryBlobStorage), () => new MemoryBlobStorage());
+            yield return new TestFactory<IBlobStorage>(nameof(MemoryBlobStorage), () => new ContentAddressableStorage(new MemoryBlobStorage()));
+
+            if (!string.IsNullOrEmpty(Connection.Current.AzureStorage))
             {
-                new TestFactory<IBlobStorage>(nameof(AzureBlobStorage), () => new AzureBlobStorage("") { Cache = true }),
-                new TestFactory<IBlobStorage>(nameof(AzureBlobStorage), () => new AzureBlobStorage("") { Cache = false }),
-            };
+                yield return new TestFactory<IBlobStorage>(nameof(AzureBlobStorage), () => new AzureBlobStorage(Connection.Current.AzureStorage) { Cache = true });
+                yield return new TestFactory<IBlobStorage>(nameof(AzureBlobStorage), () => new AzureBlobStorage(Connection.Current.AzureStorage) { Cache = false });
+            }
         }
     }
 }
