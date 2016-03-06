@@ -8,7 +8,7 @@
 
     public class MemoryBlobStorage : IBlobStorage
     {
-        private readonly ConcurrentDictionary<string, MemoryStream> _store = new ConcurrentDictionary<string, MemoryStream>(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, byte[]> _store = new ConcurrentDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 
         public virtual Task<bool> Exists(string key)
         {
@@ -20,28 +20,40 @@
 
         public virtual Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellation = default(CancellationToken))
         {
-            MemoryStream result;
+            byte[] result;
             if (string.IsNullOrEmpty(key)) return Task.FromResult<Stream>(null);
             if (_store.TryGetValue(key, out result) && result != null)
             {
-                result.Seek(0, SeekOrigin.Begin);
-                return Task.FromResult<Stream>(result);
+                return Task.FromResult<Stream>(new MemoryStream(result, writable: false));
             }
             return CommonTasks.Null<Stream>();
         }
 
         public virtual Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellation = default(CancellationToken))
         {
-            var ms = new MemoryStream();
-            stream.CopyTo(ms);
-            ms.Seek(0, SeekOrigin.Begin);
-            _store.GetOrAdd(key, ms);
+            long length;
+
+            try
+            {
+                length = stream.Length;
+            }
+            catch (NotSupportedException)
+            {
+                var ms = new MemoryStream();
+                stream.CopyTo(ms);
+                _store.GetOrAdd(key, ms.ToArray());
+                return Task.FromResult(key);
+            }
+
+            var bytes = new byte[length];
+            stream.Read(bytes, 0, bytes.Length);
+            _store.GetOrAdd(key, bytes);
             return Task.FromResult(key);
         }
 
         public virtual Task Delete(string key)
         {
-            MemoryStream removed;
+            byte[] removed;
             _store.TryRemove(key, out removed);
             return CommonTasks.Completed;
         }
