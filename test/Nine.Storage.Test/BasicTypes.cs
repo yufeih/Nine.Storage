@@ -1,45 +1,45 @@
 ﻿namespace Nine.Storage
 {
     using System;
-    using ProtoBuf;
+    using System.Runtime.Serialization;
 
-    [ProtoContract]
+    [DataContract]
     public class BasicTypes : BasicTypesBase { }
 
-    [ProtoContract]
+    [DataContract]
     public class BasicTypesBase
     {
-        [ProtoMember(1)]
+        [DataMember(Order = 1)]
         public short Short = short.MinValue;
-        [ProtoMember(2)]
+        [DataMember(Order = 2)]
         public ushort Ushort = ushort.MaxValue;
-        [ProtoMember(3)]
+        [DataMember(Order = 3)]
         public int Int = int.MaxValue;
-        [ProtoMember(4)]
+        [DataMember(Order = 4)]
         public long Long = long.MinValue;
-        //[ProtoMember(5)] NotSupported by bson
+        //[DataMember(Order = 5)] NotSupported by bson
         //public ulong Ulong = ulong.MaxValue;
-        [ProtoMember(6)]
+        [DataMember(Order = 6)]
         public string String = "THis afowejfksflskdjflskdf中饿鬼送我饥饿感ijifwjeifaaas";
-        [ProtoMember(7)]
+        [DataMember(Order = 7)]
         public StringComparison Enum = StringComparison.OrdinalIgnoreCase;
-        //[ProtoMember(8)] Not supported by protobuf
+        //[DataMember(Order = 8)] Not supported by protobuf
         //public StringComparison EnumOverflow = (StringComparison)int.MaxValue;
-        [ProtoMember(9)]
+        [DataMember(Order = 9)]
         public DateTime DateTime = DateTime.UtcNow;
-        [ProtoMember(10)]
+        [DataMember(Order = 10)]
         public DateTime MinDateTime = DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc);
-        [ProtoMember(11)]
+        [DataMember(Order = 11)]
         public DateTime MaxDateTime = DateTime.SpecifyKind(DateTime.MaxValue.AddDays(-1), DateTimeKind.Utc);
-        //[ProtoMember(12)]
+        //[DataMember(Order = 12)]
         //public TimeSpan TimeSpan = TimeSpan.MaxValue;
-        [ProtoMember(13)]
+        [DataMember(Order = 13)]
         public int? Nullable;
-        [ProtoMember(14)]
+        [DataMember(Order = 14)]
         public int? NullableWithValue = int.MaxValue;
-        //[ProtoMember(15)] Not supported by protobuf
+        //[DataMember(Order = 15)] Not supported by protobuf
         //public Type Type = typeof(BasicTypes);
-        //[ProtoMember(16)]
+        //[DataMember(Order = 16)]
         //public Type NullType;
 
 #pragma warning disable CS0414

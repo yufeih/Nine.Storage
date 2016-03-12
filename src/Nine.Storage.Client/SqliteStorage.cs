@@ -25,9 +25,11 @@
             public byte[] Value { get; set; }
         }
 
-        public SqliteStorage(string databasePath, ISQLitePlatform platform, IFormatter formatter = null)
+        public SqliteStorage(string databasePath, ISQLitePlatform platform, IFormatter formatter)
         {
-            _formatter = formatter ?? new JsonFormatter();
+            if (formatter == null) throw new ArgumentNullException(nameof(formatter));
+            
+            _formatter = formatter;
             _db = new SQLiteConnection(platform, databasePath, SqliteOpenFlags);
             _db.CreateTable<Table>();
         }

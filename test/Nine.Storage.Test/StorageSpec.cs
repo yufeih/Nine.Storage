@@ -5,7 +5,6 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
-    using Newtonsoft.Json;
     using Xunit;
     using Nine.Storage.Compatibility;
 
@@ -68,7 +67,7 @@
             var storage = storageFactory.Create();
             for (var i = 0; i < 1; i++)
             {
-                await storage.Put(new TestStorageObject { Id = Guid.NewGuid().ToString("N"), ApplicationName = JsonConvert.ToString(DateTime.UtcNow) });
+                await storage.Put(new TestStorageObject { Id = Guid.NewGuid().ToString("N"), ApplicationName = "2016-03-12T10:35:57.0478164Z" });
             }
 
             await storage.Put(new TestStorageObject { Id = Guid.NewGuid().ToString("N"), ApplicationName = "Booom!!!" });

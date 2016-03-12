@@ -16,8 +16,10 @@
         private readonly MemcachedClient _cache;
         private readonly string _prefix;
 
-        public MemcachedStorage(string connection, string prefix = null, ITextFormatter formatter = null)
+        public MemcachedStorage(string connection, ITextFormatter formatter, string prefix = null)
         {
+            if (formatter == null) throw new ArgumentNullException(nameof(formatter));
+            
             var parts = connection.Split(',');
             var servers = from x in parts where !x.Contains("=") select x;
             var username = parts.Where(x => x.StartsWith("username=")).Select(x => x.Substring("username=".Length)).FirstOrDefault();
@@ -40,7 +42,7 @@
 
             _cache = new MemcachedClient(configuration);
             _prefix = (prefix ?? typeof(T).ToString()) + "/";
-            _formatter = formatter ?? new JilFormatter();
+            _formatter = formatter;
         }
 
         public Task<T> Get(string key)

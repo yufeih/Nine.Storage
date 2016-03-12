@@ -17,12 +17,14 @@
         private readonly IDatabase _db;
         private readonly string _name;
 
-        public RedisStorage(string connection, string name = null, ITextFormatter formatter = null)
+        public RedisStorage(string connection, ITextFormatter formatter, string name = null)
         {
+            if (formatter == null) throw new ArgumentNullException(nameof(formatter));
+            
             _redis = Connections.GetOrAdd(connection, x => new Lazy<ConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(connection))).Value;
             _db = _redis.GetDatabase();
             _name = (name ?? typeof(T).Name);
-            _formatter = formatter ?? new JilFormatter();
+            _formatter = formatter;
         }
 
         public async Task<T> Get(string key)

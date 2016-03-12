@@ -1,4 +1,5 @@
-﻿namespace Nine.Storage.Blobs
+﻿#if !PCL
+namespace Nine.Storage.Blobs
 {
     using System;
     using System.IO;
@@ -107,3 +108,4 @@
         }
     }
 }
+#endif

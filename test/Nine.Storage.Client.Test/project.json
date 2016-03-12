@@ -1,22 +1,18 @@
 ﻿{
   "dependencies": {
-    "Nine.Storage.Client": "",
-    "Nine.Storage.Test": "",
-    "xunit": "2.1.0",
-    "xunit.runner.dnx": "2.1.0-*"
+    "Nine.Storage.Client": "2.1.0-*",
+    "Nine.Storage.Test": "2.1.0-*",
+    "xunit": "2.1.0"
   },
 
   "frameworks": {
-    "dnx451": {
+    "net451": {
       "frameworkAssemblies": {
         "System.IO": "4.0.0",
         "System.ObjectModel": "4.0.0.0",
-        "System.Runtime": "4.0.10.0"
+        "System.Runtime": "4.0.10.0",
+        "System.Threading.Tasks": "4.0.0.0"
       }
     }
-  },
-
-  "commands": {
-    "test": "xunit.runner.dnx"
   }
 }

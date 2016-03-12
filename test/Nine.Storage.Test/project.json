@@ -1,5 +1,5 @@
 ﻿{
-  "version": "2.0.0-*",
+  "version": "2.1.0-*",
   "authors": [ "Yufei Huang" ],
 
   "iconUrl": "https://avatars3.githubusercontent.com/u/9212229?s=64",
@@ -11,22 +11,29 @@
   ],
 
   "dependencies": {
-    "Newtonsoft.Json": "8.0.1",
-    "Nine.Storage.Abstractions": "",
-    "protobuf-net": "2.1.0-*",
+    "Nine.Storage.Abstractions": "2.1.0-*",
     "xunit": "2.1.0"
   },
 
   "frameworks": {
-    "dotnet5.4": {
+    "dotnet5.0": {
       "dependencies": {
-        "System.IO": "4.0.10",
-        "System.Runtime": "4.0.20"
-      }
+        "System.IO": "4.0.0",
+        "System.Runtime": "4.0.20",
+        "System.Runtime.Serialization.Primitives": "4.0.0"
+      },
+      "imports": "portable-net45+win8"
     },
     "dnx451": {
         "frameworkAssemblies": {
-            "System.Runtime": "4.0.10.0"
+            "System.Runtime": "4.0.0.0",
+            "System.Runtime.Serialization": "4.0.0"
+        }
+     },
+    "net451": {
+        "frameworkAssemblies": {
+            "System.Runtime": "4.0.0.0",
+            "System.Runtime.Serialization": "4.0.0"
         }
      }
   }
