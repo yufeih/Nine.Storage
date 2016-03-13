@@ -1,8 +1,9 @@
 ﻿{
   "version": "2.1.0-*",
-  "description": "A portable lightweight constructor injection library for singleton objects",
+  "description": "A key value pair storage to run on the server",
   "authors": [ "Yufei Huang" ],
-  "tags": [ "PCL", "Portable", "IOC", "Constructor Injection", "Dependency Injection" ],
+  "tags": [ "storage", "key", "value", "kv storage" ],
+  
   "iconUrl": "https://avatars3.githubusercontent.com/u/9212229?s=64",
   "projectUrl": "https://github.com/studio-nine/Nine.Storage",
   "licenseUrl": "https://github.com/studio-nine/Nine.Storage/blob/master/LICENSE",
