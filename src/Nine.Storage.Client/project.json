@@ -15,7 +15,7 @@
   ],
 
   "dependencies": {
-    "Nine.Formatting.Abstractions": "1.5.0-*",
+    "Nine.Formatting.Abstractions": "1.5.0-alpha2",
     "Nine.Storage.Abstractions": "2.1.0-*",
     "SQLite.Net-PCL": "3.1.1"
   },

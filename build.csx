@@ -2,4 +2,4 @@
 
 BuildTestPublishPreRelease(
     additionalProjects: new [] { "test/Nine.Storage.Test" },
-    suffix: "alpha1");
+    suffix: "alpha2");
