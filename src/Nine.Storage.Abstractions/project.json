@@ -17,18 +17,6 @@
   ],
 
   "frameworks": {
-    "dotnet5.0": {
-      "dependencies": {
-        "System.Collections": "4.0.10",
-        "System.Collections.Concurrent": "4.0.0",
-        "System.Linq": "4.0.0",
-        "System.Reflection": "4.0.0",
-        "System.Reflection.TypeExtensions": "4.0.0",
-        "System.Runtime": "4.0.20",
-        "System.Threading": "4.0.10",
-        "System.Threading.Tasks": "4.0.10"
-      }
-    },
     ".NETPortable,Version=v4.5,Profile=Profile7": {
       "frameworkAssemblies": {
         "Microsoft.CSharp": { "type": "build" },
@@ -50,7 +38,6 @@
         "System.Threading.Tasks": { "type": "build" }
       }
     },
-    "dnx451": { },
     "net451": { }
   }
 }

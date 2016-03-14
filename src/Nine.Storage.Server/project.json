@@ -3,7 +3,7 @@
   "description": "A key value pair storage to run on the server",
   "authors": [ "Yufei Huang" ],
   "tags": [ "storage", "key", "value", "kv storage" ],
-  
+
   "iconUrl": "https://avatars3.githubusercontent.com/u/9212229?s=64",
   "projectUrl": "https://github.com/studio-nine/Nine.Storage",
   "licenseUrl": "https://github.com/studio-nine/Nine.Storage/blob/master/LICENSE",
@@ -24,11 +24,6 @@
   },
 
   "frameworks": {
-    "dnx451": {
-      "frameworkAssemblies": {
-        "System.Runtime.Caching": "4.0.0.0"
-      }
-    },
     "net451": {
       "frameworkAssemblies": {
         "System.Runtime.Caching": "4.0.0.0"

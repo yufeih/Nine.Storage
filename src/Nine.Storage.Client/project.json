@@ -21,15 +21,6 @@
   },
 
   "frameworks": {
-    "dotnet5.0": {
-      "dependencies": {
-        "System.IO.FileSystem": "4.0.0",
-        "System.ObjectModel": "4.0.10",
-        "System.Runtime": "4.0.20",
-        "System.Threading.Tasks": "4.0.10"
-      },
-      "imports": "portable-net45+win8"
-    },
     ".NETPortable,Version=v4.5,Profile=Profile7": {
       "frameworkAssemblies": {
         "Microsoft.CSharp": { "type": "build" },
@@ -58,7 +49,6 @@
         "define": [ "PCL" ]
       }
     },
-    "dnx451": { },
     "net451": { }
   }
 }
