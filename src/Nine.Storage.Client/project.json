@@ -58,17 +58,7 @@
         "define": [ "PCL" ]
       }
     },
-    "dnx451": {
-      "frameworkAssemblies": {
-        "System.Collections": "4.0.0",
-        "System.Runtime": "4.0.10.0"
-      }
-    },
-    "net451": {
-      "frameworkAssemblies": {
-        "System.Collections": "4.0.0",
-        "System.Runtime": "4.0.10.0"
-      }
-    }
+    "dnx451": { },
+    "net451": { }
   }
 }

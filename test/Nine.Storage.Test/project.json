@@ -26,14 +26,14 @@
     },
     "dnx451": {
         "frameworkAssemblies": {
-            "System.Runtime": "4.0.0.0",
-            "System.Runtime.Serialization": "4.0.0"
+            "System.Runtime": { "type": "build", "version": "4.0.0.0" },
+            "System.Runtime.Serialization": { "type": "build", "version": "4.0.0.0" }
         }
      },
     "net451": {
         "frameworkAssemblies": {
-            "System.Runtime": "4.0.0.0",
-            "System.Runtime.Serialization": "4.0.0"
+            "System.Runtime": { "type": "build", "version": "4.0.0.0" },
+            "System.Runtime.Serialization": { "type": "build", "version": "4.0.0.0" }
         }
      }
   }
