@@ -1,5 +1,4 @@
-﻿#if PCL
-namespace Nine.Storage.Blobs
+﻿namespace Nine.Storage.Blobs
 {
     using System;
     using System.Collections.Concurrent;
@@ -9,14 +8,14 @@ namespace Nine.Storage.Blobs
     using System.Threading.Tasks;
     using PCLStorage;
 
-    public class FileBlobStorage : IBlobStorage
+    public class PortableBlobStorage : IBlobStorage
     {
         private readonly string baseDirectory;
-        private readonly ConcurrentDictionary<string, LazyAsync<string>> puts = new ConcurrentDictionary<string, LazyAsync<string>>(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, Lazy<Task<string>>> puts = new ConcurrentDictionary<string, Lazy<Task<string>>>(StringComparer.OrdinalIgnoreCase);
 
         public string LocalStoragePath => FileSystem.Current.LocalStorage.Path;
 
-        public FileBlobStorage(string baseDirectory = "Blobs")
+        public PortableBlobStorage(string baseDirectory = "Blobs")
         {
             if (baseDirectory != null && Path.IsPathRooted(baseDirectory))
             {
@@ -43,25 +42,25 @@ namespace Nine.Storage.Blobs
         {
             if (string.IsNullOrEmpty(key)) return null;
             var file = await GetFileAsync(key, cancellationToken).ConfigureAwait(false);
-            return file != null ? await file.OpenAsync(FileAccess.Read, cancellationToken).ConfigureAwait(false) : null;
+            return file != null ? await file.OpenAsync(PCLStorage.FileAccess.Read, cancellationToken).ConfigureAwait(false) : null;
         }
 
         public async Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (stream == null || key == null) return null;
 
-            var result = await puts.GetOrAdd(key, k => new LazyAsync<string>(() => PutCoreAsync(stream, key, progress), true)).GetValueAsync().ConfigureAwait(false);
+            var result = await puts.GetOrAdd(key, k => new Lazy<Task<string>>(() => PutCoreAsync(stream, key, progress), true)).Value.ConfigureAwait(false);
 
-            LazyAsync<string> temp;
+            Lazy<Task<string>> temp;
             puts.TryRemove(key, out temp);
-            return result; 
+            return result;
         }
 
         private async Task<string> PutCoreAsync(Stream stream, string key, IProgress<ProgressInBytes> progress)
         {
             var tempId = "." + Guid.NewGuid().ToString("N").Substring(0, 5) + ".tmp";
             var tempFile = await CreateFileIfNotExistAsync(key + tempId).ConfigureAwait(false);
-            using (var output = await tempFile.OpenAsync(FileAccess.ReadAndWrite).ConfigureAwait(false))
+            using (var output = await tempFile.OpenAsync(PCLStorage.FileAccess.ReadAndWrite).ConfigureAwait(false))
             {
                 await stream.CopyToAsync(output).ConfigureAwait(false);
             }
@@ -163,4 +162,3 @@ namespace Nine.Storage.Blobs
         }
     }
 }
-#endif

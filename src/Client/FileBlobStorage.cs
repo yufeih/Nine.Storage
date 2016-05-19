@@ -1,5 +1,4 @@
-﻿#if !PCL
-namespace Nine.Storage.Blobs
+﻿namespace Nine.Storage.Blobs
 {
     using System;
     using System.IO;
@@ -56,7 +55,7 @@ namespace Nine.Storage.Blobs
             {
                 Directory.CreateDirectory(directory);
             }
-            
+
             using (var output = File.Create(tempPath))
             {
                 stream.CopyTo(output);
@@ -103,9 +102,8 @@ namespace Nine.Storage.Blobs
         private string GetFilePath(string key)
         {
             if (string.IsNullOrEmpty(key) || key.Length < 2) return null;
-            
+
             return Path.Combine(_baseDirectory, key.Substring(0, 2), key);
         }
     }
 }
-#endif
