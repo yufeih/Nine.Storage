@@ -6,13 +6,6 @@
     using System.Threading.Tasks;
     using Nine.Storage.Compatibility;
 
-    public interface IPartitionedDataSource<T>
-    {
-        Task<IEnumerable<string>> GetPartitions();
-
-        IAsyncEnumerator<T> GetValues(string partition);
-    }
-
     public class StorageDataSource<T> : IPartitionedDataSource<T> where T : IKeyed
     {
         private static readonly string[] ValidIdChars;
