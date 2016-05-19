@@ -48,6 +48,7 @@
     <Compile Include="../dep/Nine.Formatting/src/JilFormatter.cs" />
     <Compile Include="../dep/Nine.Formatting/src/JsonFormatter.cs" />
     <Compile Include="../src/**/*.cs" />
+    <Compile Include="Spec\*.cs" />
     <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>

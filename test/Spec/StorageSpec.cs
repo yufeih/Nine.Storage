@@ -6,7 +6,6 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Xunit;
-    using Nine.Storage.Compatibility;
 
     public abstract class StorageSpec<TData> : ITestFactoryData<IStorage<TestStorageObject>> where TData : ITestFactoryData<IStorage<TestStorageObject>>, new()
     {
@@ -99,7 +98,7 @@
 
             try
             {
-                var names = (await storage.All().ToListAsync()).Select(x => x.Name);
+                var names = (await storage.Range(null, null)).Select(x => x.Name);
                 Assert.Equal(new[] { "0", "1", "8", "9" }, names);
             }
             catch (NotSupportedException)
