@@ -1,5 +1,4 @@
-﻿#if PCL
-namespace Nine.Storage
+﻿namespace Nine.Storage
 {
     using System;
     using System.Collections.Concurrent;
@@ -15,40 +14,40 @@ namespace Nine.Storage
     [Obsolete]
     public class PersistedStorage<T> : IStorage<T> where T : class, IKeyed, new()
     {
-        private readonly LazyAsync<PersistedStorageCore<T>> coreFactory;
+        private readonly Lazy<Task<PersistedStorageCore<T>>> coreFactory;
 
         public PersistedStorage(IFormatter formatter, string baseDirectory = "Objects")
         {
-            coreFactory = new LazyAsync<PersistedStorageCore<T>>(() => PersistedStorageCore<T>.GetOrCreateAsync(baseDirectory, formatter));
+            coreFactory = new Lazy<Task<PersistedStorageCore<T>>>(() => PersistedStorageCore<T>.GetOrCreateAsync(baseDirectory, formatter));
         }
 
         public async Task<bool> Add(string key, T value)
         {
-            var core = await coreFactory.GetValueAsync().ConfigureAwait(false);
+            var core = await coreFactory.Value.ConfigureAwait(false);
             return await core.Add(key, value).ConfigureAwait(false);
         }
 
         public async Task<bool> Delete(string key)
         {
-            var core = await coreFactory.GetValueAsync().ConfigureAwait(false);
+            var core = await coreFactory.Value.ConfigureAwait(false);
             return await core.Delete(key).ConfigureAwait(false);
         }
 
         public async Task<T> Get(string key)
         {
-            var core = await coreFactory.GetValueAsync().ConfigureAwait(false);
+            var core = await coreFactory.Value.ConfigureAwait(false);
             return await core.Get(key).ConfigureAwait(false);
         }
 
         public async Task Put(string key, T value)
         {
-            var core = await coreFactory.GetValueAsync().ConfigureAwait(false);
+            var core = await coreFactory.Value.ConfigureAwait(false);
             await core.Put(key, value).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<T>> Range(string minKey, string maxKey, int? count = default(int?))
         {
-            var core = await coreFactory.GetValueAsync().ConfigureAwait(false);
+            var core = await coreFactory.Value.ConfigureAwait(false);
             return await core.Range(minKey, maxKey, count).ConfigureAwait(false);
         }
     }
@@ -94,7 +93,7 @@ namespace Nine.Storage
         private readonly List<Bucket> buckets = new List<Bucket>();
         private readonly Dictionary<byte[], Node> items = new Dictionary<byte[], Node>(new KeyComparer());
 
-        private static ConcurrentDictionary<string, LazyAsync<PersistedStorageCore<T>>> instances = new ConcurrentDictionary<string, LazyAsync<PersistedStorageCore<T>>>();
+        private static ConcurrentDictionary<string, Lazy<Task<PersistedStorageCore<T>>>> instances = new ConcurrentDictionary<string, Lazy<Task<PersistedStorageCore<T>>>>();
 
         private PersistedStorageCore(string baseDirectory, IFormatter formatter)
         {
@@ -107,8 +106,8 @@ namespace Nine.Storage
 
         public static Task<PersistedStorageCore<T>> GetOrCreateAsync(string baseDirectory, IFormatter formatter)
         {
-            var instance = instances.GetOrAdd(baseDirectory, k => new LazyAsync<PersistedStorageCore<T>>(() => CreateAsync(baseDirectory, formatter)));
-            return instance.GetValueAsync();
+            var instance = instances.GetOrAdd(baseDirectory, k => new Lazy<Task<PersistedStorageCore<T>>>(() => CreateAsync(baseDirectory, formatter)));
+            return instance.Value;
         }
 
         private static async Task<PersistedStorageCore<T>> CreateAsync(string baseDirectory, IFormatter formatter)
@@ -354,27 +353,26 @@ namespace Nine.Storage
 
     static class PersistedStorageSharedStreams
     {
-        private static readonly Dictionary<string, LazyAsync<Stream>> sharedStreams = new Dictionary<string, LazyAsync<Stream>>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Lazy<Task<Stream>>> sharedStreams = new Dictionary<string, Lazy<Task<Stream>>>(StringComparer.OrdinalIgnoreCase);
 
         public static Task<Stream> OpenStreamAsync(string path)
         {
-            LazyAsync<Stream> result;
+            Lazy<Task<Stream>> result;
             lock (sharedStreams)
             {
                 if (!sharedStreams.TryGetValue(path, out result))
                 {
-                    sharedStreams.Add(path, result = new LazyAsync<Stream>(() => OpenStreamCoreAsync(path)));
+                    sharedStreams.Add(path, result = new Lazy<Task<Stream>>(() => OpenStreamCoreAsync(path)));
                 }
             }
-            return result.GetValueAsync();
+            return result.Value;
         }
 
         private static async Task<Stream> OpenStreamCoreAsync(string path)
         {
             var file = await FileSystem.Current.LocalStorage.CreateFileAsync(path, CreationCollisionOption.OpenIfExists).ConfigureAwait(false);
             if (file == null) return null;
-            return await file.OpenAsync(FileAccess.ReadAndWrite).ConfigureAwait(false);
+            return await file.OpenAsync(PCLStorage.FileAccess.ReadAndWrite).ConfigureAwait(false);
         }
     }
 }
-#endif
