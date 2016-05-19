@@ -101,7 +101,7 @@
                 if (loadedCount < batchSize)
                 {
                     HasMoreItems = false;
-                    OnPropertyChanged(nameof(HasMoreItems));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasMoreItems)));
                 }
             }
         }
@@ -138,7 +138,7 @@
                 }
 
                 IsLoading = true;
-                OnPropertyChanged("IsLoading");
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsLoading"));
 
                 if (!_subscribed)
                 {
@@ -169,7 +169,7 @@
                     if (item == null) continue;
 
                     var key = item.GetKey();
-                    
+
                     if (string.CompareOrdinal(key, _cursor) > 0) _cursor = StorageKey.Increment(key);
                     if (TryFindIndex(key, out index)) continue;
                     var value = _convert(item, default(TViewModel));
@@ -181,8 +181,8 @@
                 var addedCount = _collection.Count - originalCount;
                 if (addedCount > 0)
                 {
-                    OnPropertyChanged(nameof(Count));
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, addedItems));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Count)));
+                    CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, addedItems));
                 }
 
                 if (addedCount <= 0 || string.CompareOrdinal(_cursor, _maxKey) >= 0)
@@ -195,8 +195,8 @@
             finally
             {
                 IsLoading = false;
-                OnPropertyChanged(nameof(IsLoading));
-                OnPropertyChanged(nameof(HasMoreItems));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLoading)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasMoreItems)));
 
                 foreach (var change in _pendingChanges)
                 {
@@ -242,8 +242,8 @@
                     var value = _convert(change.Value, default(TViewModel));
                     _collection.Insert(index, new Entry { Key = key, Data = change.Value, Value = value });
 
-                    OnPropertyChanged(nameof(Count));
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Count)));
+                    CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index));
                 }
             }
             else if (change.Action == DeltaAction.Remove)
@@ -253,8 +253,8 @@
                     var entry = _collection[index];
                     _collection.RemoveAt(index);
 
-                    OnPropertyChanged(nameof(Count));
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, entry.Value, index));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Count)));
+                    CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, entry.Value, index));
                 }
             }
             else if (change.Action == DeltaAction.Put)
@@ -267,7 +267,7 @@
 
                     if (!Equals(value, entry.Value))
                     {
-                        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, entry.Value, index));
+                        CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, entry.Value, index));
                     }
                 }
                 else
@@ -275,7 +275,7 @@
                     var value = _convert(change.Value, default(TViewModel));
                     _collection.Insert(index, new Entry { Key = key, Data = change.Value, Value = value });
 
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index));
+                    CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index));
                 }
             }
             else
@@ -309,24 +309,6 @@
             return false;
         }
 
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            var collectionChanged = CollectionChanged;
-            if (collectionChanged != null)
-            {
-                collectionChanged(this, e);
-            }
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            var propertyChanged = PropertyChanged;
-            if (propertyChanged != null)
-            {
-                propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
         public IEnumerator<TViewModel> GetEnumerator()
         {
             return _collection.Select(x => x.Value).GetEnumerator();
@@ -350,7 +332,7 @@
         public StorageCollection(IStorage storage, string minKey, string maxKey)
             : base(storage, minKey, maxKey, (x, e) => x)
         { }
-        
+
         public new StorageCollection<T> WithAllItems(int batchSize = 100)
         {
             return (StorageCollection<T>)base.WithAllItems(batchSize);
