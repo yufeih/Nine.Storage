@@ -28,7 +28,7 @@
         /// </summary>
         private readonly int _partitionCount;
         private readonly int _partitionKeyLength;
-        private readonly LazyAsync<CloudTable> _table;
+        private readonly Lazy<Task<CloudTable>> _table;
         private readonly Batch[] _batches;
 
         /// <summary>
@@ -69,7 +69,7 @@
                 return entity;
             };
 
-            _table = new LazyAsync<CloudTable>(async () =>
+            _table = new Lazy<Task<CloudTable>>(async () =>
             {
                 var table = storageAccount.CreateCloudTableClient().GetTableReference(tableName ?? typeof(T).Name);
                 await table.CreateIfNotExistsAsync().ConfigureAwait(false);
@@ -133,7 +133,7 @@
             if (_batches[partitionKey].Items.TryGetValue(key, out value)) return value;
 
             // Lookup the storage for persisted records.
-            var result = await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Retrieve(partitionKey.ToString(), key, _entityResolver)).ConfigureAwait(false);
+            var result = await (await _table.Value.ConfigureAwait(false)).ExecuteAsync(TableOperation.Retrieve(partitionKey.ToString(), key, _entityResolver)).ConfigureAwait(false);
             if (result == null || result.Result == null) return null;
             return (((KeyedTableEntity<T>)result.Result).Data);
         }
@@ -180,7 +180,7 @@
             TableContinuationToken continuation = null;
             while (true)
             {
-                var queryResult = await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteQuerySegmentedAsync(query, _entityResolver, continuation).ConfigureAwait(false);
+                var queryResult = await (await _table.Value.ConfigureAwait(false)).ExecuteQuerySegmentedAsync(query, _entityResolver, continuation).ConfigureAwait(false);
                 continuation = queryResult.ContinuationToken;
                 result.AddRange(from item in queryResult.Results select (T)item.Data);
                 if (continuation == null) break;
@@ -212,7 +212,7 @@
         public async Task Put(string key, T value)
         {
             var partitionKey = GetPartitionKey(key);
-            await _batches[partitionKey].AddAsync(key, value, await _table.GetValueAsync().ConfigureAwait(false)).ConfigureAwait(false);
+            await _batches[partitionKey].AddAsync(key, value, await _table.Value.ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -228,7 +228,7 @@
 
             try
             {
-                await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Delete(new TableEntity { PartitionKey = partitionKey.ToString(), RowKey = key, ETag = "*" })).ConfigureAwait(false);
+                await (await _table.Value.ConfigureAwait(false)).ExecuteAsync(TableOperation.Delete(new TableEntity { PartitionKey = partitionKey.ToString(), RowKey = key, ETag = "*" })).ConfigureAwait(false);
                 return true;
             }
             catch (StorageException e)
@@ -246,7 +246,7 @@
         /// </summary>
         public async Task Flush()
         {
-            var tableValue = await _table.GetValueAsync().ConfigureAwait(false);
+            var tableValue = await _table.Value.ConfigureAwait(false);
             await Task.WhenAll(from x in _batches select x.FlushAsync(tableValue)).ConfigureAwait(false);
         }
 
@@ -262,7 +262,7 @@
 
             return AsyncEnumerator.Create(new Func<Task<AsyncEnumerationResult<T>>>(async () =>
             {
-                var queryResult = await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteQuerySegmentedAsync(query, _entityResolver, continuation).ConfigureAwait(false);
+                var queryResult = await (await _table.Value.ConfigureAwait(false)).ExecuteQuerySegmentedAsync(query, _entityResolver, continuation).ConfigureAwait(false);
                 continuation = queryResult.ContinuationToken;
                 return new AsyncEnumerationResult<T>
                 {

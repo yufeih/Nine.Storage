@@ -1,3 +1,6 @@
-[submodule "Common"]
-	path = Common
+[submodule "dep/Common"]
+	path = dep/Common
 	url = https://github.com/yufeih/Common
+[submodule "dep/Nine.Formatting"]
+	path = dep/Nine.Formatting
+	url = https://github.com/yufeih/Nine.Formatting

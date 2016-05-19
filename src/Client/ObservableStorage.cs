@@ -80,7 +80,7 @@
                 var wr = _instances.GetOrAdd(key, _ => new WeakReference<T>(value));
                 if (wr.TryGetTarget(out target))
                 {
-                    value = ObjectHelper<T>.Merge(target, value);
+                    value = ObjectHelper.Merge(target, value);
                 }
             }
 
@@ -96,7 +96,7 @@
                 var wr = _instances.GetOrAdd(key, _ => new WeakReference<T>(value));
                 if (wr.TryGetTarget(out target))
                 {
-                    value = ObjectHelper<T>.Merge(target, value);
+                    value = ObjectHelper.Merge(target, value);
                 }
             }
 

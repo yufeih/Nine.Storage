@@ -6,7 +6,7 @@
 
     public abstract class StorageProvider
     {
-        struct Entry { public LazyAsync<object> Initializer; public object Result; }
+        struct Entry { public Lazy<Task<object>> Initializer; public object Result; }
 
         private readonly ConcurrentDictionary<Type, Entry> _values = new ConcurrentDictionary<Type, Entry>();
 
@@ -20,9 +20,9 @@
         {
             var factory = _values.GetOrAdd(typeof(T), type => new Entry
             {
-                Initializer = new LazyAsync<object>(() => GetStorageCore<T>())
+                Initializer = new Lazy<Task<object>>(() => GetStorageCore<T>())
             });
-            return (IStorage<T>)(await factory.Initializer.GetValueAsync().ConfigureAwait(false));
+            return (IStorage<T>)(await factory.Initializer.Value.ConfigureAwait(false));
         }
 
         private async Task<object> GetStorageCore<T>()

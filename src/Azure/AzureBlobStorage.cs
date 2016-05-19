@@ -13,12 +13,12 @@
         private readonly CacheItemPolicy _policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromMinutes(30) };
         private readonly MemoryCache _contentCache = new MemoryCache(typeof(AzureBlobStorage).Name);
 
-        private readonly LazyAsync<CloudBlobContainer> _container;
+        private readonly Lazy<Task<CloudBlobContainer>> _container;
         private readonly Lazy<Uri> _baseUri;
 
         private readonly string _containerName;
 
-        public CloudBlobContainer Container => _container.GetValueAsync().Result;
+        public CloudBlobContainer Container => _container.Value.Result;
 
         public Uri BaseUri => _baseUri.Value;
 
@@ -35,7 +35,7 @@
         {
             if (container == null) throw new ArgumentNullException("container");
 
-            _container = new LazyAsync<CloudBlobContainer>(container);
+            _container = new Lazy<Task<CloudBlobContainer>>(container);
 
             // Turn container into a directory
             _baseUri = new Lazy<Uri>(() => new Uri(Container.Uri + "/"));
@@ -78,7 +78,7 @@
         {
             if (_contentCache.Contains(key)) return true;
 
-            var container = await _container.GetValueAsync().ConfigureAwait(false);
+            var container = await _container.Value.ConfigureAwait(false);
 
             return await container.GetBlockBlobReference(key).ExistsAsync().ConfigureAwait(false);
         }
@@ -88,7 +88,7 @@
             var cached = _contentCache.Get(key) as byte[];
             if (cached != null) return new MemoryStream(cached);
 
-            var container = await _container.GetValueAsync().ConfigureAwait(false);
+            var container = await _container.Value.ConfigureAwait(false);
 
             using (var stream = await container.GetBlockBlobReference(key).OpenReadAsync(cancellationToken).ConfigureAwait(false))
             {
@@ -112,7 +112,7 @@
                 stream = ms;
             }
 
-            var container = await _container.GetValueAsync().ConfigureAwait(false);
+            var container = await _container.Value.ConfigureAwait(false);
 
             var blob = container.GetBlockBlobReference(key);
 
@@ -125,7 +125,7 @@
         {
             _contentCache.Remove(key);
 
-            var container = await _container.GetValueAsync().ConfigureAwait(false);
+            var container = await _container.Value.ConfigureAwait(false);
 
             await container.GetBlockBlobReference(key).DeleteAsync().ConfigureAwait(false);
         }

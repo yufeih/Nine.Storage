@@ -22,7 +22,7 @@
     public class AzureTableStorage<T> : IStorage<T> where T : class, new()
     {
         private readonly bool _treatKeyAsPartitionKey;
-        private readonly LazyAsync<CloudTable> _table;
+        private readonly Lazy<Task<CloudTable>> _table;
 
         /// <summary>
         /// Resolves an entity into a KeyedTableEntity.
@@ -47,7 +47,7 @@
             _formatter = new KeyedTableEntityFormatter<T>(textConverter);
             _entityResolver = ResolveEntity;
             _treatKeyAsPartitionKey = treatKeyAsPartitionKey;
-            _table = new LazyAsync<CloudTable>(async () =>
+            _table = new Lazy<Task<CloudTable>>(async () =>
             {
                 // NOTE: 
                 // Azure may blame 409 (Conflict) if you are trying to create the table and immediately after it is deleted
@@ -65,7 +65,7 @@
         public async Task<T> Get(string key)
         {
             var operation = _treatKeyAsPartitionKey ? TableOperation.Retrieve(key, "", _entityResolver) : TableOperation.Retrieve("", key, _entityResolver);
-            var result = await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(operation).ConfigureAwait(false);
+            var result = await (await _table.Value.ConfigureAwait(false)).ExecuteAsync(operation).ConfigureAwait(false);
             if (result == null || result.Result == null) return null;
             return (((KeyedTableEntity<T>)result.Result).Data);
         }
@@ -111,7 +111,7 @@
             TableContinuationToken continuation = null;
             while (true)
             {
-                var queryResult = await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteQuerySegmentedAsync(query, _entityResolver, continuation).ConfigureAwait(false);
+                var queryResult = await (await _table.Value.ConfigureAwait(false)).ExecuteQuerySegmentedAsync(query, _entityResolver, continuation).ConfigureAwait(false);
                 continuation = queryResult.ContinuationToken;
                 result.AddRange(from item in queryResult.Results select (T)item.Data);
                 if (count != null || continuation == null) break;
@@ -130,7 +130,7 @@
                     new KeyedTableEntity<T>(_formatter) { Data = value, PartitionKey = key, RowKey = "" } :
                     new KeyedTableEntity<T>(_formatter) { Data = value, PartitionKey = "", RowKey = key };
 
-                await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Insert(entity)).ConfigureAwait(false);
+                await (await _table.Value.ConfigureAwait(false)).ExecuteAsync(TableOperation.Insert(entity)).ConfigureAwait(false);
                 return true;
             }
             catch (StorageException ex)
@@ -151,7 +151,7 @@
                 new KeyedTableEntity<T>(_formatter) { Data = value, PartitionKey = key, RowKey = "" } :
                 new KeyedTableEntity<T>(_formatter) { Data = value, PartitionKey = "", RowKey = key };
 
-            await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.InsertOrReplace(entity)).ConfigureAwait(false);
+            await (await _table.Value.ConfigureAwait(false)).ExecuteAsync(TableOperation.InsertOrReplace(entity)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@
                     new TableEntity { PartitionKey = key, RowKey = "", ETag = "*" } :
                     new TableEntity { PartitionKey = "", RowKey = key, ETag = "*" };
 
-                await (await _table.GetValueAsync().ConfigureAwait(false)).ExecuteAsync(TableOperation.Delete(entity)).ConfigureAwait(false);
+                await (await _table.Value.ConfigureAwait(false)).ExecuteAsync(TableOperation.Delete(entity)).ConfigureAwait(false);
                 return true;
             }
             catch (StorageException e)
