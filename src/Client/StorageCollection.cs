@@ -129,6 +129,8 @@
         {
             if (IsLoading || !HasMoreItems || count <= 0) return 0;
 
+            await Task.Yield();
+
             try
             {
                 if (_cursor != null && string.CompareOrdinal(_cursor, _maxKey) >= 0)
