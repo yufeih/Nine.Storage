@@ -46,7 +46,7 @@
     {
         Task<bool> Exists(string key);
 
-        Task<string> GetUri(string key);
+        string GetUri(string key);
 
         Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken));
 
@@ -69,7 +69,7 @@
         public static async Task<string> Download(this IBlobStorage blob, string key, CancellationToken cancellationToken = default(CancellationToken))
         {
             using (await blob.Get(key, null, cancellationToken).ConfigureAwait(false)) { };
-            return await blob.GetUri(key).ConfigureAwait(false);
+            return blob.GetUri(key);
         }
 
         public static async Task Download(this IBlobStorage blob, string key, Action<BlobProgress> progress, CancellationToken cancellationToken = default(CancellationToken))
@@ -91,7 +91,7 @@
                     catch (NotSupportedException) { }
                 }
 
-                var uri = await blob.GetUri(key).ConfigureAwait(false);
+                var uri = blob.GetUri(key);
                 progress(new BlobProgress(uri, BlobProgressState.Succeeded, new ProgressInBytes(sizeInBytes, sizeInBytes)));
             }
             catch

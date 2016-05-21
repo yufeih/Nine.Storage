@@ -18,7 +18,7 @@
         }
 
         public Task<bool> Exists(string key) => _blob.Exists(VerifySha1(key));
-        public Task<string> GetUri(string key) => _blob.GetUri(VerifySha1(key));
+        public string GetUri(string key) => _blob.GetUri(VerifySha1(key));
         public Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken)) => _blob.Get(VerifySha1(key), progress, cancellationToken);
         public Task<string> Put(Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken)) => Put(null, stream, progress, cancellationToken);
         public Task Delete(string key) => _blob.Delete(key);
