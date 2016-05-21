@@ -133,7 +133,7 @@
 
             try
             {
-                if (_cursor != null && string.CompareOrdinal(_cursor, _maxKey) >= 0)
+                if (IsCursorPassedMax())
                 {
                     HasMoreItems = false;
                     return 0;
@@ -187,7 +187,7 @@
                     CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, addedItems));
                 }
 
-                if (addedCount <= 0 || string.CompareOrdinal(_cursor, _maxKey) >= 0)
+                if (addedCount <= 0 || IsCursorPassedMax())
                 {
                     HasMoreItems = false;
                 }
@@ -206,6 +206,11 @@
                 }
                 _pendingChanges.Clear();
             }
+        }
+
+        private bool IsCursorPassedMax()
+        {
+            return _cursor != null && !string.IsNullOrEmpty(_maxKey) && string.CompareOrdinal(_cursor, _maxKey) >= 0;
         }
 
         private void OnStorageChanged(Delta<T> change)
