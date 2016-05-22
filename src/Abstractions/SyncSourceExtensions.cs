@@ -71,14 +71,27 @@
         {
             var syncContext = SynchronizationContext.Current;
             if (syncContext == null) return action;
-            return new Action<T>(target => syncContext.Post(x => action(target), null));
+            return new Action<T>(target => syncContext.Post(x =>
+            {
+                try
+                {
+                    action(target);
+                } catch { }
+            }, null));
         }
 
         private static Action<T, T> PostToSynchronizationContext<T>(Action<T, T> action)
         {
             var syncContext = SynchronizationContext.Current;
             if (syncContext == null) return action;
-            return new Action<T, T>((a, b) => syncContext.Post(x => action(a, b), null));
+            return new Action<T, T>((a, b) => syncContext.Post(x =>
+            {
+                try
+                {
+                    action(a, b);
+                }
+                catch { };
+            }, null));
         }
     }
 }
