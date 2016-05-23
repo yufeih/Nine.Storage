@@ -33,6 +33,14 @@
             return source.On<T>(key, action);
         }
 
+        public static IDisposable On<T>(this IStorage storage, string key, Action<Delta<T>> action, bool runOnSyncContext = true)
+        {
+            var source = storage as ISyncSource;
+            if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
+            if (runOnSyncContext) action = PostToSynchronizationContext(action);
+            return source.On<T>(key, action);
+        }
+
         public static IDisposable On<T>(this IStorage storage, string key, Action<T, T> action, bool runOnSyncContext = true) where T : class, new()
         {
             var source = storage as ISyncSource;
