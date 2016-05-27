@@ -19,12 +19,12 @@
         public async Task get_null_key_returns_null_content(ITestFactory<IBlobStorage> storageFactory)
         {
             var storage = storageFactory.Create();
-            Assert.Null(await storage.GetUri(null));
-            Assert.Null(await storage.GetUri(""));
+            Assert.Null(storage.GetUri(null));
+            Assert.Null(storage.GetUri(""));
             Assert.Null(await storage.Get(null));
             Assert.Null(await storage.Get(""));
 
-            // TODO: Test for special charactors in keys
+            // TODO: Test for special characters in keys
         }
 
         [Theory, MemberData("Data")]

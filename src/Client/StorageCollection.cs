@@ -129,16 +129,18 @@
         {
             if (IsLoading || !HasMoreItems || count <= 0) return 0;
 
+            await Task.Yield();
+
             try
             {
-                if (_cursor != null && string.CompareOrdinal(_cursor, _maxKey) >= 0)
+                if (IsCursorPassedMax())
                 {
                     HasMoreItems = false;
                     return 0;
                 }
 
                 IsLoading = true;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsLoading"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLoading)));
 
                 if (!_subscribed)
                 {
@@ -146,12 +148,12 @@
 
                     if (_observableStorage != null)
                     {
-                        // If there are any actions happened before the subscription is set, thoses changes will be lost
+                        // If there are any actions happened before the subscription is set, these changes will be lost
                         _subscription = _observableStorage.On<T>(OnStorageChanged);
                     }
                 }
-
-                var items = await _storage.Range<T>(_cursor, _maxKey, count);
+                
+                var items = await _storage.Range<T>(_cursor, _maxKey, _cursor != null ? count + 1 : count);
                 var itemCount = items.Count();
 
                 if (itemCount <= 0)
@@ -170,7 +172,8 @@
 
                     var key = item.GetKey();
 
-                    if (string.CompareOrdinal(key, _cursor) > 0) _cursor = StorageKey.Increment(key);
+                    if (key == _cursor) continue;
+                    if (string.CompareOrdinal(key, _cursor) > 0) _cursor = key;
                     if (TryFindIndex(key, out index)) continue;
                     var value = _convert(item, default(TViewModel));
 
@@ -185,7 +188,7 @@
                     CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, addedItems));
                 }
 
-                if (addedCount <= 0 || string.CompareOrdinal(_cursor, _maxKey) >= 0)
+                if (addedCount <= 0 || IsCursorPassedMax())
                 {
                     HasMoreItems = false;
                 }
@@ -198,12 +201,20 @@
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLoading)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasMoreItems)));
 
-                foreach (var change in _pendingChanges)
+                if (_pendingChanges.Count > 0)
                 {
-                    OnStorageChangedCore(change);
+                    foreach (var change in _pendingChanges)
+                    {
+                        OnStorageChangedCore(change);
+                    }
+                    _pendingChanges.Clear();
                 }
-                _pendingChanges.Clear();
             }
+        }
+
+        private bool IsCursorPassedMax()
+        {
+            return _cursor != null && !string.IsNullOrEmpty(_maxKey) && string.CompareOrdinal(_cursor, _maxKey) >= 0;
         }
 
         private void OnStorageChanged(Delta<T> change)

@@ -103,15 +103,15 @@
         [Fact]
         public async Task should_sync_to_concurrent_storage_changes()
         {
-            var count = 100;
+            var count = 103;
             var storage = new StorageContainer(x => new ObservableStorage<TestStorageObject>(new MemoryStorage<TestStorageObject>()));
 
             await Task.WhenAll(Enumerable.Range(0, count).AsParallel().Select(i => storage.Put(new TestStorageObject(i))));
 
             var collection = new StorageCollection<TestStorageObject>(storage, null, null).WithAllItems();
 
-            await Task.WhenAll(Enumerable.Range(count, count).AsParallel().Select(i => storage.Put(new TestStorageObject(i))));
-            await collection.CollectionChangedTo(m => m.Select(x => x.Id).Distinct().Count() == count * 2, 10000);
+            await Task.WhenAll(Enumerable.Range(count, count * 2).AsParallel().Select(i => storage.Put(new TestStorageObject(i))));
+            await collection.CollectionChangedTo(m => m.Select(x => x.Id).Distinct().Count() == count * 3, 1000000000);
         }
 
         [Fact]

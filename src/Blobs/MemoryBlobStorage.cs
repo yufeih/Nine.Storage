@@ -16,7 +16,7 @@
             return Task.FromResult(_store.ContainsKey(key));
         }
 
-        public virtual Task<string> GetUri(string key) => CommonTasks.NullString;
+        public virtual string GetUri(string key) => null;
 
         public virtual Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellation = default(CancellationToken))
         {

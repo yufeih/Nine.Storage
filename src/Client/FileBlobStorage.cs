@@ -23,11 +23,11 @@
             return File.Exists(GetFilePath(key)) ? CommonTasks.True : CommonTasks.False;
         }
 
-        public Task<string> GetUri(string key)
+        public string GetUri(string key)
         {
-            if (string.IsNullOrEmpty(key)) return CommonTasks.NullString;
+            if (string.IsNullOrEmpty(key)) return null;
 
-            return Task.FromResult(Path.GetFullPath(GetFilePath(key)));
+            return Path.GetFullPath(GetFilePath(key));
         }
 
         public Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))

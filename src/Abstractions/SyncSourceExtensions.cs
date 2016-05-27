@@ -17,27 +17,35 @@
             return source.On<T>(change => action(change.Value));
         }
 
-        public static IDisposable On<T>(this IStorage storage, Action<T> action, bool captureSyncContext = true)
+        public static IDisposable On<T>(this IStorage storage, Action<T> action, bool runOnSyncContext = true)
         {
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
-            if (captureSyncContext) action = PostToSynchronizationContext(action);
+            if (runOnSyncContext) action = PostToSynchronizationContext(action);
             return source.On<T>(action);
         }
 
-        public static IDisposable On<T>(this IStorage storage, string key, Action<T> action, bool captureSyncContext = true)
+        public static IDisposable On<T>(this IStorage storage, string key, Action<T> action, bool runOnSyncContext = true)
         {
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
-            if (captureSyncContext) action = PostToSynchronizationContext(action);
+            if (runOnSyncContext) action = PostToSynchronizationContext(action);
             return source.On<T>(key, action);
         }
 
-        public static IDisposable On<T>(this IStorage storage, string key, Action<T, T> action, bool captureSyncContext = true) where T : class, new()
+        public static IDisposable On<T>(this IStorage storage, string key, Action<Delta<T>> action, bool runOnSyncContext = true)
         {
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
-            if (captureSyncContext) action = PostToSynchronizationContext(action);
+            if (runOnSyncContext) action = PostToSynchronizationContext(action);
+            return source.On<T>(key, action);
+        }
+
+        public static IDisposable On<T>(this IStorage storage, string key, Action<T, T> action, bool runOnSyncContext = true) where T : class, new()
+        {
+            var source = storage as ISyncSource;
+            if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
+            if (runOnSyncContext) action = PostToSynchronizationContext(action);
 
             T oldValue = null;
 
@@ -49,11 +57,11 @@
             });
         }
 
-        public static IDisposable On<T>(this IStorage storage, string key, Func<T, object> watch, Action<T> action, bool captureSyncContext = true) where T : class, new()
+        public static IDisposable On<T>(this IStorage storage, string key, Func<T, object> watch, Action<T> action, bool runOnSyncContext = true) where T : class, new()
         {
             var source = storage as ISyncSource;
             if (source == null) throw new ArgumentException("storage", "storage needs to be a sync source");
-            if (captureSyncContext) action = PostToSynchronizationContext(action);
+            if (runOnSyncContext) action = PostToSynchronizationContext(action);
 
             T oldValue = null;
 
@@ -71,14 +79,27 @@
         {
             var syncContext = SynchronizationContext.Current;
             if (syncContext == null) return action;
-            return new Action<T>(target => syncContext.Post(x => action(target), null));
+            return new Action<T>(target => syncContext.Post(x =>
+            {
+                try
+                {
+                    action(target);
+                } catch { }
+            }, null));
         }
 
         private static Action<T, T> PostToSynchronizationContext<T>(Action<T, T> action)
         {
             var syncContext = SynchronizationContext.Current;
             if (syncContext == null) return action;
-            return new Action<T, T>((a, b) => syncContext.Post(x => action(a, b), null));
+            return new Action<T, T>((a, b) => syncContext.Post(x =>
+            {
+                try
+                {
+                    action(a, b);
+                }
+                catch { };
+            }, null));
         }
     }
 }

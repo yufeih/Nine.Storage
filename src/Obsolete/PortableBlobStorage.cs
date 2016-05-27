@@ -31,10 +31,10 @@
             return await GetFileAsync(key).ConfigureAwait(false) != null;
         }
 
-        public async Task<string> GetUri(string key)
+        public string GetUri(string key)
         {
             if (string.IsNullOrEmpty(key)) return null;
-            var file = await GetFileAsync(key).ConfigureAwait(false);
+            var file = GetFileAsync(key).Result;
             return file != null ? file.Path : null;
         }
 

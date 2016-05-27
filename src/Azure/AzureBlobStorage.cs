@@ -68,11 +68,11 @@
             return container;
         }
 
-        public Task<string> GetUri(string key)
+        public string GetUri(string key)
         {
-            if (string.IsNullOrEmpty(key)) return CommonTasks.NullString;
+            if (string.IsNullOrEmpty(key)) return null;
 
-            return Task.FromResult(BaseUri + key);
+            return BaseUri + key;
         }
 
         public async Task<bool> Exists(string key)
