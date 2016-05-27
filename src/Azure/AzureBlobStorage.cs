@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Net;
     using System.Runtime.Caching;
     using System.Threading;
     using System.Threading.Tasks;
@@ -89,8 +90,22 @@
             if (cached != null) return new MemoryStream(cached);
 
             var container = await _container.Value.ConfigureAwait(false);
+            var blob = container.GetBlockBlobReference(key);
 
-            using (var stream = await container.GetBlockBlobReference(key).OpenReadAsync(cancellationToken).ConfigureAwait(false))
+            Stream stream;
+
+            try
+            {
+                stream = await blob.OpenReadAsync(cancellationToken).ConfigureAwait(false);
+
+                if (stream == null) return null;
+            }
+            catch (StorageException e) when (e.Message.Contains("[400]")) // Really unfortunate I had to do this.
+            {
+                return null;
+            }
+
+            using (stream)
             {
                 var bytes = await stream.ReadBytesAsync(8 * 1024, cancellationToken).ConfigureAwait(false);
                 if (Cache)
