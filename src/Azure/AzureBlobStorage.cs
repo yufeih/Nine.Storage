@@ -51,7 +51,7 @@
         public AzureBlobStorage(CloudStorageAccount storageAccount, string containerName = "blobs", bool publicAccess = false)
             : this(() => ContainerFromStorageAccount(storageAccount, containerName, publicAccess))
         {
-            _containerName = containerName; 
+            _containerName = containerName;
         }
 
         private async static Task<CloudBlobContainer> ContainerFromStorageAccount(CloudStorageAccount storageAccount, string containerName, bool publicAccess)
@@ -100,7 +100,7 @@
 
                 if (stream == null) return null;
             }
-            catch (StorageException e) when (e.Message.Contains("[400]")) // Really unfortunate I had to do this.
+            catch (StorageException e) when (e.Message.Contains("400")) // Really unfortunate I had to do this.
             {
                 return null;
             }
