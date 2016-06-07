@@ -32,6 +32,8 @@
         {
             var storage = storageFactory.Create();
 
+            Assert.Null(await storage.Get((Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N")).Substring(0, 40)));
+
             var bytes = Enumerable.Range(0, 1024).Select(x => (byte)x).ToArray();
             var stream = new MemoryStream(bytes);
 

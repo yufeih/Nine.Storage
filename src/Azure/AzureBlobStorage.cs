@@ -2,7 +2,6 @@
 {
     using System;
     using System.IO;
-    using System.Net;
     using System.Runtime.Caching;
     using System.Threading;
     using System.Threading.Tasks;
@@ -77,6 +76,8 @@
 
         public async Task<bool> Exists(string key)
         {
+            if (string.IsNullOrEmpty(key)) return false;
+
             if (_contentCache.Contains(key)) return true;
 
             var container = await _container.Value.ConfigureAwait(false);
@@ -86,6 +87,8 @@
 
         public async Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (string.IsNullOrEmpty(key)) return null;
+
             var cached = _contentCache.Get(key) as byte[];
             if (cached != null) return new MemoryStream(cached);
 
@@ -100,7 +103,7 @@
 
                 if (stream == null) return null;
             }
-            catch (StorageException e) when (e.Message.Contains("400")) // Really unfortunate I had to do this.
+            catch (StorageException e) when (e.RequestInformation.HttpStatusCode == 404)
             {
                 return null;
             }
