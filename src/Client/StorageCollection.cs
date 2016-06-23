@@ -152,8 +152,9 @@
                         _subscription = _observableStorage.On<T>(OnStorageChanged);
                     }
                 }
-                
-                var items = await _storage.Range<T>(_cursor, _maxKey, _cursor != null ? count + 1 : count);
+
+                var initialLoad = (_cursor == _minKey);
+                var items = await _storage.Range<T>(_cursor, _maxKey, initialLoad ? count : count + 1);
                 var itemCount = items.Count();
 
                 if (itemCount <= 0)
@@ -172,7 +173,7 @@
 
                     var key = item.GetKey();
 
-                    if (key == _cursor) continue;
+                    if (!initialLoad && key == _cursor) continue;
                     if (string.CompareOrdinal(key, _cursor) > 0) _cursor = key;
                     if (TryFindIndex(key, out index)) continue;
                     var value = _convert(item, default(TViewModel));

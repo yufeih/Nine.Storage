@@ -54,7 +54,13 @@
 
             await collection.LoadMoreItemsAsync(10);
             Assert.Equal(6, collection.Count);
+
+            Assert.False(collection.IsLoading);
+            Assert.True(collection.HasMoreItems);
+
+            await collection.LoadMoreItemsAsync(10);
             Assert.False(collection.HasMoreItems);
+            Assert.False(collection.IsLoading);
             Assert.Equal(collection.Select(e => e.Id), Enumerable.Range(0, 6).Select(i => i.ToString()));
         }
 

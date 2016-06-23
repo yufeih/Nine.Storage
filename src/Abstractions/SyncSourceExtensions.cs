@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Reflection;
     using System.Threading;
 
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -51,7 +52,7 @@
 
             return source.On<T>(key, x =>
             {
-                var copy = ObjectHelper.MemberwiseClone(x);
+                var copy = x.MemberwiseClone();
                 action(x, oldValue);
                 oldValue = copy;
             });
@@ -67,7 +68,7 @@
 
             return source.On<T>(key, x =>
             {
-                var copy = ObjectHelper.MemberwiseClone(x);
+                var copy = x.MemberwiseClone();
                 if (watch == null) return;
                 if (x != null && oldValue != null && Equals(watch(x), watch(oldValue))) return;
                 action(x);

@@ -5,6 +5,7 @@
     using System.Collections.Concurrent;
     using System.Threading.Tasks;
     using System.Linq;
+    using System.Reflection;
     using Nine.Storage.Syncing;
 
     public class ObservableStorage<T> : SyncSource<T>, IStorage<T> where T : class, IKeyed, new()
@@ -80,7 +81,7 @@
                 var wr = _instances.GetOrAdd(key, _ => new WeakReference<T>(value));
                 if (wr.TryGetTarget(out target))
                 {
-                    value = ObjectHelper.Merge(target, value);
+                    value = target.Merge(value);
                 }
             }
 
@@ -96,7 +97,7 @@
                 var wr = _instances.GetOrAdd(key, _ => new WeakReference<T>(value));
                 if (wr.TryGetTarget(out target))
                 {
-                    value = ObjectHelper.Merge(target, value);
+                    value = target.Merge(value);
                 }
             }
 

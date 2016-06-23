@@ -42,11 +42,11 @@
                 {
                     var ms = new MemoryStream();
                     _formatter.WriteTo(value, ms);
-                    return _db.Insert(new Table { Key = key, Value = ms.ToArray() }) == 1 ? CommonTasks.True : CommonTasks.False;
+                    return _db.Insert(new Table { Key = key, Value = ms.ToArray() }) == 1 ? Tasks.True : Tasks.False;
                 }
                 catch (SQLiteException)
                 {
-                    return CommonTasks.False;
+                    return Tasks.False;
                 }
             }
         }
@@ -55,7 +55,7 @@
         {
             lock (_lock)
             {
-                return _db.Delete<Table>(key) == 1 ? CommonTasks.True : CommonTasks.False;
+                return _db.Delete<Table>(key) == 1 ? Tasks.True : Tasks.False;
             }
         }
 
@@ -76,7 +76,7 @@
                 var ms = new MemoryStream();
                 _formatter.WriteTo(value, ms);
                 _db.InsertOrReplace(new Table { Key = key, Value = ms.ToArray() });
-                return CommonTasks.Completed;
+                return Tasks.Completed;
             }
         }
 

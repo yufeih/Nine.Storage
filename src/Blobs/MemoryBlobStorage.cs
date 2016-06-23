@@ -26,7 +26,7 @@
             {
                 return Task.FromResult<Stream>(new MemoryStream(result, writable: false));
             }
-            return CommonTasks.Null<Stream>();
+            return Tasks.Null<Stream>();
         }
 
         public virtual Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellation = default(CancellationToken))
@@ -55,7 +55,7 @@
         {
             byte[] removed;
             _store.TryRemove(key, out removed);
-            return CommonTasks.Completed;
+            return Tasks.Completed;
         }
     }
 }

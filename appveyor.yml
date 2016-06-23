@@ -1,0 +1,4 @@
+build_script:
+- cmd: git submodule update --init
+- cmd: nuget restore
+- cmd: msbuild

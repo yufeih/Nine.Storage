@@ -18,9 +18,9 @@
 
         public Task<bool> Exists(string key)
         {
-            if (string.IsNullOrEmpty(key)) return CommonTasks.False;
+            if (string.IsNullOrEmpty(key)) return Tasks.False;
 
-            return File.Exists(GetFilePath(key)) ? CommonTasks.True : CommonTasks.False;
+            return File.Exists(GetFilePath(key)) ? Tasks.True : Tasks.False;
         }
 
         public string GetUri(string key)
@@ -32,18 +32,18 @@
 
         public Task<Stream> Get(string key, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (string.IsNullOrEmpty(key)) return CommonTasks.NullStream;
+            if (string.IsNullOrEmpty(key)) return Tasks.NullStream;
 
             var path = GetFilePath(key);
 
-            if (!File.Exists(path)) return CommonTasks.NullStream;
+            if (!File.Exists(path)) return Tasks.NullStream;
 
             return Task.FromResult<Stream>(File.OpenRead(path));
         }
 
         public Task<string> Put(string key, Stream stream, IProgress<ProgressInBytes> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (stream == null || key == null) return CommonTasks.NullString;
+            if (stream == null || key == null) return Tasks.NullString;
 
             var tempId = "." + Guid.NewGuid().ToString("N").Substring(0, 5) + ".tmp";
 
@@ -89,14 +89,14 @@
 
             if (File.Exists(path)) File.Delete(path);
 
-            return CommonTasks.Completed;
+            return Tasks.Completed;
         }
 
         public Task DeleteAll()
         {
             Directory.Delete(_baseDirectory, true);
 
-            return CommonTasks.Completed;
+            return Tasks.Completed;
         }
 
         private string GetFilePath(string key)

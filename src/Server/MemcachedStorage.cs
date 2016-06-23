@@ -59,18 +59,18 @@
 
         public Task<bool> Add(string key, T value)
         {
-            return _cache.Store(StoreMode.Add, key, _formatter.ToText(value)) ? CommonTasks.True : CommonTasks.False;
+            return _cache.Store(StoreMode.Add, key, _formatter.ToText(value)) ? Tasks.True : Tasks.False;
         }
 
         public Task Put(string key, T value)
         {
             _cache.Store(StoreMode.Set, key, _formatter.ToText(value));
-            return CommonTasks.Completed;
+            return Tasks.Completed;
         }
 
         public Task<bool> Delete(string key)
         {
-            return _cache.Remove(key) ? CommonTasks.True : CommonTasks.False;
+            return _cache.Remove(key) ? Tasks.True : Tasks.False;
         }
 
         // http://stackoverflow.com/questions/2727609/best-way-to-create-ipendpoint-from-string

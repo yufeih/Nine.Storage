@@ -35,7 +35,11 @@
                     stream = ms;
                 }
 
-                key = Sha1.ComputeHashString(stream);
+                using (var sha1 = SHA1.Create())
+                {
+                    key = sha1.ComputeHash(stream).ToHexString();
+                }
+
                 stream.Seek(0, SeekOrigin.Begin);
             }
 

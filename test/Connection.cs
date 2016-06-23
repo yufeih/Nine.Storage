@@ -1,7 +1,7 @@
 ﻿namespace Nine.Storage
 {
     using System.IO;
-    using Nine.Formatting;
+    using Newtonsoft.Json;
 
     public class Connection
     {
@@ -18,7 +18,7 @@
         {
             try
             {
-                Current = new JsonFormatter().FromText<Connection>(File.ReadAllText("connection.json"));
+                Current = JsonConvert.DeserializeObject<Connection>(File.ReadAllText("connection.json"));
             }
             catch
             {

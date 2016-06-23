@@ -62,11 +62,11 @@
             lock (_values)
             {
                 var i = _keys.BinarySearch(key, s_comparer);
-                if (i >= 0) return CommonTasks.False;
+                if (i >= 0) return Tasks.False;
                 var index = ~i;
                 _keys.Insert(index, key);
                 _values.Insert(index, new Entry(value, _weak));
-                return CommonTasks.True;
+                return Tasks.True;
             }
         }
 
@@ -130,12 +130,12 @@
         Task IStorage<T>.Put(string key, T value)
         {
             Put(key, value);
-            return CommonTasks.Completed;
+            return Tasks.Completed;
         }
 
         Task<bool> IStorage<T>.Delete(string key)
         {
-            return Delete(key) ? CommonTasks.True : CommonTasks.False;
+            return Delete(key) ? Tasks.True : Tasks.False;
         }
 
         struct Entry

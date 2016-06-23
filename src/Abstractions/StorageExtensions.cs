@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Reflection;
     using System.Threading.Tasks;
 
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -34,7 +35,7 @@
             if (existing == null) return false;
             if (predicate != null && !predicate(existing)) return false;
 
-            var cloned = ObjectHelper.MemberwiseClone(existing);
+            var cloned = existing.MemberwiseClone();
             action(cloned);
             await storage.Put(key, cloned).ConfigureAwait(false);
             return true;

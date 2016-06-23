@@ -317,7 +317,7 @@
                 {
                     return FlushAsync(table);
                 }
-                return CommonTasks.Completed;
+                return Tasks.Completed;
             }
 
             /// <summary>
@@ -331,7 +331,7 @@
                     var items = Interlocked.Exchange(ref Items, new ConcurrentDictionary<string, T>());
                     return Task.WhenAll(from x in GetBatchOperations(items) where x.Count > 0 select table.ExecuteBatchAsync(x));
                 }
-                return CommonTasks.Completed;
+                return Tasks.Completed;
             }
 
             /// <summary>

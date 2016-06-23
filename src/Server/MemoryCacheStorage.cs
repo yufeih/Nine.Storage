@@ -62,18 +62,18 @@
 
         public Task<bool> Add(string key, T value)
         {
-            return _memoryCache.Add(key, value ?? EmptyObject, _policy) ? CommonTasks.True : CommonTasks.False;
+            return _memoryCache.Add(key, value ?? EmptyObject, _policy) ? Tasks.True : Tasks.False;
         }
 
         Task IStorage<T>.Put(string key, T value)
         {
             Put(key, value);
-            return CommonTasks.Completed;
+            return Tasks.Completed;
         }
 
         Task<bool> IStorage<T>.Delete(string key)
         {
-            return Delete(key) ? CommonTasks.True : CommonTasks.False;
+            return Delete(key) ? Tasks.True : Tasks.False;
         }
 
         public void Dispose()
