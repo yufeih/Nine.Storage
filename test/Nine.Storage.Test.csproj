@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\dep\Nine.Common\src\*.cs" />
+    <Compile Include="..\dep\Nine.Common\src\Encoding\*.cs" />
     <Compile Include="..\dep\Nine.Common\src\Testing\*.cs" />
     <Compile Include="..\dep\Nine.Formatting\src\*.cs" />
     <Compile Include="..\dep\Nine.Formatting\src\Formatters\JsonFormatter.cs" />
